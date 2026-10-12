@@ -23,13 +23,14 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // ── Ensure uploads directories exist ─────────────────────────────────────────
+const uploadsDir = path.join(__dirname, '../public/uploads');
+const distUploadsDir = path.join(__dirname, '../dist/uploads');
+
 try {
-  const uploadsDir = path.join(__dirname, '../public/uploads');
   if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
     console.log('✅ Created /public/uploads directory');
   }
-  const distUploadsDir = path.join(__dirname, '../dist/uploads');
   if (!fs.existsSync(distUploadsDir)) {
     fs.mkdirSync(distUploadsDir, { recursive: true });
   }
