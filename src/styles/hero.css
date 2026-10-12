@@ -76,7 +76,7 @@
   align-items: center;
   overflow: hidden;
   background-color: #FFFFFF;
-  padding-top: 80px;
+  padding-top: clamp(100px, 14vh, 130px);
 }
 
 .hero-static-image {
@@ -137,7 +137,11 @@
   max-width: none;
   height: 100%;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: clamp(105px, 14vh, 135px);
+  padding-bottom: clamp(24px, 4vh, 48px);
+  box-sizing: border-box;
   will-change: opacity;
 }
 
@@ -180,12 +184,12 @@
 
 .hero-heading {
   font-family: var(--font-heading);
-  font-size: clamp(2.75rem, 5.2vw, 4.4rem);
+  font-size: clamp(2.35rem, 4.5vw, 3.9rem);
   font-weight: 850;
-  line-height: 1.04;
+  line-height: 1.06;
   letter-spacing: -0.03em;
   color: #111827;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   text-shadow: none;
   will-change: opacity, transform;
 }
