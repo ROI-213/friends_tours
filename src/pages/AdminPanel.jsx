@@ -1770,13 +1770,31 @@ function MediaManager() {
   const [imageUrlInput, setImageUrlInput] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [previewDataUrl, setPreviewDataUrl] = useState('');
+  const [editingItem, setEditingItem] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
+  const [editSaving, setEditSaving] = useState(false);
+  const [feedback, setFeedback] = useState(null);
   const fileInputRef = useRef(null);
+  const editFileInputRef = useRef(null);
 
-  const load = () => {
+  const load = useCallback(() => {
     setLoading(true);
-    adminApi.getGallery().then(setGallery).catch(console.error).finally(() => setLoading(false));
+    adminApi.getGallery()
+      .then((data) => {
+        if (Array.isArray(data)) setGallery(data);
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const showFeedback = (msg, isError = false) => {
+    setFeedback({ msg, isError });
+    setTimeout(() => setFeedback(null), 4000);
   };
-  useEffect(() => { load(); }, []);
 
   const handleFileUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -1787,7 +1805,7 @@ function MediaManager() {
       setPreviewDataUrl(dataUrl);
       const uploadTitle = title.trim() || file.name.replace(/\.[^.]+$/, '');
 
-      // 1. Try server storage upload
+      // 1. Try server upload
       try {
         const uploadFile = new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' });
         const res = await adminApi.uploadImage(uploadFile, {
@@ -1797,7 +1815,7 @@ function MediaManager() {
           save_to_gallery: true,
         });
         if (res && (res.success || res.url)) {
-          alert('Image uploaded successfully and added to Gallery!');
+          showFeedback('Image uploaded successfully and added to Gallery!');
           setTitle(''); setCaption(''); setPreviewDataUrl('');
           load();
           return;
@@ -1806,7 +1824,7 @@ function MediaManager() {
         console.warn('Server upload fallback to direct database insert:', uploadErr.message);
       }
 
-      // 2. Direct PostgreSQL fallback (guaranteed to work across all platforms, including Vercel)
+      // 2. Direct PostgreSQL fallback (now supports TEXT dataUrl)
       if (dataUrl) {
         await adminApi.addGalleryItem({
           title: uploadTitle,
@@ -1814,12 +1832,12 @@ function MediaManager() {
           category,
           image_url: dataUrl,
         });
-        alert('Image saved successfully to Gallery!');
+        showFeedback('Image saved successfully to Gallery!');
         setTitle(''); setCaption(''); setPreviewDataUrl('');
         load();
       }
     } catch (err) {
-      alert(`Upload failed: ${err.message}`);
+      showFeedback(`Upload failed: ${err.message}`, true);
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -1837,41 +1855,118 @@ function MediaManager() {
         category,
         image_url: imageUrlInput.trim(),
       });
-      alert('Image URL added successfully to Gallery!');
+      showFeedback('Image URL added successfully to Gallery!');
       setTitle(''); setCaption(''); setImageUrlInput('');
       load();
     } catch (err) {
-      alert(`Failed to add image: ${err.message}`);
+      showFeedback(`Failed to add image: ${err.message}`, true);
     } finally {
       setUploading(false);
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm('Remove image from gallery?')) return;
+  const handleDelete = async (id, imageTitle) => {
+    if (!window.confirm(`Are you sure you want to permanently delete "${imageTitle || 'this image'}" from the gallery?`)) {
+      return;
+    }
+    setDeletingId(id);
+    // Optimistic removal from UI
+    setGallery(prev => prev.filter(g => String(g.id) !== String(id)));
     try {
       await adminApi.deleteGalleryItem(id);
+      showFeedback('Image deleted successfully!');
       load();
     } catch (err) {
-      alert(`Delete failed: ${err.message}`);
+      showFeedback(`Delete failed: ${err.message}`, true);
+      load();
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const openEditModal = (img) => {
+    setEditingItem({
+      id: img.id,
+      title: img.title || '',
+      category: (img.category || 'fleet').toLowerCase(),
+      caption: img.caption || '',
+      image_url: img.image_url || '',
+    });
+  };
+
+  const handleEditReplacementFile = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const { dataUrl } = await compressImage(file);
+      if (dataUrl) {
+        setEditingItem(prev => ({ ...prev, image_url: dataUrl }));
+      }
+    } catch (err) {
+      alert('Error reading image file: ' + err.message);
+    }
+  };
+
+  const handleSaveEdit = async (e) => {
+    e.preventDefault();
+    if (!editingItem) return;
+    setEditSaving(true);
+    try {
+      await adminApi.updateGalleryItem(editingItem.id, {
+        title: editingItem.title.trim(),
+        category: editingItem.category,
+        caption: editingItem.caption.trim(),
+        image_url: editingItem.image_url.trim(),
+      });
+      showFeedback('Gallery image updated successfully!');
+      setEditingItem(null);
+      load();
+    } catch (err) {
+      alert(`Failed to update image: ${err.message}`);
+    } finally {
+      setEditSaving(false);
     }
   };
 
   const filteredGallery = selectedFilter === 'all'
     ? gallery
-    : gallery.filter(g => (g.category || '').toLowerCase() === selectedFilter.toLowerCase());
+    : gallery.filter(g => {
+        const cat = (g.category || '').toLowerCase();
+        if (selectedFilter === 'fleet') return cat === 'fleet' || cat === 'vehicles';
+        if (selectedFilter === 'outstation') return cat === 'outstation' || cat === 'tours' || cat === 'destinations';
+        if (selectedFilter === 'airport') return cat === 'airport' || cat === 'bangalore';
+        return cat === selectedFilter;
+      });
 
   return (
     <div>
       <div style={{ marginBottom: 20 }}>
-        <h2 style={{ margin: 0, fontWeight: 800, color: '#0A1938' }}>Media & Gallery Manager</h2>
+        <h2 style={{ margin: 0, fontWeight: 800, color: '#0A1938' }}>Media &amp; Gallery Manager</h2>
         <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '0.875rem' }}>
-          Upload vehicle, tour, and service photos directly to server storage and PostgreSQL.
+          Upload, edit, categorize, and delete photos shown in the website travel gallery and vehicle showcases.
         </p>
       </div>
 
-      <div style={{ background: '#fff', borderRadius: 14, padding: 24, boxShadow: '0 2px 10px rgba(0,0,0,0.04)', marginBottom: 24 }}>
-        <h3 style={{ margin: '0 0 16px', fontWeight: 800, color: '#0A1938', fontSize: '1rem' }}>Upload or Add New Image</h3>
+      {feedback && (
+        <div style={{
+          padding: '12px 18px',
+          borderRadius: 8,
+          marginBottom: 16,
+          fontWeight: 700,
+          fontSize: '0.875rem',
+          background: feedback.isError ? '#fef2f2' : '#f0fdf4',
+          color: feedback.isError ? '#dc2626' : '#16a34a',
+          border: `1px solid ${feedback.isError ? '#fecaca' : '#bbf7d0'}`
+        }}>
+          {feedback.isError ? '⚠️ ' : '✅ '}{feedback.msg}
+        </div>
+      )}
+
+      {/* Upload/Add Box */}
+      <div style={{ background: '#fff', borderRadius: 14, padding: 24, boxShadow: '0 2px 10px rgba(0,0,0,0.04)', marginBottom: 24, border: '1px solid #e2e8f0' }}>
+        <h3 style={{ margin: '0 0 16px', fontWeight: 800, color: '#0A1938', fontSize: '1.05rem', borderBottom: '1px solid #f1f5f9', paddingBottom: 10 }}>
+          📤 Upload or Add New Gallery Image
+        </h3>
         
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 16 }}>
           <div>
@@ -1905,15 +2000,15 @@ function MediaManager() {
           </div>
         </div>
 
-        {/* Upload methods: File picker or URL */}
+        {/* Upload options */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, background: '#f8fafc', padding: 18, borderRadius: 12, border: '1px solid #e2e8f0' }}>
-          {/* Method 1: Upload from computer/device */}
+          {/* Method 1: Choose File */}
           <div>
             <div style={{ fontWeight: 800, fontSize: '0.8125rem', color: '#0A1938', marginBottom: 6 }}>
               OPTION 1: UPLOAD FROM DEVICE
             </div>
             <p style={{ margin: '0 0 12px', fontSize: '0.75rem', color: '#64748b' }}>
-              Choose any photo from your phone or PC. Automatically optimized and saved.
+              Choose any photo from your phone or PC. Automatically optimized and saved directly.
             </p>
             <button
               type="button"
@@ -1946,7 +2041,7 @@ function MediaManager() {
             />
           </div>
 
-          {/* Method 2: Add by URL */}
+          {/* Method 2: Image URL */}
           <div>
             <div style={{ fontWeight: 800, fontSize: '0.8125rem', color: '#0A1938', marginBottom: 6 }}>
               OPTION 2: ADD BY IMAGE URL
@@ -1987,17 +2082,18 @@ function MediaManager() {
         {previewDataUrl && (
           <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', gap: 12, padding: 10, background: '#f0fdf4', borderRadius: 8, border: '1px solid #bbf7d0' }}>
             <img src={previewDataUrl} alt="Preview" style={{ width: 60, height: 44, objectFit: 'cover', borderRadius: 6 }} />
-            <div style={{ fontSize: '0.8125rem', color: '#166534', fontWeight: 600 }}>Image ready and saving to PostgreSQL gallery...</div>
+            <div style={{ fontSize: '0.8125rem', color: '#166534', fontWeight: 600 }}>Image compressed and saved to PostgreSQL gallery!</div>
           </div>
         )}
       </div>
 
-      <div style={{ background: '#fff', borderRadius: 14, padding: 24, boxShadow: '0 2px 10px rgba(0,0,0,0.04)' }}>
+      {/* Gallery Grid Section */}
+      <div style={{ background: '#fff', borderRadius: 14, padding: 24, boxShadow: '0 2px 10px rgba(0,0,0,0.04)', border: '1px solid #e2e8f0' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18, flexWrap: 'wrap', gap: 10 }}>
-          <h3 style={{ margin: 0, fontWeight: 800, color: '#0A1938', fontSize: '1rem' }}>
+          <h3 style={{ margin: 0, fontWeight: 800, color: '#0A1938', fontSize: '1.05rem' }}>
             Gallery Images ({filteredGallery.length}{selectedFilter !== 'all' ? ` of ${gallery.length}` : ''})
           </h3>
-          <div style={{ display: 'flex', gap: 6 }}>
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             {['all', 'fleet', 'outstation', 'airport', 'general'].map(cat => (
               <button
                 key={cat}
@@ -2022,58 +2118,213 @@ function MediaManager() {
         </div>
 
         {loading ? (
-          <div style={{ textAlign: 'center', padding: 30, color: '#94a3b8' }}>Loading gallery...</div>
+          <div style={{ textAlign: 'center', padding: 40, color: '#94a3b8' }}>Loading gallery images...</div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 18 }}>
             {filteredGallery.map(img => (
-              <div key={img.id} style={{ borderRadius: 10, overflow: 'hidden', border: '1px solid #e2e8f0', background: '#f8fafc', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ height: 130, background: '#e2e8f0', overflow: 'hidden' }}>
+              <div key={img.id} style={{ borderRadius: 12, overflow: 'hidden', border: '1px solid #e2e8f0', background: '#fff', display: 'flex', flexDirection: 'column', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+                <div style={{ height: 150, background: '#e2e8f0', overflow: 'hidden', position: 'relative' }}>
                   <img
                     src={img.image_url}
-                    alt={img.title}
+                    alt={img.title || 'Gallery item'}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    onError={(e) => { e.target.style.display = 'none'; }}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80';
+                    }}
                   />
+                  <span style={{
+                    position: 'absolute', top: 8, right: 8,
+                    background: 'rgba(10, 25, 56, 0.85)',
+                    color: '#fff',
+                    padding: '3px 8px',
+                    borderRadius: 6,
+                    fontSize: '0.6875rem',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    backdropFilter: 'blur(4px)'
+                  }}>
+                    {img.category || 'general'}
+                  </span>
                 </div>
-                <div style={{ padding: 12, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div style={{ padding: 14, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                   <div>
-                    <div style={{ fontWeight: 700, fontSize: '0.8125rem', color: '#0A1938', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <div style={{ fontWeight: 800, fontSize: '0.875rem', color: '#0A1938', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {img.title || 'Untitled'}
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'capitalize', marginTop: 2 }}>
-                      {img.category || 'general'}
-                    </div>
+                    {img.caption && (
+                      <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: 3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                        {img.caption}
+                      </div>
+                    )}
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 }}>
+                  <div style={{ display: 'flex', gap: 6, marginTop: 14 }}>
                     <button
                       type="button"
                       onClick={() => {
                         navigator.clipboard.writeText(img.image_url);
-                        alert('Image URL copied to clipboard!');
+                        showFeedback('Image URL copied to clipboard!');
                       }}
-                      style={{ padding: '4px 10px', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: 4, fontSize: '0.7rem', cursor: 'pointer', fontWeight: 600 }}
+                      style={{ flex: 1, padding: '6px 8px', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: 6, fontSize: '0.72rem', cursor: 'pointer', fontWeight: 600, color: '#334155' }}
+                      title="Copy URL"
                     >
-                      Copy URL
+                      📋 Copy URL
                     </button>
                     <button
                       type="button"
-                      onClick={() => handleDelete(img.id)}
-                      style={{ padding: '4px 10px', background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: 4, fontSize: '0.7rem', cursor: 'pointer', fontWeight: 700 }}
+                      onClick={() => openEditModal(img)}
+                      style={{ padding: '6px 12px', background: '#e0f2fe', color: '#0284c7', border: 'none', borderRadius: 6, fontSize: '0.72rem', cursor: 'pointer', fontWeight: 700 }}
                     >
-                      Delete
+                      ✏️ Edit
+                    </button>
+                    <button
+                      type="button"
+                      disabled={deletingId === img.id}
+                      onClick={() => handleDelete(img.id, img.title)}
+                      style={{ padding: '6px 10px', background: deletingId === img.id ? '#94a3b8' : '#fee2e2', color: deletingId === img.id ? '#fff' : '#dc2626', border: 'none', borderRadius: 6, fontSize: '0.72rem', cursor: deletingId === img.id ? 'not-allowed' : 'pointer', fontWeight: 700 }}
+                    >
+                      {deletingId === img.id ? '...' : '🗑️ Delete'}
                     </button>
                   </div>
                 </div>
               </div>
             ))}
             {filteredGallery.length === 0 && (
-              <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: 40, color: '#94a3b8' }}>
+              <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: 50, color: '#94a3b8' }}>
                 No gallery images found in this category. Upload one above!
               </div>
             )}
           </div>
         )}
       </div>
+
+      {/* Edit Gallery Image Modal */}
+      {editingItem && (
+        <Modal title="✏️ Edit Gallery Image" onClose={() => setEditingItem(null)} maxWidth={560}>
+          <form onSubmit={handleSaveEdit} style={{ display: 'grid', gap: 16 }}>
+            {/* Image Preview */}
+            <div style={{ height: 160, borderRadius: 10, overflow: 'hidden', background: '#f1f5f9', border: '1px solid #cbd5e1', position: 'relative' }}>
+              <img
+                src={editingItem.image_url}
+                alt={editingItem.title}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                onError={(e) => { e.target.style.display = 'none'; }}
+              />
+            </div>
+
+            <div>
+              <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>IMAGE TITLE</label>
+              <input
+                type="text"
+                value={editingItem.title}
+                onChange={e => setEditingItem({ ...editingItem, title: e.target.value })}
+                required
+                style={inputStyle}
+              />
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <div>
+                <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>CATEGORY</label>
+                <select
+                  value={editingItem.category}
+                  onChange={e => setEditingItem({ ...editingItem, category: e.target.value })}
+                  style={inputStyle}
+                >
+                  <option value="fleet">Fleet Vehicles</option>
+                  <option value="outstation">Outstation Tours</option>
+                  <option value="airport">Airport Transfers</option>
+                  <option value="general">General Travel</option>
+                </select>
+              </div>
+              <div>
+                <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>REPLACE WITH NEW FILE</label>
+                <button
+                  type="button"
+                  onClick={() => editFileInputRef.current?.click()}
+                  style={{
+                    width: '100%',
+                    padding: '9px 12px',
+                    background: '#f1f5f9',
+                    border: '1.5px dashed #94a3b8',
+                    borderRadius: 8,
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    marginTop: 4,
+                    color: '#0A1938'
+                  }}
+                >
+                  📁 Choose Replacement
+                </button>
+                <input
+                  type="file"
+                  ref={editFileInputRef}
+                  accept="image/*"
+                  onChange={handleEditReplacementFile}
+                  style={{ display: 'none' }}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>IMAGE URL (OR DATA URL)</label>
+              <input
+                type="text"
+                value={editingItem.image_url}
+                onChange={e => setEditingItem({ ...editingItem, image_url: e.target.value })}
+                required
+                style={inputStyle}
+              />
+            </div>
+
+            <div>
+              <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>CAPTION / ALT TEXT</label>
+              <textarea
+                value={editingItem.caption}
+                onChange={e => setEditingItem({ ...editingItem, caption: e.target.value })}
+                rows={2}
+                style={{ ...inputStyle, resize: 'vertical' }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: 10, paddingTop: 8 }}>
+              <button
+                type="submit"
+                disabled={editSaving}
+                style={{
+                  flex: 1,
+                  padding: '12px',
+                  background: editSaving ? '#64748b' : '#0A1938',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 8,
+                  fontWeight: 700,
+                  fontSize: '0.9rem',
+                  cursor: editSaving ? 'not-allowed' : 'pointer'
+                }}
+              >
+                {editSaving ? 'Saving Changes...' : '💾 Save Changes'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setEditingItem(null)}
+                style={{
+                  padding: '12px 20px',
+                  background: '#f1f5f9',
+                  color: '#334155',
+                  border: 'none',
+                  borderRadius: 8,
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
     </div>
   );
 }

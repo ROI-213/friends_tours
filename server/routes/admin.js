@@ -546,10 +546,18 @@ router.get('/gallery', requireAuth, async (req, res) => {
 
 router.post('/gallery', requireAuth, async (req, res) => {
   try {
-    const { title, caption, image_url, category, tags } = req.body;
+    const { title, caption, image_url, category, tags, is_featured, is_active } = req.body;
     const result = await query(
-      'INSERT INTO gallery (title, caption, image_url, category, tags) VALUES ($1,$2,$3,$4,$5) RETURNING *',
-      [title, caption, image_url, category || 'general', JSON.stringify(tags || [])]
+      'INSERT INTO gallery (title, caption, image_url, category, tags, is_featured, is_active) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *',
+      [
+        title || 'Gallery Image',
+        caption || '',
+        image_url,
+        category || 'general',
+        JSON.stringify(tags || []),
+        is_featured === true,
+        is_active !== false
+      ]
     );
     syncManager.notifyDataChange('gallery', 'create', { id: result.rows[0].id });
     res.json({ success: true, item: result.rows[0] });
@@ -558,9 +566,47 @@ router.post('/gallery', requireAuth, async (req, res) => {
   }
 });
 
+router.put('/gallery/:id', requireAuth, async (req, res) => {
+  try {
+    const { title, caption, image_url, category, tags, is_featured, is_active, sort_order } = req.body;
+    const result = await query(
+      `UPDATE gallery
+       SET title = COALESCE($1, title),
+           caption = COALESCE($2, caption),
+           image_url = COALESCE($3, image_url),
+           category = COALESCE($4, category),
+           tags = COALESCE($5, tags),
+           is_featured = COALESCE($6, is_featured),
+           is_active = COALESCE($7, is_active),
+           sort_order = COALESCE($8, sort_order),
+           updated_at = NOW()
+       WHERE id::text = $9
+       RETURNING *`,
+      [
+        title !== undefined ? title : null,
+        caption !== undefined ? caption : null,
+        image_url !== undefined ? image_url : null,
+        category !== undefined ? category : null,
+        tags !== undefined ? JSON.stringify(tags) : null,
+        is_featured !== undefined ? is_featured : null,
+        is_active !== undefined ? is_active : null,
+        sort_order !== undefined ? sort_order : null,
+        req.params.id
+      ]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Gallery image not found' });
+    }
+    syncManager.notifyDataChange('gallery', 'update', { id: req.params.id, item: result.rows[0] });
+    res.json({ success: true, item: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.delete('/gallery/:id', requireAuth, async (req, res) => {
   try {
-    await query('DELETE FROM gallery WHERE id = $1', [req.params.id]);
+    await query('DELETE FROM gallery WHERE id::text = $1', [req.params.id]);
     syncManager.notifyDataChange('gallery', 'delete', { id: req.params.id });
     res.json({ success: true });
   } catch (err) {

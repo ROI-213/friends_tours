@@ -95,6 +95,16 @@ export const GALLERY_DATA = [
   },
 ];
 
+const normalizeCategory = (cat) => {
+  const upper = String(cat || '').toUpperCase().trim();
+  if (upper === 'FLEET' || upper === 'VEHICLE' || upper === 'VEHICLES' || upper === 'CAR' || upper === 'CARS') return 'VEHICLES';
+  if (upper === 'OUTSTATION' || upper === 'DESTINATION' || upper === 'DESTINATIONS') return 'DESTINATIONS';
+  if (upper === 'AIRPORT' || upper === 'BANGALORE' || upper === 'LOCAL') return 'BANGALORE';
+  if (upper === 'TOUR' || upper === 'TOURS' || upper === 'JOURNEY' || upper === 'JOURNEYS') return 'JOURNEYS';
+  if (upper === 'EXPERIENCE' || upper === 'EXPERIENCES' || upper === 'MOMENTS' || upper === 'GENERAL') return 'EXPERIENCES';
+  return upper || 'DESTINATIONS';
+};
+
 const GALLERY_FILTERS = ['ALL', 'BANGALORE', 'DESTINATIONS', 'VEHICLES', 'JOURNEYS', 'EXPERIENCES'];
 
 export const TravelGallery = () => {
@@ -108,14 +118,16 @@ export const TravelGallery = () => {
         const dynamic = data.map((g, i) => ({
           id: g.id,
           title: g.title || 'Friends Tours & Travels',
-          category: (g.category || 'DESTINATIONS').toUpperCase(),
+          category: normalizeCategory(g.category),
           badge: g.is_featured ? 'FEATURED' : '',
           featured: !!g.is_featured,
           layoutClass: i % 4 === 0 ? 'gallery-item-tall' : (i % 5 === 0 ? 'gallery-item-wide' : ''),
           image: g.image_url || g.image || '',
           description: g.caption || g.title || 'Tour memory with Friends Tours & Travels',
         }));
-        setGalleryList(dynamic);
+        const dynamicUrls = new Set(data.map(d => d.image_url));
+        const remainingDefaults = GALLERY_DATA.filter(d => !dynamicUrls.has(d.image));
+        setGalleryList([...dynamic, ...remainingDefaults]);
       }
     }).catch((err) => {
       console.warn('Notice: Using default gallery data:', err.message);

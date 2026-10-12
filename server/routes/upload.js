@@ -112,4 +112,60 @@ const getGalleryHandler = async (req, res) => {
 router.get('/', getGalleryHandler);
 router.get('/gallery', getGalleryHandler);
 
+// Edit gallery item via upload router
+const updateGalleryHandler = async (req, res) => {
+  try {
+    const { title, caption, image_url, category, tags, is_featured, is_active, sort_order } = req.body;
+    const result = await query(
+      `UPDATE gallery
+       SET title = COALESCE($1, title),
+           caption = COALESCE($2, caption),
+           image_url = COALESCE($3, image_url),
+           category = COALESCE($4, category),
+           tags = COALESCE($5, tags),
+           is_featured = COALESCE($6, is_featured),
+           is_active = COALESCE($7, is_active),
+           sort_order = COALESCE($8, sort_order),
+           updated_at = NOW()
+       WHERE id::text = $9
+       RETURNING *`,
+      [
+        title !== undefined ? title : null,
+        caption !== undefined ? caption : null,
+        image_url !== undefined ? image_url : null,
+        category !== undefined ? category : null,
+        tags !== undefined ? JSON.stringify(tags) : null,
+        is_featured !== undefined ? is_featured : null,
+        is_active !== undefined ? is_active : null,
+        sort_order !== undefined ? sort_order : null,
+        req.params.id
+      ]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Gallery image not found' });
+    }
+    syncManager.notifyDataChange('gallery', 'update', { id: req.params.id, item: result.rows[0] });
+    res.json({ success: true, item: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+router.put('/:id', requireAuth, updateGalleryHandler);
+router.put('/gallery/:id', requireAuth, updateGalleryHandler);
+
+// Delete gallery item via upload router
+const deleteGalleryHandler = async (req, res) => {
+  try {
+    await query('DELETE FROM gallery WHERE id::text = $1', [req.params.id]);
+    syncManager.notifyDataChange('gallery', 'delete', { id: req.params.id });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+router.delete('/:id', requireAuth, deleteGalleryHandler);
+router.delete('/gallery/:id', requireAuth, deleteGalleryHandler);
+
 export default router;

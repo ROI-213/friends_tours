@@ -488,6 +488,11 @@ export const adminApi = {
     notifyLocalMutation('gallery', 'create');
     return res;
   },
+  updateGalleryItem: async (id, data) => {
+    const res = await apiFetch(`/admin/gallery/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+    notifyLocalMutation('gallery', 'update');
+    return res;
+  },
   deleteGalleryItem: async (id) => {
     const res = await apiFetch(`/admin/gallery/${id}`, { method: 'DELETE' });
     notifyLocalMutation('gallery', 'delete');
