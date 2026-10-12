@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Sparkles, 
   ArrowRight, 
@@ -19,13 +19,39 @@ import { BRAND } from '../constants/branding';
 import { Navbar } from '../components/layout/Navbar';
 import { Footer } from '../components/layout/Footer';
 import { CorporateClientsSection } from '../components/home/CorporateClientsSection';
+import { api } from '../lib/api.js';
+import { useDataSync } from '../hooks/useDataSync';
 import '../styles/about.css';
 
+const DEFAULT_HIGHLIGHTS = [
+  { num: '01', name: 'EMPLOYEE TRANSPORTATION', desc: 'Scheduled shift pickups, tech park mobility, and monthly corporate GST billing.' },
+  { num: '02', name: 'AIRPORT TRANSPORT', desc: 'Guaranteed on-time Kempegowda Airport transfers with live flight tracking.' },
+  { num: '03', name: 'LOCAL & OUTSTATION RENTALS', desc: '4hr/8hr local city packages and outstation journeys (min 300 km/day).' },
+  { num: '04', name: 'SHUTTLE SERVICES', desc: 'Dedicated office shuttles, event transit, and 12–17 seater Tempo Travellers.' },
+];
+
 export const AboutPage = ({ onNavigate, onBookNowClick }) => {
+  const [highlights, setHighlights] = useState(DEFAULT_HIGHLIGHTS);
+
+  const fetchServices = useCallback(() => {
+    api.getServices().then((data) => {
+      if (Array.isArray(data) && data.length > 0) {
+        setHighlights(data.map((s, idx) => ({
+          num: `0${idx + 1}`.slice(-2),
+          name: s.title,
+          desc: s.short_desc || s.full_desc || ''
+        })));
+      }
+    }).catch(() => {});
+  }, []);
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     document.title = `About Us | ${BRAND.name} J.P. Nagar Bangalore`;
-  }, []);
+    fetchServices();
+  }, [fetchServices]);
+
+  useDataSync('services', fetchServices);
 
   return (
     <div className="page-container" aria-label="About Friends Tours & Travels">
@@ -109,36 +135,17 @@ export const AboutPage = ({ onNavigate, onBookNowClick }) => {
                 With clean, yellow-board air-conditioned vehicles, experienced highway chauffeurs, and official transparent billing (rates effective 01 Jan 2026), we ensure every mile is seamless and stress-free.
               </p>
 
-              {/* 2×2 Service Highlights Grid (4 Core Services) */}
+              {/* 2×2 Service Highlights Grid (Dynamic from Database) */}
               <div className="about-highlights-grid">
-                <div className="about-highlight-item">
-                  <span className="about-highlight-num">01</span>
-                  <div>
-                    <p className="about-highlight-name">EMPLOYEE TRANSPORTATION</p>
-                    <p className="about-highlight-desc">Scheduled shift pickups, tech park mobility, and monthly corporate GST billing.</p>
+                {highlights.map((h, i) => (
+                  <div key={i} className="about-highlight-item">
+                    <span className="about-highlight-num">{h.num}</span>
+                    <div>
+                      <p className="about-highlight-name">{h.name}</p>
+                      <p className="about-highlight-desc">{h.desc}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="about-highlight-item">
-                  <span className="about-highlight-num">02</span>
-                  <div>
-                    <p className="about-highlight-name">AIRPORT TRANSPORT</p>
-                    <p className="about-highlight-desc">Guaranteed on-time Kempegowda Airport transfers with live flight tracking.</p>
-                  </div>
-                </div>
-                <div className="about-highlight-item">
-                  <span className="about-highlight-num">03</span>
-                  <div>
-                    <p className="about-highlight-name">LOCAL &amp; OUTSTATION RENTALS</p>
-                    <p className="about-highlight-desc">4hr/8hr local city packages and outstation journeys (min 300 km/day).</p>
-                  </div>
-                </div>
-                <div className="about-highlight-item">
-                  <span className="about-highlight-num">04</span>
-                  <div>
-                    <p className="about-highlight-name">SHUTTLE SERVICES</p>
-                    <p className="about-highlight-desc">Dedicated office shuttles, event transit, and 12–17 seater Tempo Travellers.</p>
-                  </div>
-                </div>
+                ))}
               </div>
 
               <div className="about-cta-row">

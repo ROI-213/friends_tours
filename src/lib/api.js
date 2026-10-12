@@ -63,11 +63,25 @@ export function getImageUrl(path) {
   return path;
 }
 
-function notifyLocalMutation(type, action) {
+let ftBroadcastChannel = null;
+if (typeof window !== 'undefined' && typeof window.BroadcastChannel === 'function') {
+  try {
+    ftBroadcastChannel = new BroadcastChannel('ft_sync_channel');
+  } catch (_) {}
+}
+
+export function notifyLocalMutation(type, action) {
   if (typeof window !== 'undefined') {
-    window.dispatchEvent(new CustomEvent('ft:data-change', {
-      detail: { type, action, timestamp: Date.now() }
-    }));
+    const payload = { type, action, timestamp: Date.now() };
+    window.dispatchEvent(new CustomEvent('ft:data-change', { detail: payload }));
+    try {
+      localStorage.setItem('ft_last_mutation', JSON.stringify(payload));
+    } catch (_) {}
+    try {
+      if (ftBroadcastChannel) {
+        ftBroadcastChannel.postMessage(payload);
+      }
+    } catch (_) {}
   }
 }
 

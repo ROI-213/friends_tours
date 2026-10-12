@@ -45,20 +45,26 @@ function createPool() {
         idleTimeoutMillis: 30000,
         connectionTimeoutMillis: 10000,
       }
-    : {
-        host: process.env.DB_HOST || process.env.PGHOST || '127.0.0.1',
-        port: parseInt(process.env.DB_PORT || process.env.PGPORT || '5432', 10),
-        database: process.env.DB_NAME || process.env.PGDATABASE || 'frien470',
-        user: process.env.DB_USER || process.env.PGUSER || 'frien470',
-        password:
-          process.env.DB_PASSWORD ||
-          process.env.PGPASSWORD ||
-          'VGgzGvd9tielKwuxxeB4qI7zn',
-        ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
-        max: parseInt(process.env.DB_POOL_MAX || '20', 10),
-        idleTimeoutMillis: 30000,
-        connectionTimeoutMillis: 10000,
-      };
+    : (() => {
+        let dbHost = process.env.DB_HOST || process.env.PGHOST || '168.119.64.101';
+        if (process.env.VERCEL && (dbHost === '127.0.0.1' || dbHost === 'localhost')) {
+          dbHost = '168.119.64.101';
+        }
+        return {
+          host: dbHost,
+          port: parseInt(process.env.DB_PORT || process.env.PGPORT || '5432', 10),
+          database: process.env.DB_NAME || process.env.PGDATABASE || 'frien470',
+          user: process.env.DB_USER || process.env.PGUSER || 'frien470',
+          password:
+            process.env.DB_PASSWORD ||
+            process.env.PGPASSWORD ||
+            'VGgzGvd9tielKwuxxeB4qI7zn',
+          ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
+          max: parseInt(process.env.DB_POOL_MAX || '20', 10),
+          idleTimeoutMillis: 30000,
+          connectionTimeoutMillis: 10000,
+        };
+      })();
 
   const newPool = new Pool(poolConfig);
 
