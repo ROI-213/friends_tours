@@ -16,13 +16,23 @@ export const AboutSection = ({ onExploreClick }) => {
   const { getSetting } = useSiteSettings();
   const aboutTitle = getSetting('about_title', 'MORE THAN A RIDE. A BETTER WAY TO TRAVEL.');
   const aboutStory = getSetting('about_story', 'Friends Tours & Travels is a Bangalore-based travel and transportation service focused on making local journeys, airport transfers, weekend escapes and outstation trips simple and comfortable.');
+  const statYears = getSetting('stat_years_exp', '15+');
+  const statTrips = getSetting('stat_trips_completed', '50,000+');
+  const statRating = getSetting('stat_client_rating', '4.9 / 5');
 
   let titleLine1 = aboutTitle;
   let titleLine2 = '';
   if (aboutTitle.includes('.')) {
     const parts = aboutTitle.split('.');
-    titleLine1 = parts[0] + '.';
+    titleLine1 = parts[0].trim() + (parts.length > 1 && parts[1].trim() ? '.' : '');
     titleLine2 = parts.slice(1).join('.').trim();
+  } else {
+    const words = aboutTitle.trim().split(/\s+/);
+    if (words.length > 2) {
+      const splitIdx = Math.ceil(words.length / 2);
+      titleLine1 = words.slice(0, splitIdx).join(' ');
+      titleLine2 = words.slice(splitIdx).join(' ');
+    }
   }
 
   const serviceHighlights = [
@@ -92,6 +102,32 @@ export const AboutSection = ({ onExploreClick }) => {
             <p className="about-text" style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--color-primary, #0D256C)', marginBottom: 12 }}>
               {aboutStory}
             </p>
+
+            {/* Dynamic Verified Stats Strip */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: 10,
+              margin: '16px 0 20px',
+              padding: '14px 16px',
+              background: '#f8fafc',
+              borderRadius: 12,
+              border: '1px solid #e2e8f0',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.03)'
+            }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--color-primary, #0D256C)', lineHeight: 1.1 }}>{statYears}</div>
+                <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: 4 }}>Years Exp.</div>
+              </div>
+              <div style={{ textAlign: 'center', borderLeft: '1px solid #e2e8f0', borderRight: '1px solid #e2e8f0' }}>
+                <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#FA4616', lineHeight: 1.1 }}>{statTrips}</div>
+                <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: 4 }}>Trips Done</div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--color-primary, #0D256C)', lineHeight: 1.1 }}>{statRating}</div>
+                <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: 4 }}>Client Rating</div>
+              </div>
+            </div>
 
             <p className="about-text">
               Whether you need punctual pickup at Kempegowda International Airport, seamless daily employee mobility across Bangalore’s major tech corridors, or a customized outstation getaway across Karnataka, our priority is always your safety, comfort, and peace of mind.

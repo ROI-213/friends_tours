@@ -2079,127 +2079,292 @@ function MediaManager() {
 }
 
 // ── In-Detail Website Sections & Content Editor ───────────────────────────────
+const DEFAULT_WEBSITE_CONTENT = {
+  hero_eyebrow: 'FRIENDS TOURS & TRAVELS • J.P. NAGAR, BANGALORE',
+  hero_title: 'YOUR JOURNEY. OUR PRIORITY.',
+  hero_subtitle: "Bangalore's trusted partner for Employee Transportation, Airport Transport, Local & Outstation Rentals, and Shuttle Services.",
+  about_title: 'MORE THAN A RIDE. A BETTER WAY TO TRAVEL.',
+  about_story: 'Friends Tours & Travels is a Bangalore-based travel and transportation service focused on making local journeys, airport transfers, weekend escapes and outstation trips simple and comfortable.',
+  stat_years_exp: '15+',
+  stat_trips_completed: '50,000+',
+  stat_client_rating: '4.9 / 5',
+  safety_gps: '100% GPS Fleet Tracking & Speed Governors',
+  safety_police: 'Police Verified & Background Checked Chauffeurs',
+  safety_sanitized: 'Deep Cleaned & Sanitized Cabins Before Every Trip',
+  safety_billing: 'Transparent Computerized / Printed Receipt Billing',
+};
+
 function ContentManager() {
-  const [settings, setSettings] = useState([]);
+  const [content, setContent] = useState(DEFAULT_WEBSITE_CONTENT);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    adminApi.getSettings().then(setSettings).catch(console.error).finally(() => setLoading(false));
+  const loadContent = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const rows = await adminApi.getSettings();
+      if (Array.isArray(rows)) {
+        const merged = { ...DEFAULT_WEBSITE_CONTENT };
+        rows.forEach(r => {
+          if (r.key && r.value !== undefined && r.value !== null && r.value !== '') {
+            merged[r.key] = r.value;
+          }
+        });
+        setContent(merged);
+      }
+    } catch (err) {
+      console.error('Failed to load website content:', err);
+      setError('Could not fetch current settings from database.');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const getVal = (key, fallback = '') => {
-    const item = settings.find(s => s.key === key);
-    return item ? (item.value || '') : fallback;
-  };
+  useEffect(() => {
+    loadContent();
+  }, [loadContent]);
 
-  const setVal = (key, value) => {
-    setSettings(prev => {
-      const exists = prev.some(s => s.key === key);
-      if (exists) return prev.map(s => s.key === key ? { ...s, value } : s);
-      return [...prev, { key, value }];
-    });
+  const handleChange = (key, value) => {
+    setContent(prev => ({ ...prev, [key]: value }));
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
     setSaving(true);
-    await adminApi.updateSettings(settings.map(s => ({ key: s.key, value: s.value }))).catch(console.error);
-    setSaving(false); setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    setError(null);
+    try {
+      const payload = Object.entries(content).map(([key, value]) => ({
+        key,
+        value: typeof value === 'string' ? value.trim() : (value || '')
+      }));
+      await adminApi.updateSettings(payload);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 4000);
+    } catch (err) {
+      console.error('Error saving website content:', err);
+      setError(err.message || 'Failed to save changes. Please try again.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (loading) return <div style={{ padding: 40, textAlign: 'center', color: '#94a3b8' }}>Loading website content...</div>;
 
   return (
     <div>
-      <div style={{ marginBottom: 20 }}>
-        <h2 style={{ margin: 0, fontWeight: 800, color: '#0A1938' }}>Website Sections & Content Editor</h2>
-        <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '0.875rem' }}>Edit headings, story paragraphs, safety standards, and stats shown across the website.</p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
+        <div>
+          <h2 style={{ margin: 0, fontWeight: 800, color: '#0A1938' }}>Website Sections &amp; Content Editor</h2>
+          <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '0.875rem' }}>
+            Edit headings, story paragraphs, safety standards, and statistics shown live across the website.
+          </p>
+        </div>
+        <a
+          href="/"
+          target="_blank"
+          rel="noreferrer"
+          style={{
+            padding: '9px 16px',
+            background: '#f1f5f9',
+            color: '#0A1938',
+            borderRadius: 8,
+            textDecoration: 'none',
+            fontSize: '0.8125rem',
+            fontWeight: 700,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6
+          }}
+        >
+          View Live Website ↗
+        </a>
       </div>
 
-      <form onSubmit={handleSave} style={{ display: 'grid', gap: 24, maxWidth: 800 }}>
+      {error && (
+        <div style={{ padding: '12px 16px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8, color: '#dc2626', marginBottom: 16, fontSize: '0.875rem', fontWeight: 600 }}>
+          ⚠️ {error}
+        </div>
+      )}
+
+      {saved && (
+        <div style={{ padding: '12px 16px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 8, color: '#16a34a', marginBottom: 16, fontSize: '0.875rem', fontWeight: 700 }}>
+          ✅ Content saved to PostgreSQL and synced across all pages!
+        </div>
+      )}
+
+      <form onSubmit={handleSave} style={{ display: 'grid', gap: 24, maxWidth: 840 }}>
         {/* HERO SECTION */}
-        <div style={{ background: '#fff', borderRadius: 14, padding: 24, boxShadow: '0 2px 10px rgba(0,0,0,0.04)' }}>
+        <div style={{ background: '#fff', borderRadius: 14, padding: 24, boxShadow: '0 2px 10px rgba(0,0,0,0.04)', border: '1px solid #e2e8f0' }}>
           <h3 style={{ margin: '0 0 16px', fontWeight: 800, color: '#0A1938', fontSize: '1.05rem', borderBottom: '1px solid #f1f5f9', paddingBottom: 10 }}>
             🌟 Hero Section (Homepage Banner)
           </h3>
           <div style={{ display: 'grid', gap: 14 }}>
             <div>
               <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>HERO EYEBROW BANNER TEXT</label>
-              <input type="text" value={getVal('hero_eyebrow')} onChange={e => setVal('hero_eyebrow', e.target.value)} style={inputStyle} />
+              <input
+                type="text"
+                value={content.hero_eyebrow || ''}
+                onChange={e => handleChange('hero_eyebrow', e.target.value)}
+                style={inputStyle}
+                placeholder="e.g. FRIENDS TOURS & TRAVELS • J.P. NAGAR, BANGALORE"
+              />
             </div>
             <div>
               <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>MAIN HEADLINE (H1)</label>
-              <input type="text" value={getVal('hero_title')} onChange={e => setVal('hero_title', e.target.value)} style={inputStyle} />
+              <input
+                type="text"
+                value={content.hero_title || ''}
+                onChange={e => handleChange('hero_title', e.target.value)}
+                style={inputStyle}
+                placeholder="e.g. YOUR JOURNEY. OUR PRIORITY."
+              />
+              <span style={{ fontSize: '0.7rem', color: '#94a3b8', display: 'block', marginTop: 4 }}>
+                Tip: Periods (.) or phrases with multiple words will have the second half highlighted in brand orange accent.
+              </span>
             </div>
             <div>
               <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>SUBTITLE / DESCRIPTION</label>
-              <textarea value={getVal('hero_subtitle')} onChange={e => setVal('hero_subtitle', e.target.value)} rows={2} style={{ ...inputStyle, resize: 'vertical' }} />
+              <textarea
+                value={content.hero_subtitle || ''}
+                onChange={e => handleChange('hero_subtitle', e.target.value)}
+                rows={2}
+                style={{ ...inputStyle, resize: 'vertical' }}
+                placeholder="Describe your services and commitment..."
+              />
             </div>
           </div>
         </div>
 
         {/* ABOUT SECTION */}
-        <div style={{ background: '#fff', borderRadius: 14, padding: 24, boxShadow: '0 2px 10px rgba(0,0,0,0.04)' }}>
+        <div style={{ background: '#fff', borderRadius: 14, padding: 24, boxShadow: '0 2px 10px rgba(0,0,0,0.04)', border: '1px solid #e2e8f0' }}>
           <h3 style={{ margin: '0 0 16px', fontWeight: 800, color: '#0A1938', fontSize: '1.05rem', borderBottom: '1px solid #f1f5f9', paddingBottom: 10 }}>
             🏛️ About Friends Tours Section
           </h3>
           <div style={{ display: 'grid', gap: 14 }}>
             <div>
               <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>ABOUT TITLE / SLOGAN</label>
-              <input type="text" value={getVal('about_title')} onChange={e => setVal('about_title', e.target.value)} style={inputStyle} />
+              <input
+                type="text"
+                value={content.about_title || ''}
+                onChange={e => handleChange('about_title', e.target.value)}
+                style={inputStyle}
+                placeholder="e.g. MORE THAN A RIDE. A BETTER WAY TO TRAVEL."
+              />
             </div>
             <div>
               <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>OUR STORY / OVERVIEW PARAGRAPH</label>
-              <textarea value={getVal('about_story')} onChange={e => setVal('about_story', e.target.value)} rows={3} style={{ ...inputStyle, resize: 'vertical' }} />
+              <textarea
+                value={content.about_story || ''}
+                onChange={e => handleChange('about_story', e.target.value)}
+                rows={3}
+                style={{ ...inputStyle, resize: 'vertical' }}
+                placeholder="Overview story shown on homepage and about page..."
+              />
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
               <div>
                 <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>YEARS EXP.</label>
-                <input type="text" value={getVal('stat_years_exp', '15+')} onChange={e => setVal('stat_years_exp', e.target.value)} style={inputStyle} />
+                <input
+                  type="text"
+                  value={content.stat_years_exp || ''}
+                  onChange={e => handleChange('stat_years_exp', e.target.value)}
+                  style={inputStyle}
+                  placeholder="15+"
+                />
               </div>
               <div>
                 <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>TRIPS COMPLETED</label>
-                <input type="text" value={getVal('stat_trips_completed', '50,000+')} onChange={e => setVal('stat_trips_completed', e.target.value)} style={inputStyle} />
+                <input
+                  type="text"
+                  value={content.stat_trips_completed || ''}
+                  onChange={e => handleChange('stat_trips_completed', e.target.value)}
+                  style={inputStyle}
+                  placeholder="50,000+"
+                />
               </div>
               <div>
                 <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>STAR RATING</label>
-                <input type="text" value={getVal('stat_client_rating', '4.9 / 5')} onChange={e => setVal('stat_client_rating', e.target.value)} style={inputStyle} />
+                <input
+                  type="text"
+                  value={content.stat_client_rating || ''}
+                  onChange={e => handleChange('stat_client_rating', e.target.value)}
+                  style={inputStyle}
+                  placeholder="4.9 / 5"
+                />
               </div>
             </div>
           </div>
         </div>
 
         {/* SAFETY & RESPONSIBILITIES */}
-        <div style={{ background: '#fff', borderRadius: 14, padding: 24, boxShadow: '0 2px 10px rgba(0,0,0,0.04)' }}>
+        <div style={{ background: '#fff', borderRadius: 14, padding: 24, boxShadow: '0 2px 10px rgba(0,0,0,0.04)', border: '1px solid #e2e8f0' }}>
           <h3 style={{ margin: '0 0 16px', fontWeight: 800, color: '#0A1938', fontSize: '1.05rem', borderBottom: '1px solid #f1f5f9', paddingBottom: 10 }}>
-            🛡️ Safety & Responsibilities
+            🛡️ Safety &amp; Responsibilities
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
             <div>
-              <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>SAFETY COMMITMENT 1</label>
-              <input type="text" value={getVal('safety_gps')} onChange={e => setVal('safety_gps', e.target.value)} style={inputStyle} />
+              <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>GPS &amp; SPEED GOVERNORS</label>
+              <input
+                type="text"
+                value={content.safety_gps || ''}
+                onChange={e => handleChange('safety_gps', e.target.value)}
+                style={inputStyle}
+                placeholder="100% GPS Fleet Tracking & Speed Governors"
+              />
             </div>
             <div>
-              <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>SAFETY COMMITMENT 2</label>
-              <input type="text" value={getVal('safety_police')} onChange={e => setVal('safety_police', e.target.value)} style={inputStyle} />
+              <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>VERIFIED CHAUFFEURS</label>
+              <input
+                type="text"
+                value={content.safety_police || ''}
+                onChange={e => handleChange('safety_police', e.target.value)}
+                style={inputStyle}
+                placeholder="Police Verified & Background Checked Chauffeurs"
+              />
             </div>
             <div>
-              <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>SAFETY COMMITMENT 3</label>
-              <input type="text" value={getVal('safety_sanitized')} onChange={e => setVal('safety_sanitized', e.target.value)} style={inputStyle} />
+              <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>HYGIENE &amp; SANITIZATION</label>
+              <input
+                type="text"
+                value={content.safety_sanitized || ''}
+                onChange={e => handleChange('safety_sanitized', e.target.value)}
+                style={inputStyle}
+                placeholder="Deep Cleaned & Sanitized Cabins Before Every Trip"
+              />
             </div>
             <div>
-              <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>SAFETY COMMITMENT 4</label>
-              <input type="text" value={getVal('safety_billing')} onChange={e => setVal('safety_billing', e.target.value)} style={inputStyle} />
+              <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>TRANSPARENT BILLING</label>
+              <input
+                type="text"
+                value={content.safety_billing || ''}
+                onChange={e => handleChange('safety_billing', e.target.value)}
+                style={inputStyle}
+                placeholder="Transparent Computerized / Printed Receipt Billing"
+              />
             </div>
           </div>
         </div>
 
-        <button type="submit" disabled={saving}
-          style={{ padding: '14px', background: '#0A1938', color: '#fff', border: 'none', borderRadius: 10, fontWeight: 800, fontSize: '1rem', cursor: 'pointer' }}>
-          {saving ? 'Saving Content to PostgreSQL...' : saved ? '✅ Website Content Updated Successfully!' : '💾 Save All Section Content'}
+        <button
+          type="submit"
+          disabled={saving}
+          style={{
+            padding: '15px',
+            background: saving ? '#64748b' : '#0A1938',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 10,
+            fontWeight: 800,
+            fontSize: '1rem',
+            cursor: saving ? 'not-allowed' : 'pointer',
+            transition: 'background 0.2s',
+            boxShadow: '0 4px 12px rgba(10, 25, 56, 0.2)'
+          }}
+        >
+          {saving ? '⏳ Saving Content to PostgreSQL...' : saved ? '✅ Website Content Updated Successfully!' : '💾 Save All Section Content'}
         </button>
       </form>
     </div>

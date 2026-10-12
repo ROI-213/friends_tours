@@ -21,6 +21,7 @@ import { Footer } from '../components/layout/Footer';
 import { CorporateClientsSection } from '../components/home/CorporateClientsSection';
 import { api } from '../lib/api.js';
 import { useDataSync } from '../hooks/useDataSync';
+import { useSiteSettings } from '../context/SiteSettingsContext';
 import '../styles/about.css';
 
 const DEFAULT_HIGHLIGHTS = [
@@ -31,7 +32,29 @@ const DEFAULT_HIGHLIGHTS = [
 ];
 
 export const AboutPage = ({ onNavigate, onBookNowClick }) => {
+  const { getSetting } = useSiteSettings();
   const [highlights, setHighlights] = useState(DEFAULT_HIGHLIGHTS);
+
+  const aboutTitle = getSetting('about_title', 'MORE THAN A RIDE. A BETTER WAY TO TRAVEL.');
+  const aboutStory = getSetting('about_story', 'Located at #18, 24th Main, 5th Phase, J.P. Nagar, Bangalore, Friends Tours & Travels delivers dependable, punctual, and transparent mobility services.');
+  const statYears = getSetting('stat_years_exp', '15+');
+  const statTrips = getSetting('stat_trips_completed', '50,000+');
+  const statRating = getSetting('stat_client_rating', '4.9 / 5');
+
+  let titleLine1 = aboutTitle;
+  let titleLine2 = '';
+  if (aboutTitle.includes('.')) {
+    const parts = aboutTitle.split('.');
+    titleLine1 = parts[0].trim() + (parts.length > 1 && parts[1].trim() ? '.' : '');
+    titleLine2 = parts.slice(1).join('.').trim();
+  } else {
+    const words = aboutTitle.trim().split(/\s+/);
+    if (words.length > 2) {
+      const splitIdx = Math.ceil(words.length / 2);
+      titleLine1 = words.slice(0, splitIdx).join(' ');
+      titleLine2 = words.slice(splitIdx).join(' ');
+    }
+  }
 
   const fetchServices = useCallback(() => {
     api.getServices().then((data) => {
@@ -119,13 +142,39 @@ export const AboutPage = ({ onNavigate, onBookNowClick }) => {
             {/* RIGHT: Headline + Description + 4 Core Services */}
             <div className="about-content-col">
               <h2 className="about-heading">
-                MORE THAN A RIDE.
-                <span className="about-heading-dark">A BETTER WAY TO TRAVEL.</span>
+                {titleLine1}{' '}
+                {titleLine2 && <span className="about-heading-dark">{titleLine2}</span>}
               </h2>
 
               <p className="about-text" style={{ fontWeight: 600, color: 'var(--color-text-main)', fontSize: '1rem' }}>
-                Located at #18, 24th Main, 5th Phase, J.P. Nagar, Bangalore, Friends Tours &amp; Travels delivers dependable, punctual, and transparent mobility services.
+                {aboutStory}
               </p>
+
+              {/* Dynamic Stats Strip */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: 10,
+                margin: '16px 0 20px',
+                padding: '14px 16px',
+                background: '#f8fafc',
+                borderRadius: 12,
+                border: '1px solid #e2e8f0',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.03)'
+              }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--color-primary, #0D256C)', lineHeight: 1.1 }}>{statYears}</div>
+                  <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: 4 }}>Years Exp.</div>
+                </div>
+                <div style={{ textAlign: 'center', borderLeft: '1px solid #e2e8f0', borderRight: '1px solid #e2e8f0' }}>
+                  <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#FA4616', lineHeight: 1.1 }}>{statTrips}</div>
+                  <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: 4 }}>Trips Completed</div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--color-primary, #0D256C)', lineHeight: 1.1 }}>{statRating}</div>
+                  <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: 4 }}>Customer Rating</div>
+                </div>
+              </div>
 
               <p className="about-text">
                 Whether you need scheduled daily employee transportation for your tech park workforce, 24/7 Kempegowda Airport transfers with flight delay tracking, hourly city packages (4hr/8hr), or outstation road trips across Karnataka (min 300 km/day), our priority is always your safety, comfort, and schedule.

@@ -185,6 +185,8 @@ function HeroContent({ onBookClick, onExploreServicesClick, eyebrowRef, headingR
   const heroSubtitle = getSetting('hero_subtitle', "Bangalore's trusted partner for Employee Transportation, Airport Transport, Local & Outstation Rentals, and Shuttle Services.");
   const phone = getSetting('phone', BRAND.phoneRaw);
   const whatsapp = getSetting('whatsapp', BRAND.whatsappRaw);
+  const statRating = getSetting('stat_client_rating', '4.9');
+  const statTrips = getSetting('stat_trips_completed', '50,000+');
   const primaryPhone = phone.includes('/') ? phone.split('/')[0].trim() : phone;
   const cleanPhone = primaryPhone.replace(/[^\d+]/g, '');
   const cleanWhatsapp = whatsapp.replace(/[^\d]/g, '');
@@ -193,8 +195,15 @@ function HeroContent({ onBookClick, onExploreServicesClick, eyebrowRef, headingR
   let titlePart2 = '';
   if (heroTitle.includes('.')) {
     const parts = heroTitle.split('.');
-    titlePart1 = parts[0] + '.';
+    titlePart1 = parts[0].trim() + (parts.length > 1 && parts[1].trim() ? '.' : '');
     titlePart2 = parts.slice(1).join('.').trim();
+  } else {
+    const words = heroTitle.trim().split(/\s+/);
+    if (words.length > 2) {
+      const splitIdx = Math.ceil(words.length / 2);
+      titlePart1 = words.slice(0, splitIdx).join(' ');
+      titlePart2 = words.slice(splitIdx).join(' ');
+    }
   }
 
   return (
@@ -217,7 +226,7 @@ function HeroContent({ onBookClick, onExploreServicesClick, eyebrowRef, headingR
       <div className="hero-trust-row" style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 20 }}>
         <div className="hero-floating-badge">
           <Sparkles size={13} color="#FA4616" />
-          <span>4.9★ Rated • 15K+ Happy Journeys</span>
+          <span>{statRating.includes('★') ? statRating : `${statRating.split('/')[0].trim()}★`} Rated • {statTrips} Happy Journeys</span>
         </div>
         <div className="hero-floating-badge badge-delay">
           <ShieldCheck size={13} color="#0D256C" />
