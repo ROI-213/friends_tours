@@ -296,7 +296,7 @@ export const ContactPage = ({ onNavigate, onBookNowClick, onSubmitSuccess }) => 
   };
 
   const handleOpenGoogleMaps = () => {
-    window.open(BRAND.googleMapsUrl, '_blank');
+    window.open(googleMapsUrl, '_blank');
   };
 
   return (
@@ -929,16 +929,16 @@ export const ContactPage = ({ onNavigate, onBookNowClick, onSubmitSuccess }) => 
                   {/* 14. Quick Action Badges */}
                   <div className="contact-quick-actions-grid">
                     <a
-                      href={`tel:${BRAND.phoneRaw}`}
+                      href={`tel:${cleanPhone}`}
                       className="btn-card-view-details"
                       style={{ justifyContent: 'center', fontSize: '0.75rem', padding: '10px 12px' }}
                     >
                       <Phone size={13} />
-                      <span>Call {BRAND.phoneRaw}</span>
+                      <span>Call {phone}</span>
                     </a>
 
                     <a
-                      href={`https://wa.me/${BRAND.whatsapp.replace('+', '')}?text=${encodeURIComponent('Hi Friends Tours, I would like to book a cab.')}`}
+                      href={`https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent('Hi Friends Tours, I would like to book a cab.')}`}
                       target="_blank"
                       rel="noreferrer"
                       className="btn-card-view-details"

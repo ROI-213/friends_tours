@@ -9,9 +9,14 @@ import {
   CalendarCheck
 } from 'lucide-react';
 import { BRAND } from '../../constants/branding';
+import { useSiteSettings } from '../../context/SiteSettingsContext';
 import '../../styles/mobile-nav.css';
 
 export const MobileBottomNav = ({ currentPath, onNavClick, onBookNowClick }) => {
+  const { getSetting } = useSiteSettings();
+  const whatsapp = getSetting('whatsapp', BRAND.whatsapp);
+  const cleanWhatsapp = whatsapp.replace(/[^\d]/g, '');
+
   const handleNav = (path) => {
     if (onNavClick) {
       onNavClick(path);
@@ -88,7 +93,7 @@ export const MobileBottomNav = ({ currentPath, onNavClick, onBookNowClick }) => 
             if (onBookNowClick) {
               onBookNowClick();
             } else {
-              window.open(`https://wa.me/${BRAND.whatsapp.replace('+', '')}?text=${encodeURIComponent('Hi Friends Tours, I would like to book a cab in Bangalore.')}`, '_blank');
+              window.open(`https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent('Hi Friends Tours, I would like to book a cab in Bangalore.')}`, '_blank');
             }
           }}
           aria-label="Book Cab Now"

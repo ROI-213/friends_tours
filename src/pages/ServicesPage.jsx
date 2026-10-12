@@ -22,8 +22,12 @@ import { OfficialTariffSection } from '../components/home/OfficialTariffSection'
 import { CorporateClientsSection } from '../components/home/CorporateClientsSection';
 import { api } from '../lib/api.js';
 import { useDataSync } from '../hooks/useDataSync';
+import { useSiteSettings } from '../context/SiteSettingsContext';
 
 export const ServicesPage = ({ onNavigate, onBookNowClick, onOpenTariffModal }) => {
+  const { getSetting } = useSiteSettings();
+  const whatsapp = getSetting('whatsapp', BRAND.whatsapp);
+  const cleanWhatsapp = whatsapp.replace(/[^\d]/g, '');
   const [services, setServices] = React.useState([]);
 
   const fetchServices = React.useCallback(() => {
@@ -45,7 +49,7 @@ export const ServicesPage = ({ onNavigate, onBookNowClick, onOpenTariffModal }) 
   useDataSync('services', fetchServices);
 
   const handleTalkToUs = () => {
-    window.open(`https://wa.me/${BRAND.whatsapp.replace('+', '')}?text=${encodeURIComponent('Hi Friends Tours, I would like to inquire about your travel services.')}`, '_blank');
+    window.open(`https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent('Hi Friends Tours, I would like to inquire about your travel services.')}`, '_blank');
   };
 
   return (

@@ -21,6 +21,7 @@ import {
   Hash
 } from 'lucide-react';
 import { BRAND } from '../../constants/branding';
+import { useSiteSettings } from '../../context/SiteSettingsContext';
 import { VEHICLES_DATA } from '../../data/vehiclesData';
 import { LocationAutocomplete } from '../ui/LocationAutocomplete';
 import { api } from '../../lib/api';
@@ -80,6 +81,20 @@ export const ContactSection = ({
   hideVisualSide = false, 
   hideHeader = false 
 }) => {
+  const { getSetting } = useSiteSettings();
+  const phone = getSetting('phone', BRAND.phoneRaw);
+  const phoneAlt = getSetting('phone_alt', BRAND.phoneAltRaw);
+  const whatsapp = getSetting('whatsapp', BRAND.whatsappRaw);
+  const email = getSetting('email', BRAND.email);
+  const address = getSetting('address', BRAND.address);
+  const googleMapsUrl = getSetting('google_maps_url', BRAND.googleMapsUrl);
+
+  const cleanPhone = phone.includes('/')
+    ? phone.split('/')[0].replace(/[^\d+]/g, '')
+    : phone.replace(/[^\d+]/g, '');
+  const cleanPhoneAlt = phoneAlt ? phoneAlt.replace(/[^\d+]/g, '') : '';
+  const cleanWhatsapp = whatsapp.replace(/[^\d]/g, '');
+
   const todayStr = getLocalDateString();
 
   const [formData, setFormData] = useState({
@@ -423,7 +438,7 @@ export const ContactSection = ({
                   <div>
                     <div className="contact-info-label">PHONE NUMBERS</div>
                     <div className="contact-info-val">
-                      <a href={`tel:${BRAND.phoneRaw}`}>{BRAND.phoneRaw}</a> / <a href={`tel:${BRAND.phoneAltRaw}`}>{BRAND.phoneAltRaw}</a>
+                      <a href={`tel:${cleanPhone}`}>{phone}</a>{phoneAlt ? <> / <a href={`tel:${cleanPhoneAlt}`}>{phoneAlt}</a></> : null}
                     </div>
                   </div>
                 </div>
@@ -436,11 +451,11 @@ export const ContactSection = ({
                     <div className="contact-info-label">WHATSAPP NUMBER</div>
                     <div className="contact-info-val">
                       <a 
-                        href={`https://wa.me/${BRAND.whatsapp.replace('+', '')}?text=${encodeURIComponent('Hi Friends Tours, I would like to make an inquiry.')}`}
+                        href={`https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent('Hi Friends Tours, I would like to make an inquiry.')}`}
                         target="_blank"
                         rel="noreferrer"
                       >
-                        {BRAND.whatsappRaw}
+                        {whatsapp}
                       </a>
                     </div>
                   </div>
@@ -453,7 +468,7 @@ export const ContactSection = ({
                   <div>
                     <div className="contact-info-label">EMAIL</div>
                     <div className="contact-info-val">
-                      <a href={`mailto:${BRAND.email}`} style={{ wordBreak: 'break-all' }}>{BRAND.email}</a>
+                      <a href={`mailto:${email}`} style={{ wordBreak: 'break-all' }}>{email}</a>
                     </div>
                   </div>
                 </div>
@@ -466,12 +481,12 @@ export const ContactSection = ({
                     <div className="contact-info-label">OFFICE ADDRESS</div>
                     <div className="contact-info-val">
                       <a 
-                        href={BRAND.googleMapsUrl} 
+                        href={googleMapsUrl} 
                         target="_blank" 
                         rel="noreferrer"
                         style={{ color: 'inherit', textDecoration: 'none' }}
                       >
-                        {BRAND.address}
+                        {address}
                       </a>
                     </div>
                   </div>
@@ -491,13 +506,13 @@ export const ContactSection = ({
 
             {/* Quick Action Buttons */}
             <div className="contact-actions-row">
-              <a href={`tel:${BRAND.phoneRaw}`} className="btn-contact-call">
+              <a href={`tel:${cleanPhone}`} className="btn-contact-call">
                 <Phone size={14} />
-                <span>CALL {BRAND.phoneRaw}</span>
+                <span>CALL {phone}</span>
               </a>
 
               <a
-                href={`https://wa.me/${BRAND.whatsapp.replace('+', '')}?text=${encodeURIComponent('Hi Friends Tours, I would like to plan a journey from Bangalore.')}`}
+                href={`https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent('Hi Friends Tours, I would like to plan a journey from Bangalore.')}`}
                 target="_blank"
                 rel="noreferrer"
                 className="btn-contact-whatsapp"
@@ -1007,15 +1022,15 @@ export const ContactSection = ({
                   flexWrap: 'wrap'
                 }}>
                   <a
-                    href={`tel:${BRAND.phoneRaw}`}
+                    href={`tel:${cleanPhone}`}
                     style={{ display: 'inline-flex', alignItems: 'center', gap: 6, textDecoration: 'none', color: '#444444', fontSize: '0.8125rem', fontWeight: 700 }}
                   >
                     <Phone size={14} color="var(--color-primary)" />
-                    <span>CALL {BRAND.phoneRaw}</span>
+                    <span>CALL {phone}</span>
                   </a>
 
                   <a
-                    href={`https://wa.me/${BRAND.whatsapp.replace('+', '')}?text=${encodeURIComponent('Hi Friends Tours, I would like to book a cab.')}`}
+                    href={`https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent('Hi Friends Tours, I would like to book a cab.')}`}
                     target="_blank"
                     rel="noreferrer"
                     style={{ display: 'inline-flex', alignItems: 'center', gap: 6, textDecoration: 'none', color: '#444444', fontSize: '0.8125rem', fontWeight: 700 }}

@@ -44,9 +44,11 @@ export function SiteSettingsProvider({ children }) {
     }
     // Specific built-in BRAND fallbacks
     if (key === 'phone' && BRAND.phone) return BRAND.phone;
+    if (key === 'phone_alt' && BRAND.phoneAlt) return BRAND.phoneAlt;
     if (key === 'whatsapp' && BRAND.whatsapp) return BRAND.whatsapp;
     if (key === 'email' && BRAND.email) return BRAND.email;
     if (key === 'address' && BRAND.address) return BRAND.address;
+    if (key === 'google_maps_url' && BRAND.googleMapsUrl) return BRAND.googleMapsUrl;
     if (key === 'site_name' && BRAND.name) return BRAND.name;
     if (key === 'site_tagline' && BRAND.tagline) return BRAND.tagline;
 

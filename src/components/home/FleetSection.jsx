@@ -20,6 +20,7 @@ import {
 import { api } from '../../lib/api.js';
 import { useDataSync } from '../../hooks/useDataSync';
 import { BRAND } from '../../constants/branding';
+import { useSiteSettings } from '../../context/SiteSettingsContext';
 import { VEHICLES_DATA } from '../../data/vehiclesData.js';
 import '../../styles/fleet.css';
 
@@ -32,6 +33,9 @@ const CATEGORIES = [
 ];
 
 export const FleetSection = ({ onEnquireVehicle, onViewVehicleDetails, onOpenTariffModal }) => {
+  const { getSetting } = useSiteSettings();
+  const whatsapp = getSetting('whatsapp', BRAND.whatsapp);
+  const cleanWhatsapp = whatsapp.replace(/[^\d]/g, '');
   const [activeCategory, setActiveCategory] = useState('all');
   const [vehicles, setVehicles] = useState(VEHICLES_DATA);
   const [selectedVehicle, setSelectedVehicle] = useState(VEHICLES_DATA[0] || null);
@@ -85,7 +89,7 @@ export const FleetSection = ({ onEnquireVehicle, onViewVehicleDetails, onOpenTar
 
   const handleReserveWhatsApp = (vehicle) => {
     const text = `Hi Friends Tours, I would like to reserve the *${vehicle.name}* (${vehicle.category}) for travel in Bangalore / Outstation. Please share rates and driver availability.`;
-    window.open(`https://wa.me/${BRAND.whatsapp.replace('+', '')}?text=${encodeURIComponent(text)}`, '_blank');
+    window.open(`https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent(text)}`, '_blank');
   };
 
   if (!selectedVehicle) return null;

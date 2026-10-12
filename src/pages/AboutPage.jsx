@@ -40,6 +40,7 @@ export const AboutPage = ({ onNavigate, onBookNowClick }) => {
   const statYears = getSetting('stat_years_exp', '15+');
   const statTrips = getSetting('stat_trips_completed', '50,000+');
   const statRating = getSetting('stat_client_rating', '4.9 / 5');
+  const phone = getSetting('phone', BRAND.phoneRaw);
 
   let titleLine1 = aboutTitle;
   let titleLine2 = '';
@@ -292,7 +293,7 @@ export const AboutPage = ({ onNavigate, onBookNowClick }) => {
             <div>
               <h3 className="page-cta-title">READY TO PLAN YOUR NEXT JOURNEY?</h3>
               <p className="page-cta-desc">
-                Contact our 24/7 concierge desk at {BRAND.phoneRaw} for custom quotes, corporate retainers, or outstation bookings.
+                Contact our 24/7 concierge desk at {phone} for custom quotes, corporate retainers, or outstation bookings.
               </p>
             </div>
 

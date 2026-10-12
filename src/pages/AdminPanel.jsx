@@ -2628,6 +2628,7 @@ function SettingsManager() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState(null);
 
   useEffect(() => {
     adminApi.getSettings().then(setSettings).catch(console.error).finally(() => setLoading(false));
@@ -2640,41 +2641,169 @@ function SettingsManager() {
   const handleSave = async (e) => {
     e.preventDefault();
     setSaving(true);
-    await adminApi.updateSettings(settings.map(s => ({ key: s.key, value: s.value }))).catch(console.error);
-    setSaving(false); setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    setSaveError(null);
+    try {
+      await adminApi.updateSettings(settings.map(s => ({ key: s.key, value: s.value })));
+      setSaved(true);
+      setTimeout(() => setSaved(false), 4000);
+    } catch (err) {
+      console.error('Failed to save settings:', err);
+      setSaveError(err.message || 'Error saving settings to PostgreSQL.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (loading) return <div style={{ padding: 40, textAlign: 'center', color: '#94a3b8' }}>Loading settings...</div>;
 
+  const contactKeys = ['phone', 'phone_alt', 'whatsapp', 'email', 'address', 'google_maps_url'];
+  const brandKeys = ['site_name', 'site_tagline'];
+  const socialKeys = ['instagram_url', 'facebook_url'];
+
+  const contactSettings = settings.filter(s => contactKeys.includes(s.key));
+  const brandSettings = settings.filter(s => brandKeys.includes(s.key));
+  const socialSettings = settings.filter(s => socialKeys.includes(s.key));
+  const otherSettings = settings.filter(s => !contactKeys.includes(s.key) && !brandKeys.includes(s.key) && !socialKeys.includes(s.key));
+
+  const getHelperText = (key) => {
+    switch (key) {
+      case 'phone': return 'Primary contact number displayed on Header, Contact, Booking forms & Tariffs.';
+      case 'phone_alt': return 'Alternate / secondary phone number displayed alongside primary phone.';
+      case 'whatsapp': return 'Number used for 1-click WhatsApp bookings & inquiries across the site.';
+      case 'email': return 'Official customer desk email address.';
+      case 'address': return 'Physical office address shown on footer and contact information cards.';
+      case 'google_maps_url': return 'Google Maps destination link when customers click on the address.';
+      case 'site_name': return 'Website brand name displayed in headers, modals, and copyright notices.';
+      case 'site_tagline': return 'Sub-brand slogan shown below the brand name.';
+      default: return null;
+    }
+  };
+
+  const renderField = (s) => (
+    <div key={s.key} style={{ marginBottom: 16 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 4 }}>
+        <label style={{ fontWeight: 700, fontSize: '0.8rem', color: '#1e293b', textTransform: 'uppercase' }}>
+          {s.label || s.key.replace(/_/g, ' ')}
+        </label>
+        <span style={{ fontSize: '0.72rem', color: '#94a3b8', fontFamily: 'monospace' }}>{s.key}</span>
+      </div>
+      {getHelperText(s.key) && (
+        <div style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: 6 }}>
+          {getHelperText(s.key)}
+        </div>
+      )}
+      <input
+        type={s.type === 'email' ? 'email' : s.type === 'url' ? 'url' : 'text'}
+        value={s.value || ''}
+        onChange={e => handleChange(s.key, e.target.value)}
+        style={inputStyle}
+      />
+    </div>
+  );
+
   return (
-    <div>
+    <div style={{ maxWidth: 760 }}>
       <div style={{ marginBottom: 20 }}>
-        <h2 style={{ margin: 0, fontWeight: 800, color: '#0A1938' }}>Global Contact & Site Settings</h2>
-        <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '0.875rem' }}>Update phone numbers, WhatsApp links, business address, and site metadata.</p>
+        <h2 style={{ margin: 0, fontWeight: 800, color: '#0A1938' }}>Global Contact &amp; Site Settings</h2>
+        <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '0.875rem' }}>
+          Update phone numbers, WhatsApp links, business address, and site metadata.
+        </p>
       </div>
 
-      <div style={{ background: '#fff', borderRadius: 14, padding: 24, boxShadow: '0 2px 10px rgba(0,0,0,0.04)', maxWidth: 680 }}>
-        <form onSubmit={handleSave}>
-          {settings.map(s => (
-            <div key={s.key} style={{ marginBottom: 16 }}>
-              <label style={{ display: 'block', fontWeight: 700, fontSize: '0.75rem', color: '#475569', marginBottom: 4, textTransform: 'uppercase' }}>
-                {s.label || s.key}
-              </label>
-              <input
-                type={s.type === 'email' ? 'email' : s.type === 'url' ? 'url' : 'text'}
-                value={s.value || ''}
-                onChange={e => handleChange(s.key, e.target.value)}
-                style={inputStyle}
-              />
-            </div>
-          ))}
-          <button type="submit" disabled={saving}
-            style={{ padding: '12px 28px', background: '#0A1938', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer', fontSize: '0.9375rem' }}>
-            {saving ? 'Saving to PostgreSQL...' : saved ? '✅ Settings Updated Successfully!' : 'Save All Settings'}
-          </button>
-        </form>
+      <div style={{ 
+        padding: '12px 16px', 
+        background: '#EFF6FF', 
+        border: '1px solid #BFDBFE', 
+        borderRadius: 10, 
+        marginBottom: 20, 
+        fontSize: '0.825rem', 
+        color: '#1E40AF',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 10
+      }}>
+        <span style={{ fontSize: '1.1rem' }}>⚡</span>
+        <span>
+          <strong>Live Front-End Sync Active:</strong> Changes saved here immediately update the website navbar, footer, mobile bottom nav, tariff cards, and booking forms.
+        </span>
       </div>
+
+      {saveError && (
+        <div style={{ padding: '12px 16px', background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 10, marginBottom: 20, color: '#991B1B', fontSize: '0.85rem' }}>
+          ❌ {saveError}
+        </div>
+      )}
+
+      {saved && (
+        <div style={{ padding: '12px 16px', background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 10, marginBottom: 20, color: '#166534', fontSize: '0.85rem', fontWeight: 600 }}>
+          ✅ Settings saved and synchronized to PostgreSQL! Front-end has been updated.
+        </div>
+      )}
+
+      <form onSubmit={handleSave}>
+        {/* Contact Group */}
+        <div style={{ background: '#fff', borderRadius: 14, padding: 24, boxShadow: '0 2px 10px rgba(0,0,0,0.04)', marginBottom: 20 }}>
+          <h3 style={{ margin: '0 0 16px', fontSize: '1.05rem', fontWeight: 800, color: '#0A1938', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span>📞</span> Contact Information &amp; Office Details
+          </h3>
+          {contactSettings.map(renderField)}
+        </div>
+
+        {/* Brand Group */}
+        <div style={{ background: '#fff', borderRadius: 14, padding: 24, boxShadow: '0 2px 10px rgba(0,0,0,0.04)', marginBottom: 20 }}>
+          <h3 style={{ margin: '0 0 16px', fontSize: '1.05rem', fontWeight: 800, color: '#0A1938', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span>🏢</span> Brand Identity
+          </h3>
+          {brandSettings.map(renderField)}
+        </div>
+
+        {/* Social Links Group */}
+        {socialSettings.length > 0 && (
+          <div style={{ background: '#fff', borderRadius: 14, padding: 24, boxShadow: '0 2px 10px rgba(0,0,0,0.04)', marginBottom: 20 }}>
+            <h3 style={{ margin: '0 0 16px', fontSize: '1.05rem', fontWeight: 800, color: '#0A1938', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>📱</span> Social Media Links
+            </h3>
+            {socialSettings.map(renderField)}
+          </div>
+        )}
+
+        {/* Other Settings Group if any */}
+        {otherSettings.length > 0 && (
+          <div style={{ background: '#fff', borderRadius: 14, padding: 24, boxShadow: '0 2px 10px rgba(0,0,0,0.04)', marginBottom: 20 }}>
+            <h3 style={{ margin: '0 0 16px', fontSize: '1.05rem', fontWeight: 800, color: '#0A1938', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>📝</span> Additional Content Headlines
+            </h3>
+            {otherSettings.map(renderField)}
+          </div>
+        )}
+
+        <div style={{ position: 'sticky', bottom: 20, zIndex: 10, background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(8px)', padding: 16, borderRadius: 12, boxShadow: '0 4px 20px rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', gap: 14 }}>
+          <button 
+            type="submit" 
+            disabled={saving}
+            style={{ 
+              padding: '12px 32px', 
+              background: '#0A1938', 
+              color: '#fff', 
+              border: 'none', 
+              borderRadius: 8, 
+              fontWeight: 800, 
+              cursor: saving ? 'not-allowed' : 'pointer', 
+              fontSize: '0.9375rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8
+            }}
+          >
+            {saving ? '⏳ Saving to PostgreSQL...' : saved ? '✅ Settings Updated!' : '💾 Save All Settings'}
+          </button>
+          {saved && (
+            <span style={{ color: '#166534', fontWeight: 600, fontSize: '0.875rem' }}>
+              Changes live on front-end!
+            </span>
+          )}
+        </div>
+      </form>
     </div>
   );
 }

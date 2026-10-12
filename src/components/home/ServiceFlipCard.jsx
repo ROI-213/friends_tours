@@ -17,8 +17,12 @@ import {
   Briefcase
 } from 'lucide-react';
 import { BRAND } from '../../constants/branding';
+import { useSiteSettings } from '../../context/SiteSettingsContext';
 
 export const ServiceFlipCard = ({ service, isFeatured = false, onViewDetails, onFlipChange }) => {
+  const { getSetting } = useSiteSettings();
+  const whatsapp = getSetting('whatsapp', BRAND.whatsapp);
+  const cleanWhatsapp = whatsapp.replace(/[^\d]/g, '');
   const [isFlipped, setIsFlipped] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -355,7 +359,7 @@ export const ServiceFlipCard = ({ service, isFeatured = false, onViewDetails, on
 
               <div className="success-actions">
                 <a
-                  href={`https://wa.me/${BRAND.whatsapp.replace('+', '')}`}
+                  href={`https://wa.me/${cleanWhatsapp}`}
                   target="_blank"
                   rel="noreferrer"
                   className="btn btn-whatsapp btn-sm"

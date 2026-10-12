@@ -22,7 +22,7 @@ import { Modal } from './components/ui/Modal';
 import { TariffTableModal } from './components/ui/TariffTableModal';
 import { Button } from './components/ui/Button';
 import { ToastProvider, useToast } from './context/ToastContext';
-import { SiteSettingsProvider } from './context/SiteSettingsContext';
+import { SiteSettingsProvider, useSiteSettings } from './context/SiteSettingsContext';
 import { BRAND } from './constants/branding';
 import { redirectToWhatsAppEnquiry } from './lib/whatsapp';
 
@@ -48,6 +48,12 @@ import { api } from './lib/api.js';
 
 function MainApp() {
   const { addToast } = useToast();
+  const { getSetting } = useSiteSettings();
+  const phone = getSetting('phone', BRAND.phoneRaw);
+  const whatsapp = getSetting('whatsapp', BRAND.whatsappRaw);
+  const cleanPhone = phone.includes('/') ? phone.split('/')[0].replace(/[^\d+]/g, '') : phone.replace(/[^\d+]/g, '');
+  const cleanWhatsapp = whatsapp.replace(/[^\d]/g, '');
+
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [isTariffModalOpen, setIsTariffModalOpen] = useState(false);
@@ -180,7 +186,7 @@ function MainApp() {
   };
 
   const handleTalkToUs = () => {
-    window.open(`https://wa.me/${BRAND.whatsapp.replace('+', '')}?text=${encodeURIComponent('Hi Friends Tours & Travels, I would like to speak with your travel team.')}`, '_blank');
+    window.open(`https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent('Hi Friends Tours & Travels, I would like to speak with your travel team.')}`, '_blank');
   };
 
   const handleExploreAbout = () => {
@@ -525,16 +531,16 @@ function MainApp() {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               <a
-                href={`tel:${BRAND.phoneRaw}`}
+                href={`tel:${cleanPhone}`}
                 className="btn btn-secondary"
                 style={{ textDecoration: 'none', justifyContent: 'center' }}
               >
                 <Phone size={16} />
-                <span>Call {BRAND.phoneRaw}</span>
+                <span>Call {phone}</span>
               </a>
 
               <a
-                href={`https://wa.me/${BRAND.whatsapp.replace('+', '')}?text=${encodeURIComponent(selectedItem ? `Hi Friends Tours, I am interested in reserving ${selectedItem.title}.` : 'Hi Friends Tours, I would like to book a journey.')}`}
+                href={`https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent(selectedItem ? `Hi Friends Tours, I am interested in reserving ${selectedItem.title}.` : 'Hi Friends Tours, I would like to book a journey.')}`}
                 target="_blank"
                 rel="noreferrer"
                 className="btn btn-whatsapp"

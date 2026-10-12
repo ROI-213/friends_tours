@@ -14,6 +14,7 @@ import {
   Table as TableIcon
 } from 'lucide-react';
 import { BRAND } from '../../constants/branding';
+import { useSiteSettings } from '../../context/SiteSettingsContext';
 import { api } from '../../lib/api.js';
 import { useDataSync } from '../../hooks/useDataSync';
 import { LOCAL_VEHICLE_PRICING } from '../../data/localTransferData';
@@ -45,6 +46,12 @@ const staticOutstationTariffs = (OUTSTATION_VEHICLE_RATES || []).map((v) => ({
 }));
 
 export const OfficialTariffSection = ({ onBookVehicle }) => {
+  const { getSetting } = useSiteSettings();
+  const phone = getSetting('phone', BRAND.phone);
+  const whatsapp = getSetting('whatsapp', BRAND.whatsapp);
+  const cleanPhone = phone.includes('/') ? phone.split('/')[0].replace(/[^\d+]/g, '') : phone.replace(/[^\d+]/g, '');
+  const cleanWhatsapp = whatsapp.replace(/[^\d]/g, '');
+
   const [activeTab, setActiveTab] = useState('local'); // 'local' | 'outstation'
   const [mobileView, setMobileView] = useState('cards'); // 'cards' | 'table'
   const [localTariffs, setLocalTariffs] = useState(staticLocalTariffs);
@@ -107,7 +114,7 @@ export const OfficialTariffSection = ({ onBookVehicle }) => {
           : `Outstation Min 300km/day: ₹${vehicle.minAmountPerDay} | Extra Km: ₹${vehicle.extraPerKm} | Driver Bata: ₹${vehicle.driverBataDay}`
       });
     } else {
-      window.open(`https://wa.me/${BRAND.whatsapp.replace('+', '')}?text=${encodeURIComponent(`Hi Friends Tours, I would like to book ${vehicle.vehicleName} for ${type === 'local' ? 'Bangalore Local' : 'Outstation'}.`)}`, '_blank');
+      window.open(`https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent(`Hi Friends Tours, I would like to book ${vehicle.vehicleName} for ${type === 'local' ? 'Bangalore Local' : 'Outstation'}.`)}`, '_blank');
     }
   };
 
@@ -175,14 +182,14 @@ export const OfficialTariffSection = ({ onBookVehicle }) => {
 
               <div className="tariff-contact-btns">
                 <a
-                  href={`tel:${BRAND.phone.replace(/\s+/g, '')}`}
+                  href={`tel:${cleanPhone}`}
                   className="tariff-contact-btn phone"
                 >
                   <Phone size={13} />
-                  <span>Call {BRAND.phone}</span>
+                  <span>Call {phone}</span>
                 </a>
                 <a
-                  href={`https://wa.me/${BRAND.whatsapp.replace('+', '')}?text=${encodeURIComponent('Hi Friends Tours, I would like to book a local cab package.')}`}
+                  href={`https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent('Hi Friends Tours, I would like to book a local cab package.')}`}
                   target="_blank"
                   rel="noreferrer"
                   className="tariff-contact-btn whatsapp"
@@ -344,14 +351,14 @@ export const OfficialTariffSection = ({ onBookVehicle }) => {
 
               <div className="tariff-contact-btns">
                 <a
-                  href={`tel:${BRAND.phone.replace(/\s+/g, '')}`}
+                  href={`tel:${cleanPhone}`}
                   className="tariff-contact-btn phone"
                 >
                   <Phone size={13} />
-                  <span>Call {BRAND.phone}</span>
+                  <span>Call {phone}</span>
                 </a>
                 <a
-                  href={`https://wa.me/${BRAND.whatsapp.replace('+', '')}?text=${encodeURIComponent('Hi Friends Tours, I would like to book an outstation trip.')}`}
+                  href={`https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent('Hi Friends Tours, I would like to book an outstation trip.')}`}
                   target="_blank"
                   rel="noreferrer"
                   className="tariff-contact-btn whatsapp"

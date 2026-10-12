@@ -14,11 +14,20 @@ import {
   Car
 } from 'lucide-react';
 import { BRAND } from '../../constants/branding';
+import { useSiteSettings } from '../../context/SiteSettingsContext';
 import { LOCAL_VEHICLE_PRICING, LOCAL_TRANSFER_CONFIG } from '../../data/localTransferData';
 import { OUTSTATION_VEHICLE_RATES, OUTSTATION_CONFIG } from '../../data/outstationCorporateData';
 import { api } from '../../lib/api.js';
 
 export const TariffTableModal = ({ isOpen, onClose, defaultTab = 'local' }) => {
+  const { getSetting } = useSiteSettings();
+  const phone = getSetting('phone', BRAND.phone);
+  const whatsapp = getSetting('whatsapp', BRAND.whatsapp);
+  const address = getSetting('address', BRAND.address);
+  const siteName = getSetting('site_name', BRAND.name);
+  const cleanPhone = phone.includes('/') ? phone.split('/')[0].replace(/[^\d+]/g, '') : phone.replace(/[^\d+]/g, '');
+  const cleanWhatsapp = whatsapp.replace(/[^\d]/g, '');
+
   const [activeTab, setActiveTab] = useState(defaultTab);
   const [localRates, setLocalRates] = useState(LOCAL_VEHICLE_PRICING);
   const [outstationRates, setOutstationRates] = useState(OUTSTATION_VEHICLE_RATES);
@@ -61,7 +70,7 @@ export const TariffTableModal = ({ isOpen, onClose, defaultTab = 'local' }) => {
 
   const handleWhatsAppQuote = (type) => {
     const text = `Hi Friends Tours & Travels, I am looking at your official ${type === 'local' ? 'Local' : 'Outstation'} Price List and would like to get a quote.`;
-    window.open(`https://wa.me/${BRAND.whatsapp.replace('+', '')}?text=${encodeURIComponent(text)}`, '_blank');
+    window.open(`https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent(text)}`, '_blank');
   };
 
   return (
@@ -115,10 +124,10 @@ export const TariffTableModal = ({ isOpen, onClose, defaultTab = 'local' }) => {
               </span>
             </div>
             <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)', fontWeight: 900, margin: 0 }}>
-              {BRAND.name.toUpperCase()} — TARIFF CARD
+              {siteName.toUpperCase()} — TARIFF CARD
             </h2>
             <p style={{ fontSize: '0.8125rem', color: 'rgba(255,255,255,0.8)', margin: '2px 0 0' }}>
-              {BRAND.address} • Mob: {BRAND.phonesDisplay}
+              {address} • Mob: {phone}
             </p>
           </div>
 
@@ -225,7 +234,7 @@ export const TariffTableModal = ({ isOpen, onClose, defaultTab = 'local' }) => {
 
                 <div style={{ display: 'flex', gap: 8 }}>
                   <a
-                    href={`tel:${BRAND.phone.replace(/\s+/g, '')}`}
+                    href={`tel:${cleanPhone}`}
                     className="btn btn-secondary"
                     style={{ fontSize: '0.75rem', padding: '6px 12px', textDecoration: 'none' }}
                   >
@@ -301,7 +310,7 @@ export const TariffTableModal = ({ isOpen, onClose, defaultTab = 'local' }) => {
 
                 <div style={{ display: 'flex', gap: 8 }}>
                   <a
-                    href={`tel:${BRAND.phone.replace(/\s+/g, '')}`}
+                    href={`tel:${cleanPhone}`}
                     className="btn btn-secondary"
                     style={{ fontSize: '0.75rem', padding: '6px 12px', textDecoration: 'none' }}
                   >
@@ -375,21 +384,21 @@ export const TariffTableModal = ({ isOpen, onClose, defaultTab = 'local' }) => {
           gap: 12
         }}>
           <div style={{ fontSize: '0.8125rem', color: '#666' }}>
-            <span>Office: <strong>{BRAND.address}</strong></span>
+            <span>Office: <strong>{address}</strong></span>
           </div>
 
           <div style={{ display: 'flex', gap: 10 }}>
             <a
-              href={`tel:${BRAND.phone.replace(/\s+/g, '')}`}
+              href={`tel:${cleanPhone}`}
               className="btn btn-secondary"
               style={{ textDecoration: 'none' }}
             >
               <Phone size={15} />
-              <span>Call: {BRAND.phone}</span>
+              <span>Call: {phone}</span>
             </a>
 
             <a
-              href={`https://wa.me/${BRAND.whatsapp.replace('+', '')}?text=${encodeURIComponent('Hi Friends Tours, I would like to book a cab from your price list.')}`}
+              href={`https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent('Hi Friends Tours, I would like to book a cab from your price list.')}`}
               target="_blank"
               rel="noreferrer"
               className="btn btn-whatsapp"
