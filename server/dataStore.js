@@ -8,8 +8,12 @@ const dataDir = path.join(__dirname, 'data');
 const storeFilePath = path.join(dataDir, 'store.json');
 
 // Ensure data directory exists
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
+try {
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+  }
+} catch (e) {
+  // Read-only filesystem in serverless environments
 }
 
 function getInitialStore() {
