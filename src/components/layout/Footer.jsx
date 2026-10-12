@@ -290,38 +290,43 @@ export const Footer = ({ onNavClick, onBookClick, onLegalClick, onOpenTariffModa
 
         </div>
 
-        {/* Bottom Bar: Copyright & Legal */}
+        {/* Bottom Bar: Copyright, Legal & Developer Credit */}
         <div className="footer-bottom">
-          <p className="footer-copyright">
-            © {new Date().getFullYear()} {BRAND.name}. All rights reserved. J.P. Nagar, Bangalore – 560078. Rates effective {BRAND.ratesEffectiveDate}.
-          </p>
+          <div className="footer-bottom-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <p className="footer-copyright" style={{ margin: 0, fontSize: '0.8125rem', color: '#64748b' }}>
+                © {new Date().getFullYear()} {BRAND.name}. All rights reserved. J.P. Nagar, Bangalore – 560078. Rates effective {BRAND.ratesEffectiveDate}.
+              </p>
+              <div className="footer-legal-links" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <button
+                  className="footer-legal-btn"
+                  onClick={() => onLegalClick && onLegalClick('privacy')}
+                  style={{ background: 'none', border: 'none', padding: 0, color: '#64748b', fontSize: '0.8125rem', cursor: 'pointer' }}
+                >
+                  Privacy Policy
+                </button>
+                <span className="footer-legal-divider" style={{ color: '#cbd5e1' }}>•</span>
+                <button
+                  className="footer-legal-btn"
+                  onClick={() => onLegalClick && onLegalClick('terms')}
+                  style={{ background: 'none', border: 'none', padding: 0, color: '#64748b', fontSize: '0.8125rem', cursor: 'pointer' }}
+                >
+                  Terms of Service
+                </button>
+              </div>
+            </div>
 
-          <div className="footer-developer-credit">
-            <a
-              href="https://wa.me/919945379333?text=Hi%20ROI%20Infotech%2C%20I%20am%20contacting%20you%20regarding%20website%20development."
-              target="_blank"
-              rel="noreferrer"
-              className="footer-developer-link"
-              title="Contact ROI Infotech on WhatsApp: 9945379333"
-            >
-              Developed By <span className="footer-developer-name">ROI Infotech</span>
-            </a>
-          </div>
-
-          <div className="footer-legal-links">
-            <button
-              className="footer-legal-btn"
-              onClick={() => onLegalClick && onLegalClick('privacy')}
-            >
-              Privacy Policy
-            </button>
-            <span className="footer-legal-divider">•</span>
-            <button
-              className="footer-legal-btn"
-              onClick={() => onLegalClick && onLegalClick('terms')}
-            >
-              Terms of Service
-            </button>
+            <div className="footer-developer-credit" style={{ marginLeft: 'auto' }}>
+              <a
+                href="https://wa.me/919945379333?text=Hi%20ROI%20Infotech%2C%20I%20am%20contacting%20you%20regarding%20website%20development."
+                target="_blank"
+                rel="noreferrer"
+                className="footer-developer-link"
+                title="Contact ROI Infotech on WhatsApp: 9945379333"
+              >
+                Developed By <span className="footer-developer-name">ROI Infotech</span>
+              </a>
+            </div>
           </div>
         </div>
 
