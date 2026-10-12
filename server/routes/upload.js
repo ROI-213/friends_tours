@@ -7,15 +7,25 @@ import { query } from '../db.js';
 import { requireAuth } from './admin.js';
 import { syncManager } from '../events.js';
 
+import os from 'os';
+
 const router = express.Router();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Multer configuration: store uploaded files in public/uploads/
+// Multer configuration: store uploaded files in public/uploads/ or /tmp fallback
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadDir = path.join(__dirname, '../../public/uploads');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
+    let uploadDir = path.join(__dirname, '../../public/uploads');
+    try {
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+      fs.accessSync(uploadDir, fs.constants.W_OK);
+    } catch {
+      uploadDir = path.join(os.tmpdir(), 'uploads');
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
     }
     cb(null, uploadDir);
   },

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext, useContext } from 'react';
+import React, { useState, useEffect, useRef, createContext, useContext } from 'react';
 import { adminApi } from '../lib/api.js';
 import { Eye, EyeOff } from 'lucide-react';
 
@@ -121,6 +121,168 @@ function ArrayEditor({ label, items = [], onChange, placeholder = 'Add new item.
             <button type="button" onClick={() => handleRemove(idx)} style={{ background: 'none', border: 'none', color: '#dc2626', cursor: 'pointer', fontWeight: 700, fontSize: '0.875rem' }}>✕</button>
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Image Upload Component with File Picker & Preview ─────────────────────────
+function ImageUploadInput({ label, value, onChange, placeholder = '/fleet/car.jpg or upload an image', category = 'general' }) {
+  const [uploading, setUploading] = useState(false);
+  const [previewError, setPreviewError] = useState(false);
+  const fileInputRef = useRef(null);
+
+  const compressImage = (file) => {
+    return new Promise((resolve) => {
+      if (!file.type || !file.type.startsWith('image/') || file.type === 'image/svg+xml' || file.type === 'image/gif') {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve({ dataUrl: e.target.result, blob: file });
+        reader.onerror = () => resolve({ dataUrl: '', blob: file });
+        reader.readAsDataURL(file);
+        return;
+      }
+      const img = new Image();
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        img.src = e.target.result;
+        img.onload = () => {
+          const maxDim = 1280;
+          let width = img.width;
+          let height = img.height;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          canvas.toBlob((blob) => {
+            resolve({ dataUrl, blob: blob || file });
+          }, 'image/jpeg', 0.85);
+        };
+        img.onerror = () => {
+          resolve({ dataUrl: e.target.result, blob: file });
+        };
+      };
+      reader.onerror = () => resolve({ dataUrl: '', blob: file });
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setPreviewError(false);
+    try {
+      const { dataUrl, blob } = await compressImage(file);
+      // Attempt server upload
+      try {
+        const uploadFile = new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' });
+        const res = await adminApi.uploadImage(uploadFile, { category });
+        if (res && res.url) {
+          onChange(res.url);
+          setUploading(false);
+          return;
+        }
+      } catch (uploadErr) {
+        console.warn('Server storage upload fallback to direct data url:', uploadErr.message);
+      }
+      // If server upload fails or runs on serverless read-only disk, use the compressed dataUrl directly
+      if (dataUrl) {
+        onChange(dataUrl);
+      }
+    } catch (err) {
+      alert('Error processing image: ' + err.message);
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  return (
+    <div style={{ marginBottom: 4 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+        <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>{label}</label>
+        {value && (
+          <button
+            type="button"
+            onClick={() => { onChange(''); setPreviewError(false); }}
+            style={{ background: 'none', border: 'none', color: '#dc2626', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 600, padding: 0 }}
+          >
+            ✕ Remove Image
+          </button>
+        )}
+      </div>
+
+      <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+        {value && !previewError && (
+          <div style={{ width: 52, height: 42, borderRadius: 8, overflow: 'hidden', border: '1px solid #cbd5e1', background: '#f8fafc', flexShrink: 0 }}>
+            <img
+              src={value}
+              alt="Preview"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              onError={() => setPreviewError(true)}
+            />
+          </div>
+        )}
+
+        <div style={{ flex: 1, display: 'flex', gap: 8 }}>
+          <input
+            type="text"
+            value={value || ''}
+            onChange={(e) => { onChange(e.target.value); setPreviewError(false); }}
+            placeholder={placeholder}
+            style={{ ...inputStyle, marginTop: 0, flex: 1, fontSize: '0.8rem' }}
+          />
+
+          <button
+            type="button"
+            disabled={uploading}
+            onClick={() => fileInputRef.current?.click()}
+            style={{
+              padding: '0 14px',
+              height: 42,
+              background: uploading ? '#94a3b8' : 'linear-gradient(135deg, #0A1938 0%, #1e3a8a 100%)',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 8,
+              fontWeight: 700,
+              fontSize: '0.75rem',
+              cursor: uploading ? 'not-allowed' : 'pointer',
+              whiteSpace: 'nowrap',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            }}
+          >
+            {uploading ? (
+              <>⏳ Uploading...</>
+            ) : (
+              <>📁 Choose Image</>
+            )}
+          </button>
+
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept="image/*"
+            onChange={handleFileChange}
+            style={{ display: 'none' }}
+          />
+        </div>
+      </div>
+      <div style={{ fontSize: '0.7rem', color: '#64748b', marginTop: 4 }}>
+        Click &quot;Choose Image&quot; to upload from your phone or PC, or type / paste an image URL.
       </div>
     </div>
   );
@@ -699,9 +861,14 @@ function ServicesManager() {
               <input type="text" value={editingService.target_route || ''} onChange={e => setEditingService({ ...editingService, target_route: e.target.value })} placeholder="e.g. /services/corporate-travel" style={inputStyle} />
             </div>
 
-            <div>
-              <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>SERVICE IMAGE URL</label>
-              <input type="text" value={editingService.image || ''} onChange={e => setEditingService({ ...editingService, image: e.target.value })} placeholder="/services/employee-transport.jpg" style={inputStyle} />
+            <div style={{ gridColumn: '1 / -1' }}>
+              <ImageUploadInput
+                label="SERVICE IMAGE"
+                value={editingService.image || ''}
+                onChange={val => setEditingService({ ...editingService, image: val })}
+                placeholder="/services/employee-transport.jpg"
+                category="services"
+              />
             </div>
 
             <div style={{ gridColumn: '1 / -1' }}>
@@ -903,9 +1070,14 @@ function VehiclesManager() {
               <input type="text" value={editingVehicle.air_conditioning || ''} onChange={e => setEditingVehicle({ ...editingVehicle, air_conditioning: e.target.value })} placeholder="e.g. Dual AC Climate" style={inputStyle} />
             </div>
 
-            <div>
-              <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>IMAGE PATH / URL</label>
-              <input type="text" value={editingVehicle.image || ''} onChange={e => setEditingVehicle({ ...editingVehicle, image: e.target.value })} placeholder="/fleet/dzire-white.jpg" style={inputStyle} />
+            <div style={{ gridColumn: '1 / -1' }}>
+              <ImageUploadInput
+                label="VEHICLE IMAGE"
+                value={editingVehicle.image || ''}
+                onChange={val => setEditingVehicle({ ...editingVehicle, image: val })}
+                placeholder="/fleet/dzire-white.jpg"
+                category="fleet"
+              />
             </div>
 
             <div style={{ gridColumn: '1 / -1', background: '#f8fafc', padding: 14, borderRadius: 10 }}>
@@ -1119,9 +1291,14 @@ function PackagesManager() {
               <input type="text" value={editingPackage.badge || ''} onChange={e => setEditingPackage({ ...editingPackage, badge: e.target.value })} placeholder="e.g. BEST SELLER" style={inputStyle} />
             </div>
 
-            <div>
-              <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>HERO IMAGE URL</label>
-              <input type="text" value={editingPackage.hero_image || ''} onChange={e => setEditingPackage({ ...editingPackage, hero_image: e.target.value })} placeholder="/destinations/mysore-palace.jpg" style={inputStyle} />
+            <div style={{ gridColumn: '1 / -1' }}>
+              <ImageUploadInput
+                label="HERO PACKAGE IMAGE"
+                value={editingPackage.hero_image || ''}
+                onChange={val => setEditingPackage({ ...editingPackage, hero_image: val })}
+                placeholder="/destinations/mysore-palace.jpg"
+                category="packages"
+              />
             </div>
 
             <div style={{ gridColumn: '1 / -1' }}>
@@ -2142,11 +2319,13 @@ function OutstationDestinationsManager() {
               </div>
             </div>
             <div>
-              <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>IMAGE URL</label>
-              <input value={fv('image_url')} onChange={e => sf('image_url', e.target.value)} style={inputStyle} placeholder="https://... or /uploads/coorg.jpg" />
-              {form.image_url && (
-                <img src={form.image_url} alt="preview" style={{ marginTop: 8, width: '100%', height: 120, objectFit: 'cover', borderRadius: 8 }} onError={e => e.target.style.display='none'} />
-              )}
+              <ImageUploadInput
+                label="DESTINATION IMAGE"
+                value={form.image_url || ''}
+                onChange={val => sf('image_url', val)}
+                placeholder="https://... or /uploads/coorg.jpg"
+                category="destinations"
+              />
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <input type="checkbox" id="destActive" checked={!!form.active} onChange={e => sf('active', e.target.checked)} style={{ width: 16, height: 16 }} />

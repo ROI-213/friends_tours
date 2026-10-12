@@ -307,6 +307,15 @@ export async function runMigrations() {
   await query(`CREATE INDEX IF NOT EXISTS idx_testimonials_featured ON testimonials(is_featured)`);
   await query(`CREATE INDEX IF NOT EXISTS idx_gallery_category ON gallery(category)`);
 
+  // Ensure image columns are TEXT so full base64 images or long URLs never get truncated
+  try {
+    await query(`ALTER TABLE vehicles ALTER COLUMN image TYPE TEXT;`);
+    await query(`ALTER TABLE packages ALTER COLUMN hero_image TYPE TEXT;`);
+    await query(`ALTER TABLE services ALTER COLUMN image TYPE TEXT;`);
+    await query(`ALTER TABLE outstation_destinations ALTER COLUMN image TYPE TEXT;`);
+    await query(`ALTER TABLE gallery ALTER COLUMN image_url TYPE TEXT;`);
+  } catch (_) {}
+
   // --- AUTO-SEED INITIAL DATA IF TABLES ARE EMPTY ---
   await autoSeedIfEmpty();
 
