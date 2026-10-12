@@ -25,6 +25,29 @@ const CATEGORIES = ['ALL', 'AIRPORT', 'LOCAL', 'OUTSTATION', 'CORPORATE', 'FAMIL
 export const TestimonialsPage = ({ onNavigate, onBookNowClick }) => {
   const [activeCategory, setActiveCategory] = useState('ALL');
   const [testimonialsList, setTestimonialsList] = useState(TESTIMONIALS_DATA);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
+
+  useEffect(() => {
+    try {
+      if (localStorage.getItem('ft_admin_token')) {
+        setIsAdmin(true);
+      }
+    } catch (_) {}
+  }, []);
+
+  const handleDeleteTestimonial = async (id, name) => {
+    if (!window.confirm(`Admin: Permanently delete testimonial from "${name}"?`)) return;
+    setDeletingId(id);
+    try {
+      await api.deleteTestimonial(id);
+      setTestimonialsList(prev => prev.filter(t => String(t.id) !== String(id)));
+    } catch (err) {
+      alert('Error deleting testimonial: ' + (err.message || err));
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   const fetchTestimonials = React.useCallback(() => {
     api.getTestimonials().then((data) => {
@@ -201,6 +224,31 @@ export const TestimonialsPage = ({ onNavigate, onBookNowClick }) => {
                     <span style={{ fontSize: '0.6875rem', color: 'var(--color-text-muted)' }}>{item.vehicle}</span>
                   </div>
                 </div>
+
+                {isAdmin && (
+                  <div style={{ marginTop: 12, paddingTop: 10, borderTop: '1px dashed #fee2e2', display: 'flex', justifyContent: 'flex-end' }}>
+                    <button
+                      type="button"
+                      disabled={deletingId === item.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteTestimonial(item.id, item.name);
+                      }}
+                      style={{
+                        padding: '6px 14px',
+                        background: '#fee2e2',
+                        color: '#dc2626',
+                        border: '1px solid #fecaca',
+                        borderRadius: 6,
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        cursor: deletingId === item.id ? 'not-allowed' : 'pointer'
+                      }}
+                    >
+                      {deletingId === item.id ? 'Deleting...' : '🗑️ Delete (Admin)'}
+                    </button>
+                  </div>
+                )}
               </article>
             ))}
           </div>

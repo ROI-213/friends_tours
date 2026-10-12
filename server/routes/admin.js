@@ -524,11 +524,13 @@ router.put('/testimonials/:id', requireAuth, async (req, res) => {
 
 router.delete('/testimonials/:id', requireAuth, async (req, res) => {
   try {
-    await query('DELETE FROM testimonials WHERE id = $1', [req.params.id]);
-    syncManager.notifyDataChange('testimonials', 'delete', { id: req.params.id });
-    res.json({ success: true });
+    const { id } = req.params;
+    await query('DELETE FROM testimonials WHERE id::text = $1', [id]);
+    syncManager.notifyDataChange('testimonials', 'delete', { id });
+    res.json({ success: true, message: 'Testimonial deleted' });
   } catch (err) {
-    res.status(500).json({ error: 'Server error' });
+    console.error('Delete testimonial error:', err);
+    res.status(500).json({ error: err.message || 'Server error' });
   }
 });
 

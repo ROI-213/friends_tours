@@ -195,6 +195,7 @@ export const api = {
     method: 'POST',
     body: JSON.stringify(data),
   }),
+  deleteTestimonial: (id) => adminApi.deleteTestimonial(id),
 
   // Gallery
   getGallery: (params = {}) => {

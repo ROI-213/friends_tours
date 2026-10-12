@@ -642,9 +642,9 @@ export function queryStore(text, params = []) {
     }
   }
 
-  // 9. Generic DELETE FROM <table> WHERE id = $1
+  // 9. Generic DELETE FROM <table> WHERE id = $1 or id::text = $1
   if (lower.startsWith('delete from')) {
-    const tableMatch = sql.match(/delete\s+from\s+([a-zA-Z0-9_]+)\s+where\s+id\s*=\s*\$1/i);
+    const tableMatch = sql.match(/delete\s+from\s+([a-zA-Z0-9_]+)\s+where\s+(?:id::text|id)\s*=\s*\$1/i);
     if (tableMatch) {
       const table = tableMatch[1];
       const items = store.getTable(table);

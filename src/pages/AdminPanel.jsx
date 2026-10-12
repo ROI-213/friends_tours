@@ -1622,10 +1622,23 @@ function TestimonialsManager() {
     load();
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm('Delete this testimonial?')) return;
-    await adminApi.deleteTestimonial(id);
-    load();
+  const [deletingId, setDeletingId] = useState(null);
+
+  const handleDelete = async (id, name) => {
+    const confirmed = window.confirm(`Are you sure you want to permanently delete the testimonial from "${name || 'customer'}"?`);
+    if (!confirmed) return;
+
+    setDeletingId(id);
+    try {
+      await adminApi.deleteTestimonial(id);
+      // Immediately remove from local state for instant responsive UI
+      setTestimonials(prev => prev.filter(t => String(t.id) !== String(id)));
+      load();
+    } catch (err) {
+      alert('Error deleting testimonial: ' + (err.message || err));
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   return (
@@ -1661,8 +1674,29 @@ function TestimonialsManager() {
                 </div>
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
-                <button onClick={() => handleEdit(t)} style={{ padding: '6px 12px', background: '#0A1938', color: '#fff', border: 'none', borderRadius: 6, fontWeight: 700, fontSize: '0.75rem', cursor: 'pointer' }}>✏️ Edit</button>
-                <button onClick={() => handleDelete(t.id)} style={{ padding: '6px 10px', background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: 6, fontWeight: 700, fontSize: '0.75rem', cursor: 'pointer' }}>🗑️</button>
+                <button onClick={() => handleEdit(t)} style={{ padding: '7px 14px', background: '#0A1938', color: '#fff', border: 'none', borderRadius: 6, fontWeight: 700, fontSize: '0.75rem', cursor: 'pointer' }}>✏️ Edit</button>
+                <button
+                  type="button"
+                  disabled={deletingId === t.id}
+                  onClick={() => handleDelete(t.id, t.customer_name)}
+                  title="Delete testimonial"
+                  style={{
+                    padding: '7px 14px',
+                    background: '#fee2e2',
+                    color: '#dc2626',
+                    border: '1px solid #fecaca',
+                    borderRadius: 6,
+                    fontWeight: 700,
+                    fontSize: '0.75rem',
+                    cursor: deletingId === t.id ? 'not-allowed' : 'pointer',
+                    opacity: deletingId === t.id ? 0.6 : 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 4
+                  }}
+                >
+                  {deletingId === t.id ? 'Deleting...' : '🗑️ Delete'}
+                </button>
               </div>
             </div>
           ))}
