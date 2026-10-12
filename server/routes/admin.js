@@ -707,11 +707,18 @@ router.get('/outstation-destinations', requireAuth, async (req, res) => {
 router.post('/outstation-destinations', requireAuth, async (req, res) => {
   try {
     const d = req.body;
-    const id = d.id || d.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const id = d.id || (d.name ? d.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') : `dest-${Date.now()}`);
+    const distanceKm = Number(d.distance_km) || 0;
+    const startingPrice = Number(d.starting_price) || 0;
+    const tag = d.tag || d.badge || '';
+    const image = d.image || d.image_url || '';
+    const sortOrder = Number(d.sort_order) || 0;
+    const active = d.active !== false;
+
     const result = await query(`
       INSERT INTO outstation_destinations (id, name, state, distance_km, est_drive_time, starting_price, tag, image, active, sort_order)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *
-    `, [id, d.name, d.state || 'Karnataka', d.distance_km || 0, d.est_drive_time || '', d.starting_price || 0, d.tag || '', d.image || '', d.active !== false, d.sort_order || 0]);
+    `, [id, d.name, d.state || 'Karnataka', distanceKm, d.est_drive_time || '', startingPrice, tag, image, active, sortOrder]);
     syncManager.notifyDataChange('outstation-destinations', 'create', { id });
     res.json({ success: true, destination: result.rows[0] });
   } catch (err) {
@@ -722,11 +729,28 @@ router.post('/outstation-destinations', requireAuth, async (req, res) => {
 router.put('/outstation-destinations/:id', requireAuth, async (req, res) => {
   try {
     const d = req.body;
+    const distanceKm = Number(d.distance_km) || 0;
+    const startingPrice = Number(d.starting_price) || 0;
+    const tag = d.tag !== undefined ? d.tag : (d.badge !== undefined ? d.badge : '');
+    const image = d.image !== undefined ? d.image : (d.image_url !== undefined ? d.image_url : '');
+    const sortOrder = Number(d.sort_order) || 0;
+    const active = d.active !== false;
+
     const result = await query(`
-      UPDATE outstation_destinations SET name=$1, state=$2, distance_km=$3, est_drive_time=$4, starting_price=$5, tag=$6, image=$7, active=$8, sort_order=$9, updated_at=NOW()
-      WHERE id=$10
+      UPDATE outstation_destinations SET 
+        name = COALESCE($1, name),
+        state = COALESCE($2, state),
+        distance_km = $3,
+        est_drive_time = COALESCE($4, est_drive_time),
+        starting_price = $5,
+        tag = $6,
+        image = $7,
+        active = $8,
+        sort_order = $9,
+        updated_at = NOW()
+      WHERE id = $10
       RETURNING *
-    `, [d.name, d.state, d.distance_km, d.est_drive_time, d.starting_price, d.tag, d.image, d.active !== false, d.sort_order || 0, req.params.id]);
+    `, [d.name, d.state, distanceKm, d.est_drive_time, startingPrice, tag, image, active, sortOrder, req.params.id]);
     syncManager.notifyDataChange('outstation-destinations', 'update', { id: req.params.id });
     res.json({ success: true, destination: result.rows[0] });
   } catch (err) {

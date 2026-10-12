@@ -112,9 +112,10 @@ export const TopDestinations = ({ onSelectDestination }) => {
                 id: item.id || updated[key].id,
                 landmark: item.name || updated[key].landmark,
                 country: item.state || updated[key].country,
-                badge: item.tag || updated[key].badge,
-                image: item.image || updated[key].image,
-                images: item.image ? [item.image, ...(updated[key].images || [])] : updated[key].images,
+                badge: item.tag || item.badge || updated[key].badge,
+                image: item.image || item.image_url || updated[key].image,
+                images: (item.image || item.image_url) ? [item.image || item.image_url, ...(updated[key].images || [])] : updated[key].images,
+                starting_price: item.starting_price,
               };
             }
           });

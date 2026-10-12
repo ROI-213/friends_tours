@@ -32,6 +32,8 @@ export const OutstationTransferSection = ({ onBookOutstation }) => {
   const [calcTotalKm, setCalcTotalKm] = useState(300);
   const [calcTotalDays, setCalcTotalDays] = useState(1);
 
+  const [popularRoutes, setPopularRoutes] = useState(POPULAR_OUTSTATION_ROUTES);
+
   const fetchRates = React.useCallback(() => {
     api.getOutstationTariffs().then((data) => {
       if (Array.isArray(data) && data.length > 0) {
@@ -52,11 +54,30 @@ export const OutstationTransferSection = ({ onBookOutstation }) => {
     }).catch(() => {});
   }, []);
 
+  const fetchDestinations = React.useCallback(() => {
+    api.getOutstationDestinations().then((data) => {
+      if (Array.isArray(data) && data.length > 0) {
+        const dynamic = data.map((d) => ({
+          id: d.id,
+          name: d.name + (d.state ? ` (${d.state})` : ''),
+          distanceOneWay: Number(d.distance_km) || 250,
+          estDriveTime: d.est_drive_time || '4.0 Hours',
+          popularVehicle: 'Sedan / Innova Crysta',
+          sedanDayRate: Number(d.starting_price) || 3500,
+          tag: d.tag || d.badge || 'POPULAR'
+        }));
+        setPopularRoutes(dynamic);
+      }
+    }).catch(() => {});
+  }, []);
+
   React.useEffect(() => {
     fetchRates();
-  }, [fetchRates]);
+    fetchDestinations();
+  }, [fetchRates, fetchDestinations]);
 
   useDataSync('tariffs', fetchRates);
+  useDataSync('outstation-destinations', fetchDestinations);
 
   // Active Vehicle for calculator
   const calcVehicle = useMemo(() => {
@@ -256,7 +277,7 @@ export const OutstationTransferSection = ({ onBookOutstation }) => {
           </h3>
 
           <div className="outstation-routes-grid">
-            {POPULAR_OUTSTATION_ROUTES.map((route) => (
+            {popularRoutes.map((route) => (
               <div key={route.id} className="outstation-route-card">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
                   <span style={{ fontFamily: 'var(--font-heading)', fontSize: '1.05rem', fontWeight: 800, color: '#0A1938' }}>{route.name}</span>
@@ -267,8 +288,8 @@ export const OutstationTransferSection = ({ onBookOutstation }) => {
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 10, borderTop: '1px solid var(--color-border-subtle)' }}>
                   <div>
-                    <span style={{ fontSize: '0.7rem', color: '#777', display: 'block' }}>Daily Starting Rate</span>
-                    <span style={{ fontFamily: 'var(--font-heading)', fontSize: '1.1rem', fontWeight: 800, color: 'var(--color-primary)' }}>₹{route.sedanDayRate.toLocaleString('en-IN')} / day</span>
+                    <span style={{ fontSize: '0.7rem', color: '#777', display: 'block' }}>Starting Rate</span>
+                    <span style={{ fontFamily: 'var(--font-heading)', fontSize: '1.1rem', fontWeight: 800, color: 'var(--color-primary)' }}>₹{Number(route.sedanDayRate || 0).toLocaleString('en-IN')}</span>
                   </div>
                   <button
                     type="button"

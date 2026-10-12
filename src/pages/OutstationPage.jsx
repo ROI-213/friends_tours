@@ -15,7 +15,14 @@ export const OutstationPage = ({ onNavigate, onBookNowClick, onEnquireRoute, onO
   const [prefilled, setPrefilled] = useState({ travelType: 'Outstation', destination: '' });
 
   const handleEnquireDestination = (dest) => {
-    setPrefilled({ travelType: 'Outstation', destination: dest.name || dest.title });
+    const destName = dest.name || dest.title || '';
+    const state = dest.state ? ` (${dest.state})` : '';
+    const priceText = dest.starting_price ? `Starting at ₹${Number(dest.starting_price).toLocaleString('en-IN')}` : '';
+    setPrefilled({
+      travelType: 'Outstation',
+      destination: `${destName}${state}`,
+      message: `Enquiry for trip to ${destName}. ${dest.distance || ''} ${priceText}`.trim()
+    });
     setTimeout(() => {
       const el = document.getElementById('contact');
       if (el) el.scrollIntoView({ behavior: 'smooth' });

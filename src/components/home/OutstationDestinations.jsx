@@ -138,7 +138,8 @@ export const OutstationDestinations = ({ onEnquireDestination, onExploreDestinat
           badge: d.tag || d.badge || 'OUTSTATION',
           featured: i === 0,
           image: d.image || d.image_url || '/destinations/coorg-abbey-falls.jpg',
-          description: d.description || `Scenic road trip to ${d.name} (${d.distance_km || 250} km from Bangalore). Starting from ₹${d.starting_price?.toLocaleString ? d.starting_price.toLocaleString('en-IN') : d.starting_price}.`,
+          starting_price: d.starting_price,
+          description: d.description || `Scenic road trip to ${d.name} (${d.distance_km || 250} km from Bangalore). Starting from ₹${Number(d.starting_price || 0).toLocaleString('en-IN')}.`,
           distance: `${d.distance_km || 250} km from Bangalore`,
           duration: d.est_drive_time || '1–2 Days',
           placesToVisit: d.places_to_visit || `${d.name} Sightseeing & Local Trails`,
@@ -259,7 +260,14 @@ export const OutstationDestinations = ({ onEnquireDestination, onExploreDestinat
 
                   <div className="outstation-card-content">
                     <div className="outstation-card-location">
-                      <h4 className="outstation-card-title">{dest.name}</h4>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                        <h4 className="outstation-card-title">{dest.name}</h4>
+                        {dest.starting_price ? (
+                          <span style={{ fontWeight: 800, color: '#34d399', fontSize: '0.925rem', textShadow: '0 1px 3px rgba(0,0,0,0.8)', whiteSpace: 'nowrap', marginLeft: 8 }}>
+                            From ₹{Number(dest.starting_price).toLocaleString('en-IN')}
+                          </span>
+                        ) : null}
+                      </div>
                       <span className="outstation-card-state">{dest.state}</span>
                     </div>
 

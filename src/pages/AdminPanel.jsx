@@ -2395,11 +2395,19 @@ function OutstationDestinationsManager() {
   useEffect(load, []);
 
   const openCreate = () => {
-    setForm({ name: '', state: '', distance_km: '', est_drive_time: '', starting_price: '', badge: '', image_url: '', active: true });
+    setForm({ name: '', state: '', distance_km: '', est_drive_time: '', starting_price: '', badge: '', tag: '', image_url: '', image: '', active: true });
     setModal({ mode: 'create' });
   };
   const openEdit = (d) => {
-    setForm({ ...d });
+    setForm({
+      ...d,
+      badge: d.badge || d.tag || '',
+      tag: d.tag || d.badge || '',
+      image_url: d.image_url || d.image || '',
+      image: d.image || d.image_url || '',
+      starting_price: d.starting_price ?? '',
+      distance_km: d.distance_km ?? '',
+    });
     setModal({ mode: 'edit', id: d.id });
   };
   const closeModal = () => setModal(null);
@@ -2408,10 +2416,20 @@ function OutstationDestinationsManager() {
     e.preventDefault();
     setSaving(true);
     try {
+      const payload = {
+        ...form,
+        distance_km: Number(form.distance_km) || 0,
+        starting_price: Number(form.starting_price) || 0,
+        tag: form.badge || form.tag || '',
+        badge: form.badge || form.tag || '',
+        image: form.image_url || form.image || '',
+        image_url: form.image_url || form.image || '',
+        active: form.active !== false,
+      };
       if (modal.mode === 'create') {
-        await adminApi.createOutstationDestination(form);
+        await adminApi.createOutstationDestination(payload);
       } else {
-        await adminApi.updateOutstationDestination(modal.id, form);
+        await adminApi.updateOutstationDestination(modal.id, payload);
       }
       load();
       closeModal();
@@ -2448,50 +2466,54 @@ function OutstationDestinationsManager() {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 18 }}>
-        {destinations.map(d => (
-          <div key={d.id} style={{ background: '#fff', borderRadius: 14, overflow: 'hidden', boxShadow: '0 2px 10px rgba(0,0,0,0.06)', border: '1px solid #e2e8f0' }}>
-            {d.image_url && (
-              <div style={{ height: 140, background: `url(${d.image_url}) center/cover`, position: 'relative' }}>
-                {d.badge && (
-                  <span style={{ position: 'absolute', top: 10, right: 10, background: '#f59e0b', color: '#fff', padding: '3px 10px', borderRadius: 20, fontSize: '0.75rem', fontWeight: 700 }}>
-                    {d.badge}
+        {destinations.map(d => {
+          const img = d.image_url || d.image;
+          const badgeText = d.badge || d.tag;
+          return (
+            <div key={d.id} style={{ background: '#fff', borderRadius: 14, overflow: 'hidden', boxShadow: '0 2px 10px rgba(0,0,0,0.06)', border: '1px solid #e2e8f0' }}>
+              {img && (
+                <div style={{ height: 140, background: `url(${img}) center/cover`, position: 'relative' }}>
+                  {badgeText && (
+                    <span style={{ position: 'absolute', top: 10, right: 10, background: '#f59e0b', color: '#fff', padding: '3px 10px', borderRadius: 20, fontSize: '0.75rem', fontWeight: 700 }}>
+                      {badgeText}
+                    </span>
+                  )}
+                </div>
+              )}
+              {!img && badgeText && (
+                <div style={{ padding: '10px 14px 0' }}>
+                  <span style={{ background: '#f59e0b', color: '#fff', padding: '3px 10px', borderRadius: 20, fontSize: '0.75rem', fontWeight: 700 }}>{badgeText}</span>
+                </div>
+              )}
+              <div style={{ padding: '14px 16px' }}>
+                <div style={{ fontWeight: 800, color: '#0A1938', fontSize: '1rem' }}>{d.name}</div>
+                <div style={{ color: '#64748b', fontSize: '0.8125rem', marginTop: 2 }}>{d.state}</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 10 }}>
+                  <div style={{ background: '#f8fafc', borderRadius: 8, padding: '6px 10px' }}>
+                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 600 }}>DISTANCE</div>
+                    <div style={{ fontWeight: 700, color: '#334155' }}>{d.distance_km} km</div>
+                  </div>
+                  <div style={{ background: '#f8fafc', borderRadius: 8, padding: '6px 10px' }}>
+                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 600 }}>DRIVE TIME</div>
+                    <div style={{ fontWeight: 700, color: '#334155' }}>{d.est_drive_time}</div>
+                  </div>
+                </div>
+                <div style={{ marginTop: 10, fontWeight: 800, color: '#166534', fontSize: '1.05rem' }}>
+                  From ₹{Number(d.starting_price || 0).toLocaleString('en-IN')}
+                </div>
+                <div style={{ marginTop: 4 }}>
+                  <span style={{ padding: '3px 10px', borderRadius: 20, fontSize: '0.75rem', fontWeight: 700, background: d.active ? '#dcfce7' : '#fef2f2', color: d.active ? '#166534' : '#dc2626' }}>
+                    {d.active ? 'Active' : 'Hidden'}
                   </span>
-                )}
-              </div>
-            )}
-            {!d.image_url && d.badge && (
-              <div style={{ padding: '10px 14px 0' }}>
-                <span style={{ background: '#f59e0b', color: '#fff', padding: '3px 10px', borderRadius: 20, fontSize: '0.75rem', fontWeight: 700 }}>{d.badge}</span>
-              </div>
-            )}
-            <div style={{ padding: '14px 16px' }}>
-              <div style={{ fontWeight: 800, color: '#0A1938', fontSize: '1rem' }}>{d.name}</div>
-              <div style={{ color: '#64748b', fontSize: '0.8125rem', marginTop: 2 }}>{d.state}</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 10 }}>
-                <div style={{ background: '#f8fafc', borderRadius: 8, padding: '6px 10px' }}>
-                  <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 600 }}>DISTANCE</div>
-                  <div style={{ fontWeight: 700, color: '#334155' }}>{d.distance_km} km</div>
                 </div>
-                <div style={{ background: '#f8fafc', borderRadius: 8, padding: '6px 10px' }}>
-                  <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 600 }}>DRIVE TIME</div>
-                  <div style={{ fontWeight: 700, color: '#334155' }}>{d.est_drive_time}</div>
+                <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+                  <button onClick={() => openEdit(d)} style={{ flex: 1, padding: '7px', background: '#eff6ff', color: '#1d4ed8', border: 'none', borderRadius: 7, fontWeight: 700, cursor: 'pointer', fontSize: '0.8rem' }}>Edit</button>
+                  <button onClick={() => handleDelete(d.id, d.name)} style={{ flex: 1, padding: '7px', background: '#fef2f2', color: '#dc2626', border: 'none', borderRadius: 7, fontWeight: 700, cursor: 'pointer', fontSize: '0.8rem' }}>Delete</button>
                 </div>
-              </div>
-              <div style={{ marginTop: 10, fontWeight: 800, color: '#166534', fontSize: '1rem' }}>
-                From ₹{d.starting_price?.toLocaleString?.() ?? d.starting_price}
-              </div>
-              <div style={{ marginTop: 4 }}>
-                <span style={{ padding: '3px 10px', borderRadius: 20, fontSize: '0.75rem', fontWeight: 700, background: d.active ? '#dcfce7' : '#fef2f2', color: d.active ? '#166534' : '#dc2626' }}>
-                  {d.active ? 'Active' : 'Hidden'}
-                </span>
-              </div>
-              <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-                <button onClick={() => openEdit(d)} style={{ flex: 1, padding: '7px', background: '#eff6ff', color: '#1d4ed8', border: 'none', borderRadius: 7, fontWeight: 700, cursor: 'pointer', fontSize: '0.8rem' }}>Edit</button>
-                <button onClick={() => handleDelete(d.id, d.name)} style={{ flex: 1, padding: '7px', background: '#fef2f2', color: '#dc2626', border: 'none', borderRadius: 7, fontWeight: 700, cursor: 'pointer', fontSize: '0.8rem' }}>Delete</button>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
         {destinations.length === 0 && (
           <div style={{ gridColumn: '1/-1', padding: 60, textAlign: 'center', color: '#94a3b8', background: '#fff', borderRadius: 14 }}>
             No destinations yet. Add your first outstation destination.
@@ -2535,8 +2557,8 @@ function OutstationDestinationsManager() {
             <div>
               <ImageUploadInput
                 label="DESTINATION IMAGE"
-                value={form.image_url || ''}
-                onChange={val => sf('image_url', val)}
+                value={form.image_url || form.image || ''}
+                onChange={val => { sf('image_url', val); sf('image', val); }}
                 placeholder="https://... or /uploads/coorg.jpg"
                 category="destinations"
               />

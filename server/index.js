@@ -106,10 +106,12 @@ app.use('/api/upload', uploadRouter);
 app.use('/api/gallery', uploadRouter); // gallery is also in upload router
 app.use('/api/admin', adminRouter);
 app.use('/api/public', publicDataRouter); // live data for frontend (no auth)
-// Public aliases so /api/services and /api/tariffs work directly without /public prefix
+// Public aliases so /api/services, /api/tariffs, /api/settings, /api/outstation-destinations work directly without /public prefix
 app.use('/api/services', (req, res, next) => { req.url = '/services' + (req.url === '/' ? '' : req.url); publicDataRouter(req, res, next); });
 app.use('/api/tariffs', (req, res, next) => { req.url = '/tariffs' + (req.url === '/' ? '' : req.url); publicDataRouter(req, res, next); });
 app.use('/api/settings', (req, res, next) => { req.url = '/settings' + (req.url === '/' ? '' : req.url); publicDataRouter(req, res, next); });
+app.use('/api/outstation-destinations', (req, res, next) => { req.url = '/outstation-destinations' + (req.url === '/' ? '' : req.url); publicDataRouter(req, res, next); });
+app.use('/api/destinations', (req, res, next) => { req.url = '/outstation-destinations' + (req.url === '/' ? '' : req.url); publicDataRouter(req, res, next); });
 
 // ── Serve static frontend build if dist exists ───────────────────────────────
 const distPath = path.join(__dirname, '../dist');
