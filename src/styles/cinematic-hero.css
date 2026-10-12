@@ -1,0 +1,301 @@
+/* ==========================================================================
+   SECOND CINEMATIC HERO — "THE JOURNEY BEGINS"
+   Rainy blue-hour Suzuki sequence, scroll-controlled Canvas chapter
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   SCROLL-DRIVEN STAGE
+   -------------------------------------------------------------------------- */
+.cine-hero-scroll-wrapper {
+  position: relative;
+  width: 100%;
+  min-width: 100%;
+  height: 280vh;
+  background-color: #0A0F1F;
+}
+
+/* Pinned by hand in JS (same reason as the first hero — the global
+   `overflow-x: hidden` on html/body breaks `position: sticky`). */
+.cine-hero-stage {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  min-width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  background-color: #0A0F1F;
+  z-index: 1;
+}
+
+.cine-hero-canvas-wrap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  min-width: 100%;
+  height: 100%;
+  z-index: 1;
+  overflow: hidden;
+  background-color: #0A0F1F;
+}
+
+.cine-hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  transform: scale(1.1); /* Zoom in by 10% to crop out edge watermarks */
+  transform-origin: center center;
+}
+
+/* Static (reduced-motion) fallback */
+.cine-hero--static {
+  position: relative;
+  width: 100%;
+  min-width: 100%;
+  max-width: none;
+  height: 100vh;
+  min-height: 680px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background-color: #0A0F1F;
+  padding-top: 80px;
+}
+
+.cine-hero-static-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  min-width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 45%;
+  transform: scale(1.1);
+  transform-origin: center center;
+}
+
+.cine-hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  min-width: 100%;
+  height: 100%;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* Cinematic overlay — rainy blue-hour depth, heavier on the left for legibility */
+.cine-hero-scrim {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  background:
+    linear-gradient(90deg,
+      rgba(8, 12, 28, 0.82) 0%,
+      rgba(16, 18, 40, 0.62) 34%,
+      rgba(24, 18, 48, 0.24) 64%,
+      rgba(10, 14, 34, 0.48) 100%
+    ),
+    linear-gradient(180deg,
+      rgba(8, 12, 28, 0.34) 0%,
+      rgba(28, 16, 64, 0.08) 45%,
+      rgba(8, 12, 28, 0.86) 100%
+    );
+  pointer-events: none;
+}
+
+/* Ambient blue-hour / magenta glow */
+.cine-hero-glow {
+  position: absolute;
+  top: 10%;
+  right: 6%;
+  width: 560px;
+  height: 560px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(150, 110, 220, 0.18) 0%,
+    rgba(13, 37, 108, 0.1) 45%,
+    rgba(13, 37, 108, 0) 70%
+  );
+  filter: blur(60px);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   TEXT CONTENT
+   -------------------------------------------------------------------------- */
+.cine-hero-container {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  min-width: 100%;
+  max-width: none;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  will-change: opacity;
+}
+
+.cine-hero-container > .cine-hero-left {
+  width: 100%;
+  max-width: var(--container-max, 1720px);
+  margin: 0 auto;
+  padding: 0 clamp(18px, 3.5vw, 48px);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.cine-hero-left > * {
+  max-width: 640px;
+}
+
+.cine-hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #E7E4FF;
+  margin-bottom: 16px;
+  will-change: opacity, transform;
+}
+
+.cine-hero-eyebrow-line {
+  width: 28px;
+  height: 2px;
+  background: #B48BE8;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.cine-hero-heading {
+  font-family: var(--font-heading);
+  font-size: clamp(2.75rem, 5.2vw, 4.4rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  color: #FFFFFF;
+  margin-bottom: 20px;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.55);
+  will-change: opacity, transform;
+}
+
+.cine-hero-heading-highlight {
+  color: #E9DCFF;
+  display: block;
+  text-shadow: 0 0 32px rgba(150, 110, 220, 0.45), 0 4px 24px rgba(0, 0, 0, 0.55);
+}
+
+.cine-hero-description {
+  font-family: var(--font-body);
+  font-size: clamp(1rem, 1.25vw, 1.125rem);
+  font-weight: 400;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.92);
+  max-width: 540px;
+  margin-bottom: 32px;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+  will-change: opacity, transform;
+}
+
+.cine-hero-cta-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+  will-change: opacity, transform;
+}
+
+.btn-cine-primary {
+  background: var(--grad-primary, linear-gradient(135deg, #0D256C 0%, #1A49B8 100%));
+  color: #FFFFFF;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 15px 32px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 24px rgba(13, 37, 108, 0.45);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.btn-cine-primary:hover {
+  background: var(--color-primary-light, #1A49B8);
+  box-shadow: 0 12px 30px rgba(13, 37, 108, 0.6);
+  transform: translateY(-2px);
+}
+
+.btn-cine-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #FFFFFF;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 15px 28px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.btn-cine-secondary:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: #FFFFFF;
+  transform: translateY(-2px);
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .cine-hero-scroll-wrapper { height: 260vh; }
+}
+
+@media (max-width: 640px) {
+  .cine-hero-scroll-wrapper { height: 240vh; }
+  .cine-hero-heading { font-size: clamp(2.2rem, 9vw, 3rem); line-height: 1.08; }
+  .cine-hero-description { font-size: 0.9375rem; margin-bottom: 22px; }
+  .cine-hero-cta-group { flex-direction: column; width: 100%; gap: 10px; }
+  .btn-cine-primary, .btn-cine-secondary { width: 100%; justify-content: center; padding: 13px 20px; }
+  .cine-hero-scrim {
+    background:
+      linear-gradient(180deg,
+        rgba(8, 12, 28, 0.42) 0%,
+        rgba(8, 12, 28, 0.28) 35%,
+        rgba(8, 12, 28, 0.55) 65%,
+        rgba(8, 12, 28, 0.92) 100%
+      ),
+      linear-gradient(90deg,
+        rgba(8, 12, 28, 0.62) 0%,
+        rgba(8, 12, 28, 0.18) 50%,
+        rgba(8, 12, 28, 0.62) 100%
+      );
+  }
+}

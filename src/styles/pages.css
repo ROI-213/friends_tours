@@ -1,0 +1,983 @@
+/* ==========================================================================
+   MASTER DEDICATED PAGES STYLING SYSTEM
+   High-end editorial layouts, masonry grids, comparison strips, and interactive forms
+   ========================================================================== */
+
+.page-container {
+  width: 100%;
+  min-width: 100%;
+  background: var(--color-bg, #F7FAFF);
+  color: var(--color-text-main, #0A1938);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --------------------------------------------------------------------------
+   1. UNIFIED CINEMATIC HERO
+   -------------------------------------------------------------------------- */
+.page-hero {
+  position: relative;
+  width: 100%;
+  padding: 130px clamp(18px, 3.5vw, 48px) 60px;
+  background: #140312;
+  overflow: hidden;
+  text-align: center;
+}
+
+.page-hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.55;
+  filter: brightness(0.85);
+}
+
+.page-hero-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(20, 3, 16, 0.6) 0%, rgba(20, 3, 16, 0.96) 100%);
+}
+
+.page-hero-content {
+  position: relative;
+  z-index: 3;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.page-breadcrumbs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 14px;
+}
+
+.page-breadcrumb-link {
+  color: #FFFFFF;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+.page-breadcrumb-link:hover {
+  color: var(--color-lavender, #FA4616);
+  text-decoration: underline;
+}
+
+.page-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  background: var(--color-primary, #0D256C);
+  padding: 6px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  margin-bottom: 14px;
+  box-shadow: 0 2px 12px rgba(13, 37, 108, 0.4);
+}
+
+.page-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2.25rem, 4.5vw, 3.75rem);
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 14px;
+}
+
+.page-subtitle {
+  font-family: var(--font-body);
+  font-size: clamp(0.9375rem, 1.25vw, 1.125rem);
+  color: #EBF2FF;
+  line-height: 1.65;
+  max-width: 800px;
+  margin: 0 auto 24px;
+}
+
+.page-hero-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+/* --------------------------------------------------------------------------
+   2. MAIN CONTENT WRAPPER
+   -------------------------------------------------------------------------- */
+.page-main-section {
+  width: 100%;
+  padding: clamp(40px, 6vw, 80px) clamp(18px, 3.5vw, 48px);
+  flex: 1;
+}
+
+.page-max-width {
+  width: 100%;
+  max-width: var(--container-max, 1720px);
+  margin: 0 auto;
+}
+
+.page-content-card {
+  background: #FFFFFF;
+  border-radius: 28px;
+  border: 1px solid rgba(13, 37, 108, 0.1);
+  padding: clamp(24px, 3.5vw, 44px);
+  box-shadow: 0 8px 30px rgba(13, 37, 108, 0.04);
+  margin-bottom: 32px;
+}
+
+.page-section-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.4rem, 2.2vw, 2rem);
+  font-weight: 800;
+  color: var(--color-primary, #0D256C);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* --------------------------------------------------------------------------
+   3. SERVICES EDITORIAL BLOCKS & COMPARISON STRIP
+   -------------------------------------------------------------------------- */
+.service-feature-block {
+  background: #FFFFFF;
+  border-radius: 28px;
+  border: 1px solid rgba(13, 37, 108, 0.12);
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 0;
+  margin-bottom: 36px;
+  box-shadow: 0 10px 30px rgba(13, 37, 108, 0.04);
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 300ms ease;
+}
+
+.service-feature-block:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(13, 37, 108, 0.12);
+}
+
+.service-feature-block.reversed {
+  grid-template-columns: 1fr 1.15fr;
+}
+
+.service-block-img-wrap {
+  width: 100%;
+  min-height: 340px;
+  position: relative;
+  overflow: hidden;
+}
+
+.service-block-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 500ms ease;
+}
+
+.service-feature-block:hover .service-block-img {
+  transform: scale(1.05);
+}
+
+.service-block-content {
+  padding: clamp(28px, 4vw, 48px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.service-block-badge {
+  display: inline-block;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  background: var(--color-primary, #0D256C);
+  padding: 4px 14px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+  border: 1px solid rgba(13, 37, 108, 0.3);
+  width: fit-content;
+  box-shadow: 0 2px 8px rgba(13, 37, 108, 0.25);
+}
+
+.service-block-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.6rem, 2.4vw, 2.25rem);
+  font-weight: 800;
+  color: #0A1938;
+  margin-bottom: 12px;
+  line-height: 1.15;
+}
+
+.service-block-desc {
+  font-size: 0.9375rem;
+  color: var(--color-text-main, #444444);
+  line-height: 1.65;
+  margin-bottom: 20px;
+}
+
+/* Service Comparison Strip */
+.service-comparison-strip {
+  background: #FFFFFF;
+  border-radius: 24px;
+  border: 1px solid var(--color-border-subtle, #E2ECF8);
+  padding: 24px clamp(20px, 3vw, 36px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 48px 0;
+  box-shadow: 0 8px 24px rgba(13, 37, 108, 0.04);
+}
+
+.comparison-tab-btn {
+  flex: 1;
+  min-width: 140px;
+  padding: 14px 18px;
+  background: var(--color-pink-soft, #F7FAFF);
+  border: 1px solid var(--color-border-subtle, #DCE8FA);
+  border-radius: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 200ms ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.comparison-tab-btn:hover {
+  background: var(--color-primary, #0D256C);
+  color: #FFFFFF;
+  border-color: var(--color-primary, #0D256C);
+  transform: translateY(-2px);
+}
+
+.comparison-tab-btn:hover span,
+.comparison-tab-btn:hover * {
+  color: #FFFFFF;
+}
+
+.comparison-tab-label {
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #0A1938;
+}
+
+/* --------------------------------------------------------------------------
+   4. EDITORIAL GALLERY MASONRY & LIGHTBOX
+   -------------------------------------------------------------------------- */
+.editorial-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-auto-rows: 180px;
+  gap: 20px;
+  margin: 32px 0;
+}
+
+.editorial-gallery-card {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  cursor: pointer;
+  background: #140312;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.editorial-gallery-card.span-large {
+  grid-column: span 6;
+  grid-row: span 3;
+}
+
+.editorial-gallery-card.span-medium {
+  grid-column: span 6;
+  grid-row: span 2;
+}
+
+.editorial-gallery-card.span-tall {
+  grid-column: span 4;
+  grid-row: span 3;
+}
+
+.editorial-gallery-card.span-standard {
+  grid-column: span 4;
+  grid-row: span 2;
+}
+
+.editorial-gallery-card.span-wide {
+  grid-column: span 8;
+  grid-row: span 2;
+}
+
+.editorial-gallery-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 500ms ease;
+}
+
+.editorial-gallery-card:hover .editorial-gallery-img {
+  transform: scale(1.06);
+}
+
+.editorial-gallery-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(20, 3, 16, 0.85) 100%);
+  opacity: 0.8;
+  transition: opacity 300ms ease;
+}
+
+.editorial-gallery-card:hover .editorial-gallery-scrim {
+  opacity: 1;
+}
+
+.editorial-gallery-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px;
+  z-index: 2;
+}
+
+.editorial-gallery-cat {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-lavender, #FA4616);
+  margin-bottom: 4px;
+  display: block;
+}
+
+.editorial-gallery-title {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+
+.editorial-gallery-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: all 250ms ease;
+}
+
+.editorial-gallery-card:hover .editorial-gallery-action {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Featured Travel Story Block */
+.gallery-story-block {
+  background: linear-gradient(135deg, #F7FAFF 0%, #EBF2FF 100%);
+  border-radius: 28px;
+  border: 1px solid var(--color-border-subtle, #E2ECF8);
+  padding: clamp(32px, 4vw, 56px);
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 36px;
+  align-items: center;
+  margin: 48px 0;
+}
+
+/* --------------------------------------------------------------------------
+   5. TESTIMONIALS FEATURED STORY & EDITORIAL GRID
+   -------------------------------------------------------------------------- */
+.featured-testimonial-hero {
+  background: #FFFFFF;
+  border-radius: 32px;
+  border: 1px solid rgba(13, 37, 108, 0.12);
+  padding: clamp(32px, 4.5vw, 60px);
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 40px;
+  align-items: center;
+  margin-bottom: 48px;
+  box-shadow: 0 12px 36px rgba(13, 37, 108, 0.06);
+}
+
+.featured-quote-text {
+  font-family: var(--font-heading);
+  font-size: clamp(1.2rem, 1.8vw, 1.65rem);
+  font-weight: 700;
+  line-height: 1.5;
+  color: #0A1938;
+  margin-bottom: 24px;
+  font-style: italic;
+}
+
+.featured-quote-author {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.featured-author-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--color-primary, #0D256C);
+}
+
+.featured-author-meta {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted, #777777);
+}
+
+.editorial-testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  margin: 36px 0;
+}
+
+.testimonial-card-editorial {
+  background: #FFFFFF;
+  border-radius: 24px;
+  border: 1px solid rgba(13, 37, 108, 0.1);
+  padding: 28px;
+  box-shadow: 0 6px 20px rgba(13, 37, 108, 0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 250ms ease, border-color 250ms ease, box-shadow 250ms ease;
+}
+
+.testimonial-card-editorial:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-lavender, #FA4616);
+  box-shadow: 0 14px 32px rgba(13, 37, 108, 0.12);
+}
+
+.testimonial-card-editorial.span-2col {
+  grid-column: span 2;
+}
+
+/* Trust Pillar Strip */
+.testimonials-trust-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin: 48px 0 20px;
+}
+
+.trust-pillar-card {
+  background: #FFFFFF;
+  border-radius: 22px;
+  border: 1px solid var(--color-border-subtle, #E2ECF8);
+  padding: 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* --------------------------------------------------------------------------
+   6. CONTACT 40/60 INTERACTIVE LAYOUT & VALIDATION
+   -------------------------------------------------------------------------- */
+.contact-interactive-grid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.35fr;
+  gap: 40px;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.contact-info-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.contact-card-item {
+  background: #FFFFFF;
+  border-radius: 20px;
+  border: 1px solid rgba(13, 37, 108, 0.1);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 200ms ease;
+  text-decoration: none;
+  color: #0A1938;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.contact-card-item:hover {
+  border-color: var(--color-primary, #0D256C);
+  transform: translateX(4px);
+  box-shadow: 0 8px 24px rgba(13, 37, 108, 0.08);
+}
+
+.contact-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--color-pink-soft, #F7FAFF);
+  color: var(--color-primary, #0D256C);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.contact-card-text {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.contact-card-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted, #777777);
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.contact-card-value {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #0A1938;
+  line-height: 1.35;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.contact-card-split-val {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+}
+
+.contact-card-sep {
+  color: var(--color-text-muted, #94A3B8);
+  font-weight: 400;
+}
+
+.contact-form-panel {
+  background: #FFFFFF;
+  border-radius: 28px;
+  border: 1px solid rgba(13, 37, 108, 0.15);
+  padding: clamp(28px, 4vw, 44px);
+  box-shadow: 0 16px 40px rgba(13, 37, 108, 0.08);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.contact-quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 14px;
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-field-error {
+  font-size: 0.6875rem;
+  color: #DC2626;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   7. DEDICATED CTA BANNER
+   -------------------------------------------------------------------------- */
+.page-cta-banner {
+  background: linear-gradient(135deg, #1A0418 0%, #30062C 60%, #0D256C 100%);
+  border-radius: 28px;
+  padding: clamp(36px, 5vw, 60px);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  flex-wrap: wrap;
+  box-shadow: 0 16px 40px rgba(13, 37, 108, 0.2);
+  margin-top: 48px;
+}
+
+.page-cta-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.6rem, 2.5vw, 2.25rem);
+  font-weight: 800;
+  color: #FFFFFF;
+  margin-bottom: 6px;
+}
+
+.page-cta-desc {
+  font-size: 0.9375rem;
+  color: #EBF2FF;
+  margin: 0;
+  max-width: 620px;
+}
+
+.btn-page-cta-primary {
+  padding: 14px 32px;
+  font-size: 0.875rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: #FFFFFF;
+  color: var(--color-primary, #0D256C);
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  transition: all 200ms ease;
+}
+
+.btn-page-cta-primary:hover {
+  background: #F7FAFF;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE BREAKPOINTS
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .service-feature-block,
+  .service-feature-block.reversed,
+  .gallery-story-block,
+  .featured-testimonial-hero,
+  .contact-interactive-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .editorial-gallery-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .editorial-gallery-card.span-large,
+  .editorial-gallery-card.span-wide {
+    grid-column: span 6;
+  }
+
+  .editorial-gallery-card.span-tall,
+  .editorial-gallery-card.span-standard {
+    grid-column: span 3;
+  }
+
+  .editorial-testimonials-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .testimonial-card-editorial.span-2col {
+    grid-column: span 2;
+  }
+
+  .testimonials-trust-strip {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact-interactive-grid {
+    gap: 24px !important;
+  }
+
+  .contact-card-item {
+    padding: 16px 16px !important;
+    gap: 14px !important;
+  }
+
+  .contact-form-panel {
+    padding: 24px 18px !important;
+    border-radius: 22px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .page-hero {
+    padding: 105px 16px 36px !important;
+  }
+
+  .page-title {
+    font-size: 1.65rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .page-subtitle {
+    font-size: 0.875rem !important;
+    line-height: 1.55 !important;
+    margin-bottom: 18px !important;
+  }
+
+  .page-main-section {
+    padding: 20px 14px 44px !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  .page-max-width {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+    padding: 0 !important;
+  }
+
+  .contact-interactive-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .contact-info-panel {
+    gap: 12px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .contact-card-item {
+    padding: 12px 14px !important;
+    gap: 12px !important;
+    border-radius: 16px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .contact-card-icon {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 12px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .contact-card-icon svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .contact-card-label {
+    font-size: 0.65rem !important;
+  }
+
+  .contact-card-value {
+    font-size: 0.875rem !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .contact-card-split-val {
+    gap: 4px 6px !important;
+  }
+
+  .contact-form-panel {
+    padding: 18px 12px !important;
+    border-radius: 18px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .trip-types-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 0 0 10px !important;
+  }
+
+  .trip-types-pills {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    padding: 4px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .trip-type-pill {
+    min-width: 0 !important;
+    width: 100% !important;
+    padding: 8px 4px !important;
+    font-size: 0.75rem !important;
+    gap: 5px !important;
+    justify-content: center !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    box-sizing: border-box !important;
+    border-radius: 8px !important;
+  }
+
+  .trip-type-pill:last-child:nth-child(odd) {
+    grid-column: span 2 !important;
+  }
+
+  .direction-toggle-row {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+    padding: 4px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .btn-direction-toggle {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 10px 10px !important;
+    font-size: 0.8125rem !important;
+    text-align: center !important;
+    justify-content: center !important;
+    white-space: normal !important;
+    box-sizing: border-box !important;
+  }
+
+  .package-pills-row {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .package-pill-btn {
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    padding: 10px 12px !important;
+  }
+
+  .veh-form-row {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .veh-form-group {
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .veh-card-input,
+  .veh-card-select {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    font-size: 0.875rem !important;
+    padding: 10px 12px !important;
+  }
+
+  .tariff-info-callout {
+    grid-column: span 1 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 10px 12px !important;
+    font-size: 0.775rem !important;
+  }
+
+  .btn-veh-book {
+    padding: 12px 18px !important;
+    font-size: 0.8125rem !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .contact-quick-actions-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  .editorial-gallery-grid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: 220px;
+  }
+
+  .editorial-gallery-card.span-large,
+  .editorial-gallery-card.span-medium,
+  .editorial-gallery-card.span-tall,
+  .editorial-gallery-card.span-standard,
+  .editorial-gallery-card.span-wide {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
+
+  .editorial-testimonials-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .testimonial-card-editorial.span-2col {
+    grid-column: span 1;
+  }
+
+  .page-cta-banner {
+    flex-direction: column;
+    text-align: center;
+    padding: 30px 20px;
+  }
+}

@@ -1,0 +1,1286 @@
+{
+  "admin_users": [
+    {
+      "id": "master-admin",
+      "email": "admin@friendstours.in",
+      "password_hash": "$2a$10$bkid3zTUhPfK4l3PicrvEuuwUUQUbqDqtwKBF5d1fmKDuzLbh2Yky",
+      "name": "Admin",
+      "role": "superadmin",
+      "is_active": true,
+      "created_at": "2026-10-10T05:30:16.556Z",
+      "last_login": "2026-10-10T05:30:16.558Z",
+      "updated_at": "2026-10-10T05:36:31.887Z"
+    },
+    {
+      "created_at": "2026-10-10T05:30:22.726Z",
+      "updated_at": "2026-10-10T05:30:22.726Z",
+      "email": "admin@friendstours.in",
+      "password_hash": "$2a$12$CU9f8Q1fVFhvmkck1BGlouXx80RcNYAfKf9OTHavd7N5aytvvmxRC",
+      "id": "adm-1791610222727"
+    },
+    {
+      "created_at": "2026-10-10T05:30:22.730Z",
+      "updated_at": "2026-10-10T05:30:22.730Z",
+      "email": "admin@friendstours.com",
+      "password_hash": "$2a$12$CU9f8Q1fVFhvmkck1BGlouXx80RcNYAfKf9OTHavd7N5aytvvmxRC",
+      "id": "adm-1791610222730"
+    },
+    {
+      "created_at": "2026-10-10T05:30:22.733Z",
+      "updated_at": "2026-10-10T05:30:22.733Z",
+      "email": "admin",
+      "password_hash": "$2a$12$CU9f8Q1fVFhvmkck1BGlouXx80RcNYAfKf9OTHavd7N5aytvvmxRC",
+      "id": "adm-1791610222733"
+    }
+  ],
+  "site_settings": [
+    {
+      "key": "site_name",
+      "value": "Friends Tours & Travels",
+      "updated_at": "2026-10-10T05:30:22.744Z"
+    },
+    {
+      "key": "site_tagline",
+      "value": "Your Journey. Our Priority.",
+      "updated_at": "2026-10-10T05:30:22.746Z"
+    },
+    {
+      "key": "phone",
+      "value": "+91 82773 93089",
+      "updated_at": "2026-10-10T05:30:22.750Z"
+    },
+    {
+      "key": "whatsapp",
+      "value": "+918277393089",
+      "updated_at": "2026-10-10T05:30:22.751Z"
+    },
+    {
+      "key": "email",
+      "value": "friendstravelsone@gmail.com",
+      "updated_at": "2026-10-10T05:30:22.755Z"
+    },
+    {
+      "key": "address",
+      "value": "#18, 24TH Main 5th Phase, J.P. Nagar, Bangalore – 560078",
+      "updated_at": "2026-10-10T05:30:22.757Z"
+    },
+    {
+      "key": "google_maps_url",
+      "value": "https://maps.google.com",
+      "updated_at": "2026-10-10T05:30:22.758Z"
+    },
+    {
+      "key": "hero_headline",
+      "value": "Premium Chauffeur Cabs & Outstation Tours in Bangalore"
+    },
+    {
+      "key": "hero_eyebrow",
+      "value": "FRIENDS TOURS & TRAVELS • J.P. NAGAR, BANGALORE",
+      "updated_at": "2026-10-10T05:30:22.762Z"
+    },
+    {
+      "key": "hero_subtitle",
+      "value": "Bangalore's trusted partner for Employee Transportation, Airport Transport, Local & Outstation Rentals, and Shuttle Services.",
+      "updated_at": "2026-10-10T05:30:22.768Z"
+    },
+    {
+      "key": "instagram_url",
+      "value": "",
+      "updated_at": "2026-10-10T05:30:22.759Z"
+    },
+    {
+      "key": "facebook_url",
+      "value": "",
+      "updated_at": "2026-10-10T05:30:22.761Z"
+    },
+    {
+      "key": "hero_title",
+      "value": "YOUR JOURNEY. OUR PRIORITY.",
+      "updated_at": "2026-10-10T05:30:22.765Z"
+    },
+    {
+      "key": "about_title",
+      "value": "MORE THAN A RIDE. A PROMISE.",
+      "updated_at": "2026-10-10T05:30:22.770Z"
+    },
+    {
+      "key": "about_story",
+      "value": "Founded with the ambition to set the gold standard in Bangalore commercial passenger transport, Friends Tours & Travels has grown into a premier fleet operator trusted by tech executives, corporate HR desks, and holidaying families.",
+      "updated_at": "2026-10-10T05:30:22.772Z"
+    },
+    {
+      "key": "stat_years_exp",
+      "value": "15+",
+      "updated_at": "2026-10-10T05:30:22.773Z"
+    },
+    {
+      "key": "stat_trips_completed",
+      "value": "50,000+",
+      "updated_at": "2026-10-10T05:30:22.775Z"
+    },
+    {
+      "key": "stat_client_rating",
+      "value": "4.9 / 5",
+      "updated_at": "2026-10-10T05:30:22.776Z"
+    },
+    {
+      "key": "safety_gps",
+      "value": "100% GPS Fleet Tracking & Speed Governors",
+      "updated_at": "2026-10-10T05:30:22.779Z"
+    },
+    {
+      "key": "safety_police",
+      "value": "Police Verified & Background Checked Chauffeurs",
+      "updated_at": "2026-10-10T05:30:22.781Z"
+    },
+    {
+      "key": "safety_sanitized",
+      "value": "Deep Cleaned & Sanitized Cabins Before Every Trip",
+      "updated_at": "2026-10-10T05:30:22.782Z"
+    },
+    {
+      "key": "safety_billing",
+      "value": "Transparent Computerized / Printed Receipt Billing",
+      "updated_at": "2026-10-10T05:30:22.784Z"
+    }
+  ],
+  "vehicles": [
+    {
+      "id": "etios-dzire-logan",
+      "slug": "etios-swift-dzire-logan",
+      "name": "Etios / Swift Dzire / Logan",
+      "category": "Compact Sedan",
+      "type_category": "SEDAN",
+      "badge": "BEST VALUE",
+      "color": "White",
+      "passenger_capacity": "4 Passengers",
+      "passenger_count": 4,
+      "luggage_capacity": "2 Bags",
+      "air_conditioning": "AC",
+      "best_suited_for": "Airport Transfers / Local Sightseeing / Budget Outstation",
+      "image": "/fleet/dzire-white.jpg",
+      "gallery": [
+        "/fleet/dzire-white.jpg",
+        "/fleet/corolla-white.jpg",
+        "/fleet/innova-white.jpg",
+        "/fleet/innova-crysta-white.jpg"
+      ],
+      "description": "Fuel-efficient, smart, and dependable for Bangalore city sightseeing, airport transfers, and economical outstation trips across Karnataka.",
+      "features": [
+        "Clean, air-conditioned compact sedan with yellow board",
+        "4hr/40km package at ₹900 & 8hr/80km package at ₹1,700",
+        "Outstation tariff: ₹3,600/day (300 km min) + ₹12/km extra",
+        "Experienced polite local driver with route expertise",
+        "Dedicated luggage trunk space for 2 standard suitcases",
+        "24/7 round-the-clock booking availability"
+      ],
+      "rental_types": [
+        "Local Bangalore (4hr/8hr)",
+        "Airport Transfer",
+        "Outstation (Min 300km)",
+        "Employee Commute"
+      ],
+      "rental_durations": [
+        "Half Day (4hr/40km)",
+        "Full Day (8hr/80km)",
+        "Outstation Daily"
+      ],
+      "package_4hr_40km": 900,
+      "package_8hr_80km": 1700,
+      "extra_km": 12,
+      "extra_hour": 150,
+      "night_bata": 100,
+      "outstation_rate_per_km": 12,
+      "outstation_min_per_day": 3600,
+      "pricing_type": "Local & Outstation Packages",
+      "price_note": "Local 8hr/80km from ₹1,700 | Outstation from ₹3,600/day (300 km min)",
+      "featured": true,
+      "enabled": true,
+      "sort_order": 1,
+      "created_at": "2026-10-10T05:30:16.558Z",
+      "updated_at": "2026-10-10T05:32:07.676Z"
+    },
+    {
+      "id": "toyota-innova-ac",
+      "slug": "toyota-innova-ac",
+      "name": "Toyota Innova AC",
+      "category": "Comfort MPV",
+      "type_category": "MPV",
+      "badge": "FAMILY FAVORITE",
+      "color": "White",
+      "passenger_capacity": "6–7 Passengers",
+      "passenger_count": 7,
+      "luggage_capacity": "4 Bags",
+      "air_conditioning": "Dual AC",
+      "best_suited_for": "Family Vacations / Outstation / Airport Drops",
+      "image": "/fleet/innova-white.jpg",
+      "gallery": [
+        "/fleet/innova-white.jpg",
+        "/fleet/innova-crysta-white.jpg",
+        "/fleet/tempo-white.jpg",
+        "/fleet/dzire-white.jpg"
+      ],
+      "description": "Renowned for rugged reliability, expansive legroom, and passenger comfort on long distance road trips from Bangalore to Coorg, Mysore, Wayanad and beyond.",
+      "features": [
+        "Reliable 7-seater MPV with dual air conditioning",
+        "4hr/40km package at ₹1,300 & 8hr/80km package at ₹2,800",
+        "Outstation tariff: ₹5,100/day (300 km min) + ₹17/km extra",
+        "High ground clearance ideal for hill station terrain",
+        "Generous luggage storage with foldable rear seats",
+        "Verified commercial tourist yellow board permit"
+      ],
+      "rental_types": [
+        "Local Bangalore",
+        "Airport Transfer",
+        "Outstation (Min 300km)",
+        "Family Trips"
+      ],
+      "rental_durations": [
+        "Half Day (4hr/40km)",
+        "Full Day (8hr/80km)",
+        "Outstation Daily"
+      ],
+      "package_4hr_40km": 1300,
+      "package_8hr_80km": 2800,
+      "extra_km": 15,
+      "extra_hour": 200,
+      "night_bata": 200,
+      "outstation_rate_per_km": 17,
+      "outstation_min_per_day": 5100,
+      "pricing_type": "Local & Outstation Packages",
+      "price_note": "Local 8hr/80km from ₹2,800 | Outstation from ₹5,100/day (300 km min)",
+      "featured": true,
+      "enabled": true,
+      "sort_order": 2,
+      "created_at": "2026-10-10T05:30:16.558Z"
+    },
+    {
+      "id": "innova-crysta",
+      "slug": "toyota-innova-crysta",
+      "name": "Toyota Innova Crysta",
+      "category": "Premium MPV",
+      "type_category": "MPV",
+      "badge": "MOST POPULAR",
+      "color": "White",
+      "passenger_capacity": "6–7 Passengers",
+      "passenger_count": 7,
+      "luggage_capacity": "4 Bags",
+      "air_conditioning": "Dual AC Climate",
+      "best_suited_for": "Executive Travel / Family Tours / Mysore & Coorg",
+      "image": "/fleet/innova-crysta-white.jpg",
+      "gallery": [
+        "/fleet/innova-crysta-white.jpg",
+        "/fleet/innova-white.jpg",
+        "/fleet/corolla-white.jpg",
+        "/fleet/tempo-white.jpg"
+      ],
+      "description": "The definitive benchmark for highway comfort in India. Features plush captain seating, smooth suspension, dual climate control, and supreme quietness.",
+      "features": [
+        "Ergonomic captain seating with plush cushioning",
+        "Local 8hr/80km package at ₹3,200 (Extra Hr ₹250 | Extra Km ₹19)",
+        "Outstation tariff: ₹5,700/day (300 km min) + ₹19/km extra",
+        "Dual-zone climate control air conditioning for all rows",
+        "Spacious dedicated rear luggage compartment",
+        "Senior highway certified chauffeur"
+      ],
+      "rental_types": [
+        "Local Bangalore (8hr/80km)",
+        "Airport Transfer",
+        "Outstation (Min 300km)",
+        "Corporate Travel"
+      ],
+      "rental_durations": [
+        "Full Day (8hr/80km)",
+        "Outstation Multi-Day"
+      ],
+      "package_4hr_40km": null,
+      "package_8hr_80km": 3200,
+      "extra_km": 19,
+      "extra_hour": 250,
+      "night_bata": 200,
+      "outstation_rate_per_km": 19,
+      "outstation_min_per_day": 5700,
+      "pricing_type": "Local & Outstation Packages",
+      "price_note": "Local 8hr/80km at ₹3,200 | Outstation from ₹5,700/day (300 km min)",
+      "featured": true,
+      "enabled": true,
+      "sort_order": 3,
+      "created_at": "2026-10-10T05:30:16.558Z"
+    },
+    {
+      "id": "tempo-traveller-ac",
+      "slug": "tempo-traveller-ac",
+      "name": "Tempo Traveller AC",
+      "category": "12–17 Seater AC Van",
+      "type_category": "TEMPO TRAVELLER",
+      "badge": "GROUP FAVORITE",
+      "color": "White",
+      "passenger_capacity": "12–17 Passengers",
+      "passenger_count": 17,
+      "luggage_capacity": "8–10 Bags",
+      "air_conditioning": "Dual High AC",
+      "best_suited_for": "Group Outstation / Wedding Delegations / Corporate Outings",
+      "image": "/fleet/tempo-white.jpg",
+      "gallery": [
+        "/fleet/tempo-white.jpg",
+        "/fleet/innova-white.jpg"
+      ],
+      "description": "The premier choice for large families, wedding parties, and corporate groups travelling together with pushback reclining seats and individual AC vents.",
+      "features": [
+        "Pushback reclining individual seats with generous headspace",
+        "Local 8hr/80km package at ₹4,500 (Extra Hr ₹300 | Extra Km ₹23)",
+        "Outstation tariff: ₹6,000/day (300 km min) + ₹20/km extra",
+        "Dual high-capacity air conditioning across all rows",
+        "Large rear luggage compartment & entertainment system",
+        "Experienced commercial highway coach chauffeur"
+      ],
+      "rental_types": [
+        "Group Outstation",
+        "Family Weddings",
+        "Corporate Shuttles",
+        "Pilgrimage"
+      ],
+      "rental_durations": [
+        "Full Day (8hr/80km)",
+        "Outstation Multi-Day"
+      ],
+      "package_4hr_40km": null,
+      "package_8hr_80km": 4500,
+      "extra_km": 23,
+      "extra_hour": 300,
+      "night_bata": 300,
+      "outstation_rate_per_km": 20,
+      "outstation_min_per_day": 6000,
+      "pricing_type": "Group Packages",
+      "price_note": "Local 8hr/80km at ₹4,500 | Outstation from ₹6,000/day (300 km min)",
+      "featured": true,
+      "enabled": true,
+      "sort_order": 4,
+      "created_at": "2026-10-10T05:30:16.558Z"
+    },
+    {
+      "id": "toyota-corolla-ac",
+      "slug": "toyota-corolla-ac",
+      "name": "Toyota Corolla AC",
+      "category": "Executive Sedan",
+      "type_category": "SEDAN",
+      "badge": "EXECUTIVE CHOICE",
+      "color": "White",
+      "passenger_capacity": "4 Passengers",
+      "passenger_count": 4,
+      "luggage_capacity": "3 Bags",
+      "air_conditioning": "Climate Control",
+      "best_suited_for": "Corporate Meetings / Executive Highway Trips",
+      "image": "/fleet/corolla-white.jpg",
+      "gallery": [
+        "/fleet/corolla-white.jpg",
+        "/fleet/dzire-white.jpg",
+        "/fleet/bmw-7-white.jpg"
+      ],
+      "description": "Acoustic quietness and executive refinement for tech park delegates, visiting clients, and comfortable intercity business highway trips.",
+      "features": [
+        "Quiet executive cabin with plush rear seating",
+        "4hr/40km package at ₹1,600 & 8hr/80km package at ₹3,200",
+        "Outstation tariff: ₹6,000/day (300 km min) + ₹20/km extra",
+        "Automatic climate control air conditioning",
+        "Mobile charging ports & bottled water provided"
+      ],
+      "rental_types": [
+        "Airport Transfer",
+        "Corporate Mobility",
+        "Local 4hr/8hr",
+        "Outstation"
+      ],
+      "rental_durations": [
+        "Half Day (4hr/40km)",
+        "Full Day (8hr/80km)",
+        "Outstation Daily"
+      ],
+      "package_4hr_40km": 1600,
+      "package_8hr_80km": 3200,
+      "extra_km": 22,
+      "extra_hour": 275,
+      "night_bata": 250,
+      "outstation_rate_per_km": 20,
+      "outstation_min_per_day": 6000,
+      "pricing_type": "Local & Outstation Packages",
+      "price_note": "Local 8hr/80km at ₹3,200 | Outstation from ₹6,000/day (300 km min)",
+      "featured": false,
+      "enabled": true,
+      "sort_order": 5,
+      "created_at": "2026-10-10T05:30:16.558Z"
+    },
+    {
+      "id": "bmw-7-series",
+      "slug": "bmw-7-series",
+      "name": "BMW 7 Series",
+      "category": "Luxury Sedan",
+      "type_category": "LUXURY",
+      "badge": "GERMAN LUXURY",
+      "color": "White",
+      "passenger_capacity": "3–4 Passengers",
+      "passenger_count": 4,
+      "luggage_capacity": "2 Bags",
+      "air_conditioning": "Multi-Zone Climate",
+      "best_suited_for": "VIP Delegations / Celebrity Transit / Luxury Weddings",
+      "image": "/fleet/bmw-7-white.jpg",
+      "gallery": [
+        "/fleet/bmw-7-white.jpg",
+        "/fleet/mercedes-s-white.jpg",
+        "/fleet/mercedes-e-white.jpg"
+      ],
+      "description": "Flagship German engineering, whisper-quiet cabin, and rear executive lounge comfort for high-profile business leaders and luxury weddings.",
+      "features": [
+        "World-class acoustic insulation and rear lounge comfort",
+        "4hr/40km package at ₹3,000 & 8hr/80km package at ₹6,000",
+        "Extra hour ₹450 | Extra km ₹44 | Night Bata ₹500",
+        "Multi-zone automatic climate control",
+        "White-glove executive chauffeur service"
+      ],
+      "rental_types": [
+        "VIP Airport Transfer",
+        "Corporate VIP",
+        "Luxury Wedding"
+      ],
+      "rental_durations": [
+        "4hr / 8hr Retainer",
+        "Full Day Event"
+      ],
+      "package_4hr_40km": 3000,
+      "package_8hr_80km": 6000,
+      "extra_km": 44,
+      "extra_hour": 450,
+      "night_bata": 500,
+      "outstation_rate_per_km": null,
+      "outstation_min_per_day": null,
+      "pricing_type": "VIP Luxury Packages",
+      "price_note": "4hr/40km ₹3,000 | 8hr/80km ₹6,000 | Extra Hr ₹450",
+      "featured": false,
+      "enabled": true,
+      "sort_order": 6,
+      "created_at": "2026-10-10T05:30:16.558Z"
+    }
+  ],
+  "packages": [
+    {
+      "id": "pkg-nandi",
+      "slug": "nandi-hills-sunrise",
+      "name": "Nandi Hills Sunrise Tour",
+      "destination": "Nandi Hills",
+      "state": "Karnataka",
+      "country": "India",
+      "hero_image": "/destinations/nandi-hills-sunrise.jpg",
+      "gallery": [
+        "/destinations/nandi-hills-sunrise.jpg",
+        "/destinations/bangalore-city.jpg",
+        "/destinations/ramanagara-hills.jpg"
+      ],
+      "badge": "BEST SELLER",
+      "duration": "1 Day",
+      "nights": "Same Day Return",
+      "travel_type": "Sunrise & Scenic Hill Drive",
+      "vehicle_options": [
+        "Sedan",
+        "SUV",
+        "Innova Crysta",
+        "Tempo Traveller"
+      ],
+      "group_size": "1–6 Persons",
+      "best_for": "Couples, Friends & Early Morning Explorers",
+      "short_description": "Catch the famous cloud-bed sunrise at Nandi Hills with an early morning private chauffeur pickup from Bangalore.",
+      "overview": "Experience the magic of twilight transforming into a sea of clouds above the Deccan plains.",
+      "highlights": [
+        "Early morning 4:30 AM doorstep pickup across Bangalore",
+        "Spectacular view of sunrise above the mist and clouds at Nandi Peak",
+        "Visit to historic Bhoga Nandeeshwara Temple"
+      ],
+      "itinerary": [
+        {
+          "day": "4:30 AM",
+          "title": "Doorstep Pickup & Highway Drive",
+          "description": "Chauffeur arrives at your location in Bangalore."
+        },
+        {
+          "day": "6:00 AM",
+          "title": "Nandi Hills Sunrise & Viewpoint",
+          "description": "Arrive at the hilltop before dawn."
+        }
+      ],
+      "inclusions": [
+        "Private air-conditioned vehicle for the entire round trip",
+        "Dedicated professional driver",
+        "All toll charges and fuel"
+      ],
+      "exclusions": [
+        "Food, beverages, and restaurant bills",
+        "Hilltop entry ticket fees"
+      ],
+      "price_starting": 1999,
+      "featured": true,
+      "enabled": true,
+      "sort_order": 1,
+      "created_at": "2026-10-10T05:30:16.558Z"
+    },
+    {
+      "id": "pkg-mysore",
+      "slug": "mysore-heritage-escape",
+      "name": "Mysore Heritage Escape",
+      "destination": "Mysore",
+      "state": "Karnataka",
+      "country": "India",
+      "hero_image": "/destinations/mysore-palace.jpg",
+      "gallery": [
+        "/destinations/mysore-palace.jpg",
+        "/destinations/bangalore-city.jpg"
+      ],
+      "badge": "POPULAR",
+      "duration": "1 Day",
+      "nights": "Same Day or Optional 1 Night",
+      "travel_type": "Royal Heritage & Culture",
+      "vehicle_options": [
+        "Sedan",
+        "SUV",
+        "Innova Crysta",
+        "Tempo Traveller"
+      ],
+      "group_size": "1–7 Persons",
+      "best_for": "Families, Heritage Lovers & Day Getaways",
+      "short_description": "Explore the grandeur of the illuminated Mysore Palace, Chamundi Hills, and Srirangapatna.",
+      "overview": "Travel comfortably along the modern Bangalore-Mysore Expressway in a private chauffeur cab.",
+      "highlights": [
+        "Fast travel via the 10-lane Bangalore-Mysore Expressway",
+        "Grand Mysore Palace tour",
+        "Scenic climb to Chamundi Hill temple"
+      ],
+      "itinerary": [
+        {
+          "day": "7:00 AM",
+          "title": "Bangalore Departure via Expressway",
+          "description": "Doorstep pickup in Bangalore."
+        },
+        {
+          "day": "1:30 PM",
+          "title": "Mysore Palace & Royal Art Gallery",
+          "description": "Marvel at the architecture of the Mysore Maharaja Palace."
+        }
+      ],
+      "inclusions": [
+        "Private luxury vehicle for full-day round trip",
+        "Expressway toll charges",
+        "Experienced chauffeur"
+      ],
+      "exclusions": [
+        "Palace and garden entrance tickets",
+        "Lunch, dinner, and personal shopping"
+      ],
+      "price_starting": 3499,
+      "featured": true,
+      "enabled": true,
+      "sort_order": 2,
+      "created_at": "2026-10-10T05:30:16.558Z"
+    },
+    {
+      "id": "pkg-coorg",
+      "slug": "coorg-nature-retreat",
+      "name": "Coorg Nature Retreat",
+      "destination": "Coorg (Madikeri)",
+      "state": "Karnataka",
+      "country": "India",
+      "hero_image": "/destinations/coorg-abbey-falls.jpg",
+      "gallery": [
+        "/destinations/coorg-abbey-falls.jpg",
+        "/destinations/chikmagalur-mullayanagiri.jpg"
+      ],
+      "badge": "WEEKEND DEAL",
+      "duration": "2 Days / 1 Night",
+      "nights": "1 Night Stay",
+      "travel_type": "Coffee Estates & Hill Retreat",
+      "vehicle_options": [
+        "SUV",
+        "Innova Crysta",
+        "Tempo Traveller"
+      ],
+      "group_size": "2–12 Persons",
+      "best_for": "Couples, Families & Nature Enthusiasts",
+      "short_description": "Escape to the Scotland of India with lush coffee plantations, cascading Abbey Falls, and Tibetan monastery peace.",
+      "overview": "Rejuvenate amidst the misty hills and aromatic spice plantations of Coorg.",
+      "highlights": [
+        "Doorstep pickup from Bangalore in comfortable Innova Crysta / SUV",
+        "Visit Golden Temple Tibetan Monastery at Bylakuppe",
+        "Abbey Falls waterfall visit & scenic Raja's Seat sunset"
+      ],
+      "itinerary": [
+        {
+          "day": "DAY 01",
+          "title": "Bangalore to Coorg via Bylakuppe",
+          "description": "Early morning 6:00 AM pickup. Drive via Mysore Expressway."
+        }
+      ],
+      "inclusions": [
+        "Private AC vehicle for full 2-day itinerary",
+        "Experienced hill-route driver",
+        "All toll charges and parking fees"
+      ],
+      "exclusions": [
+        "Resort / homestay accommodation",
+        "Entry tickets",
+        "Meals"
+      ],
+      "price_starting": 6499,
+      "featured": true,
+      "enabled": true,
+      "sort_order": 3,
+      "created_at": "2026-10-10T05:30:16.558Z"
+    },
+    {
+      "id": "pkg-chikmagalur",
+      "slug": "chikkamagaluru-escape",
+      "name": "Chikkamagaluru Coffee Escape",
+      "destination": "Chikkamagaluru",
+      "state": "Karnataka",
+      "country": "India",
+      "hero_image": "/destinations/chikmagalur-mullayanagiri.jpg",
+      "gallery": [
+        "/destinations/chikmagalur-mullayanagiri.jpg"
+      ],
+      "badge": "SPECIAL",
+      "duration": "2 Days / 1 Night",
+      "nights": "1 Night Stay",
+      "travel_type": "Mountain Trails & Coffee Estates",
+      "vehicle_options": [
+        "SUV",
+        "Innova Crysta",
+        "Tempo Traveller"
+      ],
+      "group_size": "2–12 Persons",
+      "best_for": "Couples, Trekking Enthusiasts & Coffee Lovers",
+      "short_description": "Trek to Karnataka's highest peak Mullayanagiri, explore Hebbe Falls, and stay in verdant coffee estates.",
+      "overview": "Known as the coffee cradle of India, Chikkamagaluru offers rugged mountain passes, serene tea and coffee valleys.",
+      "highlights": [
+        "Drive to Mullayanagiri Peak — highest point in Karnataka",
+        "Guided walkthrough of private coffee plantations",
+        "Visit Belur and Halebidu UNESCO Hoysala temples"
+      ],
+      "itinerary": [
+        {
+          "day": "DAY 01",
+          "title": "Bangalore to Chikkamagaluru via Belur",
+          "description": "Morning 6:30 AM pickup from Bangalore."
+        }
+      ],
+      "inclusions": [
+        "Private SUV or Innova Crysta for full 2-day tour",
+        "Hill-certified highway chauffeur with driver allowance"
+      ],
+      "exclusions": [
+        "Off-road Jeep charges for remote peak areas",
+        "Resort stay and meals"
+      ],
+      "price_starting": 5999,
+      "featured": true,
+      "enabled": true,
+      "sort_order": 4,
+      "created_at": "2026-10-10T05:30:16.558Z"
+    }
+  ],
+  "services": [
+    {
+      "id": "srv-employee",
+      "slug": "employee-transportation",
+      "title": "EMPLOYEE TRANSPORTATION",
+      "badge": "SERVICE 01 • CORPORATE MOBILITY",
+      "category": "Corporate Mobility",
+      "short_desc": "Dedicated daily employee pickup and drop services for Bangalore tech parks, IT/BPO companies, and corporate offices.",
+      "full_desc": "Dedicated daily employee pickup and drop services for Bangalore tech parks (Whitefield, Electronic City, Manyata, ORR), IT/BPO companies, and corporate offices. Includes centralized monthly GST billing, automated MIS logs, and vetted chauffeurs.",
+      "features": [
+        "Scheduled Shift Pickups",
+        "Tech Park Transit",
+        "Monthly GST Invoicing",
+        "Vetted & Uniformed Drivers",
+        "24/7 Dispatch Desk"
+      ],
+      "image": "/services/employee-transport.jpg",
+      "target_route": "/services/corporate-travel",
+      "sort_order": 1,
+      "enabled": true,
+      "created_at": "2026-10-10T05:30:16.558Z"
+    },
+    {
+      "id": "srv-airport",
+      "slug": "airport-transport",
+      "title": "AIRPORT TRANSPORT",
+      "badge": "SERVICE 02 • 24/7 AIRPORT SERVICE",
+      "category": "Airport Transfers",
+      "short_desc": "Reliable airport pickup and drop services connecting Kempegowda International Airport (BLR) with all Bangalore areas.",
+      "full_desc": "Reliable airport pickup and drop services connecting Kempegowda International Airport (BLR) with all Bangalore areas. Real-time flight tracking ensures chauffeurs adjust automatically for flight delays with zero waiting surcharges.",
+      "features": [
+        "Kempegowda Airport Drops",
+        "Terminal 1 & 2 Pickups",
+        "Live Flight Delay Tracking",
+        "Expressway Toll Management",
+        "Luggage Handling Assistance"
+      ],
+      "image": "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1200&q=80",
+      "target_route": "/services/airport-transfer",
+      "sort_order": 2,
+      "enabled": true,
+      "created_at": "2026-10-10T05:30:16.558Z"
+    },
+    {
+      "id": "srv-local-outstation",
+      "slug": "local-and-outstation-rentals",
+      "title": "LOCAL AND OUTSTATION RENTALS",
+      "badge": "SERVICE 03 • HOURLY & HIGHWAY",
+      "category": "Car Rentals",
+      "short_desc": "Flexible hourly rentals (4hr/40km & 8hr/80km) for Bangalore city transit, plus outstation highway rentals (min 300 km/day).",
+      "full_desc": "Flexible hourly rentals (4hr/40km & 8hr/80km) for Bangalore city transit, business errands, and shopping, plus outstation highway rentals (min 300 km/day) to Mysore, Coorg, Ooty, Chikmagalur, Hampi, and South India.",
+      "features": [
+        "4hr/40km Half Day",
+        "8hr/80km Full Day",
+        "Outstation Min 300km/Day",
+        "Transparent Per-Km Rates",
+        "Highway Verified Drivers"
+      ],
+      "image": "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80",
+      "target_route": "/local-packages",
+      "sort_order": 3,
+      "enabled": true,
+      "created_at": "2026-10-10T05:30:16.559Z"
+    },
+    {
+      "id": "srv-shuttle",
+      "slug": "shuttle-and-coach-services",
+      "title": "SHUTTLE AND COACH SERVICES",
+      "badge": "SERVICE 04 • GROUP LOGISTICS",
+      "category": "Group Travel",
+      "short_desc": "Large capacity 12 to 50-seater coaches and Tempo Travellers for corporate events, team offsites, and weddings.",
+      "full_desc": "Large capacity 12 to 50-seater coaches and Tempo Travellers for corporate events, tech conferences, team offsites, wedding delegations, and educational excursions across Karnataka.",
+      "features": [
+        "12-17 Seater Tempo Travellers",
+        "21-32 Seater Mini Buses",
+        "40-50 Seater Luxury Air Suspension Coaches",
+        "Airport Bulk Movements",
+        "Event Transportation Support"
+      ],
+      "image": "https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=crop&w=1200&q=80",
+      "target_route": "/rental-cars",
+      "sort_order": 4,
+      "enabled": true,
+      "created_at": "2026-10-10T05:30:16.559Z"
+    }
+  ],
+  "tariff_local": [
+    {
+      "id": "1",
+      "vehicle_name": "Etios / Swift Dzire / Logan",
+      "category": "Compact Sedan",
+      "package_4hr_40km": 900,
+      "package_8hr_80km": 1700,
+      "extra_hour": 150,
+      "extra_km": 12,
+      "night_bata": 100,
+      "sort_order": 1,
+      "enabled": true
+    },
+    {
+      "id": "2",
+      "vehicle_name": "Toyota Innova AC",
+      "category": "Comfort MPV",
+      "package_4hr_40km": 1300,
+      "package_8hr_80km": 2800,
+      "extra_hour": 200,
+      "extra_km": 15,
+      "night_bata": 200,
+      "sort_order": 2,
+      "enabled": true
+    },
+    {
+      "id": "3",
+      "vehicle_name": "Toyota Innova Crysta",
+      "category": "Premium MPV",
+      "package_4hr_40km": null,
+      "package_8hr_80km": 3200,
+      "extra_hour": 250,
+      "extra_km": 19,
+      "night_bata": 200,
+      "sort_order": 3,
+      "enabled": true
+    },
+    {
+      "id": "4",
+      "vehicle_name": "Toyota Corolla",
+      "category": "Executive Sedan",
+      "package_4hr_40km": 1600,
+      "package_8hr_80km": 3200,
+      "extra_hour": 275,
+      "extra_km": 22,
+      "night_bata": 250,
+      "sort_order": 4,
+      "enabled": true
+    },
+    {
+      "id": "5",
+      "vehicle_name": "Tempo Traveller AC (12-17 Seater)",
+      "category": "Group Van",
+      "package_4hr_40km": null,
+      "package_8hr_80km": 4500,
+      "extra_hour": 300,
+      "extra_km": 23,
+      "night_bata": 300,
+      "sort_order": 5,
+      "enabled": true
+    },
+    {
+      "id": "6",
+      "vehicle_name": "BMW 7 Series",
+      "category": "Luxury Sedan",
+      "package_4hr_40km": 3000,
+      "package_8hr_80km": 6000,
+      "extra_hour": 450,
+      "extra_km": 44,
+      "night_bata": 500,
+      "sort_order": 6,
+      "enabled": true
+    },
+    {
+      "id": "7",
+      "vehicle_name": "M.Benz-E Class E-350",
+      "category": "Executive Luxury",
+      "package_4hr_40km": 3250,
+      "package_8hr_80km": 6500,
+      "extra_hour": 450,
+      "extra_km": 48,
+      "night_bata": 500,
+      "sort_order": 7,
+      "enabled": true
+    },
+    {
+      "id": "8",
+      "vehicle_name": "M.Benz-S Class S-350",
+      "category": "Ultra Luxury",
+      "package_4hr_40km": null,
+      "package_8hr_80km": 11000,
+      "extra_hour": 1100,
+      "extra_km": 110,
+      "night_bata": 750,
+      "sort_order": 8,
+      "enabled": true
+    },
+    {
+      "id": "9",
+      "vehicle_name": "Audi A-6",
+      "category": "Premium Luxury",
+      "package_4hr_40km": null,
+      "package_8hr_80km": 5250,
+      "extra_hour": 500,
+      "extra_km": 50,
+      "night_bata": 250,
+      "sort_order": 9,
+      "enabled": true
+    }
+  ],
+  "tariff_outstation": [
+    {
+      "id": "1",
+      "vehicle_name": "Etios / Swift Dzire",
+      "category": "Compact Sedan",
+      "min_amount_per_day": 3600,
+      "extra_per_km": 12,
+      "driver_bata_day": 300,
+      "night_bata_extra": 300,
+      "sort_order": 1,
+      "enabled": true
+    },
+    {
+      "id": "2",
+      "vehicle_name": "Toyota Innova AC",
+      "category": "Comfort MPV",
+      "min_amount_per_day": 5100,
+      "extra_per_km": 17,
+      "driver_bata_day": 300,
+      "night_bata_extra": 350,
+      "sort_order": 2,
+      "enabled": true
+    },
+    {
+      "id": "3",
+      "vehicle_name": "Toyota Innova Crysta",
+      "category": "Premium MPV",
+      "min_amount_per_day": 5700,
+      "extra_per_km": 19,
+      "driver_bata_day": 350,
+      "night_bata_extra": 400,
+      "sort_order": 3,
+      "enabled": true
+    },
+    {
+      "id": "4",
+      "vehicle_name": "Toyota Innova Hycross",
+      "category": "Hybrid Luxury MPV",
+      "min_amount_per_day": 5700,
+      "extra_per_km": 19,
+      "driver_bata_day": 400,
+      "night_bata_extra": 400,
+      "sort_order": 4,
+      "enabled": true
+    },
+    {
+      "id": "5",
+      "vehicle_name": "Tempo Traveller AC (12-17 Seater)",
+      "category": "Group Van",
+      "min_amount_per_day": 6000,
+      "extra_per_km": 20,
+      "driver_bata_day": 400,
+      "night_bata_extra": 500,
+      "sort_order": 5,
+      "enabled": true
+    }
+  ],
+  "airport_areas": [
+    {
+      "id": "yelahanka",
+      "name": "Yelahanka",
+      "distance_km": 18,
+      "est_time": "25-35 mins",
+      "city_to_airport_fare": 700,
+      "airport_to_city_fare": 700,
+      "active": true,
+      "sort_order": 1
+    },
+    {
+      "id": "hebbal",
+      "name": "Hebbal / Manyata Tech Park",
+      "distance_km": 28,
+      "est_time": "35-45 mins",
+      "city_to_airport_fare": 850,
+      "airport_to_city_fare": 850,
+      "active": true,
+      "sort_order": 2
+    },
+    {
+      "id": "mg-road",
+      "name": "MG Road / Brigade / CBD",
+      "distance_km": 35,
+      "est_time": "50-65 mins",
+      "city_to_airport_fare": 950,
+      "airport_to_city_fare": 950,
+      "active": true,
+      "sort_order": 3
+    },
+    {
+      "id": "indiranagar",
+      "name": "Indiranagar",
+      "distance_km": 38,
+      "est_time": "55-70 mins",
+      "city_to_airport_fare": 1000,
+      "airport_to_city_fare": 1000,
+      "active": true,
+      "sort_order": 4
+    },
+    {
+      "id": "koramangala",
+      "name": "Koramangala",
+      "distance_km": 41,
+      "est_time": "65-80 mins",
+      "city_to_airport_fare": 1050,
+      "airport_to_city_fare": 1050,
+      "active": true,
+      "sort_order": 5
+    },
+    {
+      "id": "hsr-layout",
+      "name": "HSR Layout",
+      "distance_km": 44,
+      "est_time": "70-85 mins",
+      "city_to_airport_fare": 1100,
+      "airport_to_city_fare": 1100,
+      "active": true,
+      "sort_order": 6
+    },
+    {
+      "id": "jp-nagar",
+      "name": "J.P. Nagar / Jayanagar",
+      "distance_km": 43,
+      "est_time": "70-90 mins",
+      "city_to_airport_fare": 1100,
+      "airport_to_city_fare": 1100,
+      "active": true,
+      "sort_order": 7
+    },
+    {
+      "id": "whitefield",
+      "name": "Whitefield / ITPL / Kadugodi",
+      "distance_km": 42,
+      "est_time": "60-80 mins",
+      "city_to_airport_fare": 1150,
+      "airport_to_city_fare": 1150,
+      "active": true,
+      "sort_order": 8
+    },
+    {
+      "id": "electronic-city",
+      "name": "Electronic City (Phase 1 & 2)",
+      "distance_km": 55,
+      "est_time": "80-100 mins",
+      "city_to_airport_fare": 1350,
+      "airport_to_city_fare": 1350,
+      "active": true,
+      "sort_order": 9
+    },
+    {
+      "id": "bellandur-orr",
+      "name": "Bellandur / Outer Ring Road",
+      "distance_km": 45,
+      "est_time": "70-90 mins",
+      "city_to_airport_fare": 1150,
+      "airport_to_city_fare": 1150,
+      "active": true,
+      "sort_order": 10
+    }
+  ],
+  "outstation_destinations": [
+    {
+      "id": "nandi-hills",
+      "name": "Nandi Hills",
+      "state": "Karnataka",
+      "distance_km": 60,
+      "est_drive_time": "1.5 Hours",
+      "starting_price": 1999,
+      "tag": "SUNRISE DRIVE",
+      "image": "/destinations/nandi-hills-sunrise.jpg",
+      "active": true,
+      "sort_order": 1
+    },
+    {
+      "id": "mysore",
+      "name": "Mysore",
+      "state": "Karnataka",
+      "distance_km": 145,
+      "est_drive_time": "2.5 Hours (Expressway)",
+      "starting_price": 3499,
+      "tag": "ROYAL HERITAGE",
+      "image": "/destinations/mysore-palace.jpg",
+      "active": true,
+      "sort_order": 2
+    },
+    {
+      "id": "coorg",
+      "name": "Coorg (Madikeri)",
+      "state": "Karnataka",
+      "distance_km": 260,
+      "est_drive_time": "5.5 Hours",
+      "starting_price": 6499,
+      "tag": "COFFEE ESTATES",
+      "image": "/destinations/coorg-abbey-falls.jpg",
+      "active": true,
+      "sort_order": 3
+    },
+    {
+      "id": "chikmagalur",
+      "name": "Chikkamagaluru",
+      "state": "Karnataka",
+      "distance_km": 245,
+      "est_drive_time": "4.5 Hours",
+      "starting_price": 5999,
+      "tag": "PEAK TRAILS",
+      "image": "/destinations/chikmagalur-mullayanagiri.jpg",
+      "active": true,
+      "sort_order": 4
+    },
+    {
+      "id": "ooty",
+      "name": "Ooty (Nilgiris)",
+      "state": "Tamil Nadu",
+      "distance_km": 275,
+      "est_drive_time": "6.0 Hours",
+      "starting_price": 7499,
+      "tag": "QUEEN OF HILLS",
+      "image": "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80",
+      "active": true,
+      "sort_order": 5
+    },
+    {
+      "id": "wayanad",
+      "name": "Wayanad",
+      "state": "Kerala",
+      "distance_km": 280,
+      "est_drive_time": "6.5 Hours",
+      "starting_price": 7299,
+      "tag": "MISTY FORESTS",
+      "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+      "active": true,
+      "sort_order": 6
+    },
+    {
+      "id": "hampi",
+      "name": "Hampi Heritage",
+      "state": "Karnataka",
+      "distance_km": 345,
+      "est_drive_time": "6.5 Hours",
+      "starting_price": 8999,
+      "tag": "UNESCO RUINS",
+      "image": "https://images.unsplash.com/photo-1599827552599-ea260f85cb68?auto=format&fit=crop&w=800&q=80",
+      "active": true,
+      "sort_order": 7
+    },
+    {
+      "id": "pondicherry",
+      "name": "Pondicherry",
+      "state": "Tamil Nadu",
+      "distance_km": 310,
+      "est_drive_time": "6.5 Hours",
+      "starting_price": 7999,
+      "tag": "FRENCH COLONIAL",
+      "image": "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=800&q=80",
+      "active": true,
+      "sort_order": 8
+    }
+  ],
+  "testimonials": [
+    {
+      "id": "1",
+      "customer_name": "Rajesh Kumar",
+      "designation": "Software Engineer",
+      "location": "Koramangala, Bangalore",
+      "rating": 5,
+      "review": "Excellent service! The driver was punctual and the car was very clean. Booked an Innova Crysta for Coorg trip and it was absolutely comfortable. Will definitely book again.",
+      "trip_type": "Outstation",
+      "vehicle_used": "Innova Crysta",
+      "travel_date": "Jan 2026",
+      "is_featured": true,
+      "is_approved": true,
+      "sort_order": 1,
+      "created_at": "2026-10-10T05:30:16.559Z"
+    },
+    {
+      "id": "2",
+      "customer_name": "Priya Sharma",
+      "designation": "HR Manager",
+      "location": "Whitefield, Bangalore",
+      "rating": 5,
+      "review": "Used Friends Tours for our company employee shuttle. Very reliable and professional. The drivers are polite and always on time.",
+      "trip_type": "Employee Transport",
+      "vehicle_used": "Tempo Traveller",
+      "travel_date": "Dec 2025",
+      "is_featured": true,
+      "is_approved": true,
+      "sort_order": 2,
+      "created_at": "2026-10-10T05:30:16.559Z"
+    },
+    {
+      "id": "3",
+      "customer_name": "Mohammed Irfan",
+      "designation": "Business Owner",
+      "location": "Shivajinagar, Bangalore",
+      "rating": 5,
+      "review": "Booked for my family trip to Mysore. Excellent driver, clean vehicle, and very affordable rates. The best cab service I have used in Bangalore.",
+      "trip_type": "Outstation",
+      "vehicle_used": "Toyota Innova",
+      "travel_date": "Feb 2026",
+      "is_featured": true,
+      "is_approved": true,
+      "sort_order": 3,
+      "created_at": "2026-10-10T05:30:16.559Z"
+    },
+    {
+      "id": "4",
+      "customer_name": "Ananya Reddy",
+      "designation": "Doctor",
+      "location": "JP Nagar, Bangalore",
+      "rating": 5,
+      "review": "Perfect airport transfer service. Driver was waiting at the terminal with a name board. Very professional and comfortable ride to my hotel.",
+      "trip_type": "Airport Transfer",
+      "vehicle_used": "Swift Dzire",
+      "travel_date": "Mar 2026",
+      "is_featured": true,
+      "is_approved": true,
+      "sort_order": 4,
+      "created_at": "2026-10-10T05:30:16.559Z"
+    }
+  ],
+  "gallery": [
+    {
+      "id": "1",
+      "title": "Toyota Innova Crysta Fleet",
+      "caption": "Premium tourist cabs ready for departure",
+      "image_url": "/fleet/innova-crysta-white.jpg",
+      "category": "fleet",
+      "tags": [
+        "innova",
+        "fleet",
+        "premium"
+      ],
+      "sort_order": 1,
+      "created_at": "2026-10-10T05:30:16.559Z"
+    },
+    {
+      "id": "2",
+      "title": "Mysore Palace Express Route",
+      "caption": "Expressway direct tours from Bangalore",
+      "image_url": "/destinations/mysore-palace.jpg",
+      "category": "tours",
+      "tags": [
+        "mysore",
+        "palace"
+      ],
+      "sort_order": 2,
+      "created_at": "2026-10-10T05:30:16.559Z"
+    },
+    {
+      "id": "3",
+      "title": "Nandi Hills Cloud Bed View",
+      "caption": "Sunrise chauffeur tours",
+      "image_url": "/destinations/nandi-hills-sunrise.jpg",
+      "category": "tours",
+      "tags": [
+        "nandi",
+        "sunrise"
+      ],
+      "sort_order": 3,
+      "created_at": "2026-10-10T05:30:16.559Z"
+    }
+  ],
+  "enquiries": [
+    {
+      "id": "enq-sample-1",
+      "booking_ref": "FT89421A",
+      "name": "Suresh Varma",
+      "email": "suresh.varma@example.com",
+      "phone": "+91 98450 12345",
+      "trip_type": "Outstation Travel",
+      "pickup_location": "Koramangala 4th Block, Bangalore",
+      "drop_location": "Coorg (Madikeri)",
+      "travel_date": "2026-10-15",
+      "return_date": "2026-10-18",
+      "passengers": 5,
+      "vehicle_preference": "Toyota Innova Crysta",
+      "package_name": "Coorg Nature Retreat",
+      "special_requests": "Require baby seat and highway experienced driver.",
+      "status": "confirmed",
+      "quoted_amount": 14500,
+      "admin_notes": "Advance received ₹2,000. Crysta assigned.",
+      "is_read": true,
+      "created_at": "2026-10-10T05:30:16.559Z"
+    },
+    {
+      "id": "enq-sample-2",
+      "booking_ref": "FT91048B",
+      "name": "Kavitha Nair",
+      "email": "kavitha.n@techcorp.in",
+      "phone": "+91 99002 67890",
+      "trip_type": "Airport Transfer",
+      "pickup_location": "Indiranagar 100ft Road",
+      "drop_location": "KIA Airport Terminal 2",
+      "travel_date": "2026-10-12",
+      "passengers": 2,
+      "vehicle_preference": "Etios / Swift Dzire",
+      "special_requests": "Early morning flight at 6:00 AM. Need pickup at 3:30 AM.",
+      "status": "new",
+      "quoted_amount": 1000,
+      "admin_notes": "New web lead. Call customer to confirm 3:30 AM timing.",
+      "is_read": false,
+      "created_at": "2026-10-10T05:30:16.559Z"
+    }
+  ],
+  "contact_messages": []
+}

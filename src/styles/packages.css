@@ -1,0 +1,456 @@
+/* ==========================================================================
+   POPULAR LOCAL PACKAGES SECTION STYLING
+   Editorial tour discovery, interactive filter pills, asymmetric card grid
+   ========================================================================== */
+
+.packages-section {
+  width: 100%;
+  min-width: 100%;
+  padding-top: clamp(60px, 8vw, 100px);
+  padding-bottom: clamp(60px, 8vw, 100px);
+  background: linear-gradient(180deg, #FFFFFF 0%, #F7FAFF 60%, #FFFFFF 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.packages-container {
+  width: 100%;
+  max-width: var(--container-max, 1720px);
+  margin: 0 auto;
+  padding: 0 clamp(18px, 3.5vw, 48px);
+}
+
+/* --------------------------------------------------------------------------
+   SECTION HEADER
+   -------------------------------------------------------------------------- */
+.packages-header {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto clamp(24px, 3.5vw, 36px);
+}
+
+.packages-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  background: var(--color-primary, #0D256C);
+  padding: 5px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(13, 37, 108, 0.3);
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(13, 37, 108, 0.25);
+}
+
+.packages-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 3.8vw, 2.75rem);
+  font-weight: 800;
+  color: var(--color-primary, #0D256C);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+
+.packages-subtitle {
+  font-family: var(--font-body);
+  font-size: clamp(0.9375rem, 1.15vw, 1.0625rem);
+  color: var(--color-text-muted, #777777);
+  line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+   FILTER PILLS ROW
+   -------------------------------------------------------------------------- */
+.packages-filter-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: clamp(32px, 4vw, 48px);
+  overflow-x: auto;
+  padding: 4px 4px 10px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.packages-filter-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.packages-filter-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #FFFFFF;
+  padding: 6px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-subtle, #E2ECF8);
+  box-shadow: 0 4px 14px rgba(13, 37, 108, 0.05);
+}
+
+.packages-filter-pill {
+  padding: 8px 18px;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #666666;
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 250ms ease;
+  white-space: nowrap;
+}
+
+.packages-filter-pill:hover {
+  color: var(--color-primary, #0D256C);
+  background: var(--color-pink-soft, #EBF2FF);
+}
+
+.packages-filter-pill.active {
+  background: var(--color-primary, #0D256C);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(13, 37, 108, 0.25);
+}
+
+/* --------------------------------------------------------------------------
+   ASYMMETRIC PACKAGE GRID (Featured + Supporting)
+   -------------------------------------------------------------------------- */
+.packages-editorial-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+/* Top Row: 1 Large Featured (60%) + 2 Stacked Supporting (40%) */
+.packages-top-tier {
+  display: grid;
+  grid-template-columns: 1.35fr 0.9fr;
+  gap: 24px;
+  width: 100%;
+}
+
+.packages-stacked-col {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  height: 100%;
+}
+
+/* Bottom Row: 3 Equal Supporting Cards */
+.packages-bottom-tier {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  width: 100%;
+}
+
+/* Base Package Card */
+.pkg-card {
+  position: relative;
+  border-radius: 26px;
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(13, 37, 108, 0.1);
+  border: 1px solid rgba(233, 215, 232, 0.7);
+  background-color: #1a0415;
+  transition: transform 350ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 350ms ease, border-color 300ms ease;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.pkg-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 22px 46px rgba(13, 37, 108, 0.22);
+  border-color: rgba(213, 107, 183, 0.9);
+}
+
+/* Card Heights */
+.pkg-card-featured {
+  height: 600px;
+  border: 1.5px solid rgba(213, 107, 183, 0.7);
+  box-shadow: 0 16px 40px rgba(13, 37, 108, 0.18);
+}
+
+.pkg-card-supporting {
+  height: 288px; /* Two stacked = 600px total matching featured height (with gap) */
+}
+
+.pkg-card-row {
+  height: 380px;
+}
+
+/* Card Background Media */
+.pkg-card-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pkg-card:hover .pkg-card-media {
+  transform: scale(1.05);
+}
+
+/* Scrim Gradient */
+.pkg-card-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 25%, rgba(22, 4, 18, 0.4) 55%, rgba(20, 3, 16, 0.94) 100%);
+  pointer-events: none;
+  transition: background 300ms ease;
+}
+
+.pkg-card:hover .pkg-card-scrim {
+  background: linear-gradient(180deg, rgba(0,0,0,0.05) 20%, rgba(13, 37, 108, 0.35) 55%, rgba(20, 3, 16, 0.97) 100%);
+}
+
+/* Top Badges */
+.pkg-badge-pill {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  color: #FFFFFF;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 999px;
+  z-index: 3;
+}
+
+.pkg-badge-featured {
+  background: var(--color-primary, #0D256C);
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 4px 14px rgba(13, 37, 108, 0.5);
+}
+
+/* Bottom Content Container */
+.pkg-card-content {
+  position: relative;
+  z-index: 3;
+  padding: clamp(16px, 2.5vw, 26px);
+  color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+}
+
+.pkg-dest-eyebrow {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #EBF2FF;
+  margin-bottom: 2px;
+}
+
+.pkg-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.15rem, 1.6vw, 1.5rem);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #FFFFFF;
+  line-height: 1.2;
+  margin-bottom: 8px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.pkg-card-featured .pkg-title {
+  font-size: clamp(1.5rem, 2.2vw, 2rem);
+}
+
+.pkg-places-line {
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+/* Metadata Row (Duration, Places, Vehicles) */
+.pkg-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #EBF2FF;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.pkg-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Price & CTA Action Row */
+.pkg-action-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  margin-top: 4px;
+}
+
+.pkg-price-text {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.pkg-price-val {
+  font-family: var(--font-heading);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  display: block;
+}
+
+.pkg-cta-btns {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-pkg-view {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 200ms ease, color 200ms ease;
+}
+
+.btn-pkg-view:hover {
+  color: var(--color-pink-soft, #EBF2FF);
+  transform: translateX(3px);
+}
+
+.btn-pkg-enquire {
+  padding: 6px 14px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--color-primary, #0D256C);
+  color: #FFFFFF;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.btn-pkg-enquire:hover {
+  background: #1A49B8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(13, 37, 108, 0.4);
+}
+
+/* Empty State */
+.packages-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: #FFFFFF;
+  border-radius: 24px;
+  border: 1px solid var(--color-border-subtle, #E2ECF8);
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE BREAKPOINTS (Tablet & Mobile)
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .packages-top-tier {
+    grid-template-columns: 1fr;
+  }
+
+  .packages-stacked-col {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    height: auto;
+  }
+
+  .pkg-card-featured {
+    height: 420px;
+  }
+
+  .pkg-card-supporting {
+    height: 280px;
+  }
+
+  .packages-bottom-tier {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .packages-section {
+    padding-top: 40px;
+    padding-bottom: 50px;
+  }
+
+  .packages-filter-wrapper {
+    justify-content: flex-start;
+  }
+
+  .packages-top-tier {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .packages-stacked-col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .pkg-card-featured {
+    height: 380px;
+    border-radius: 20px;
+  }
+
+  .pkg-card-supporting {
+    height: 260px;
+    border-radius: 20px;
+  }
+
+  .packages-bottom-tier {
+    display: flex;
+    overflow-x: auto;
+    gap: 16px;
+    padding-bottom: 12px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .packages-bottom-tier .pkg-card {
+    flex: 0 0 85%;
+    min-width: 270px;
+    height: 290px;
+    scroll-snap-align: start;
+  }
+}

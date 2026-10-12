@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        var startTs = Date.now();
+        var origReload = window.location.reload.bind(window.location);
+        window.location.reload = function(force) {
+          var diff = Date.now() - startTs;
+          if (diff < 12000) {
+            console.warn('[SystemGuard] Blocked automated reload attempt ' + diff + 'ms after initial page load.');
+            return;
+          }
+          return origReload(force);
+        };
+      })();
+    </script>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="icon" type="image/svg+xml" href="/logo-icon.svg" />
+    <link rel="apple-touch-icon" href="/logo-icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <meta name="theme-color" content="#0D256C" />
+    <meta name="description" content="Friends Tours & Travels - #18, 24th Main, 5th Phase, J.P. Nagar, Bangalore – 560078. Employee Transportation, Airport Transport, Local & Outstation Rentals, and Shuttle Services." />
+    <meta name="keywords" content="Friends Tours & Travels Bangalore, J.P. Nagar Bangalore travels, Employee Transportation Bangalore, Bangalore Airport Transport, Bangalore Local Rentals, Outstation Rentals Bangalore, Shuttle Services Bangalore, Bangalore to Mysore Cab, Bangalore to Coorg Cab" />
+    
+    <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
+
+    <title>Friends Tours & Travels | Employee Transportation, Airport, Local & Outstation Rentals Bangalore</title>
+    <script type="module" crossorigin src="/assets/index-BsRZEjHr.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-Dik6OG8R.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-BCNtDny6.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-react-CML1Uj-u.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-eoUY0kw9.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

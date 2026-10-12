@@ -1,0 +1,345 @@
+/* ==========================================================================
+   CINEMATIC SCROLL & LUXURY MOTION DESIGN SYSTEM
+   Smooth parallax, scroll-triggered reveals, glassmorphism & luxury micro-interactions
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. GLOBAL SCROLL-TRIGGERED REVEAL ANIMATIONS
+   -------------------------------------------------------------------------- */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Subtle Scale-In Reveal (For featured cards, images, badges) */
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.95) translateY(18px);
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-scale.is-revealed {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+/* Slide From Left Reveal */
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-left.is-revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Slide From Right Reveal */
+.reveal-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-right.is-revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Pure Smooth Fade-In */
+.reveal-fade {
+  opacity: 0;
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity;
+}
+
+.reveal-fade.is-revealed {
+  opacity: 1;
+}
+
+/* Stagger Delays for Grid Children */
+.stagger-1 { transition-delay: 60ms; }
+.stagger-2 { transition-delay: 130ms; }
+.stagger-3 { transition-delay: 200ms; }
+.stagger-4 { transition-delay: 270ms; }
+.stagger-5 { transition-delay: 340ms; }
+.stagger-6 { transition-delay: 410ms; }
+
+/* --------------------------------------------------------------------------
+   2. CINEMATIC HERO ENHANCEMENTS (Layered Images & Slow Zoom)
+   -------------------------------------------------------------------------- */
+
+/* Continuous Slow Luxury Drift / Ken Burns */
+@keyframes cinematicBreathe {
+  0% {
+    transform: scale(1.02) translate3d(0, 0, 0);
+  }
+  50% {
+    transform: scale(1.08) translate3d(0, -6px, 0);
+  }
+  100% {
+    transform: scale(1.03) translate3d(0, 4px, 0);
+  }
+}
+
+.hero-cinematic-bg {
+  animation: cinematicBreathe 22s ease-in-out infinite alternate;
+  will-change: transform;
+  transform-origin: center center;
+}
+
+/* Ambient Radial Light Flare behind Hero Headline */
+.hero-ambient-glow {
+  position: absolute;
+  top: 30%;
+  left: 10%;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(26, 73, 184, 0.18) 0%, rgba(250, 70, 22, 0.08) 45%, transparent 75%);
+  pointer-events: none;
+  filter: blur(50px);
+  z-index: 2;
+  opacity: 0.85;
+}
+
+/* Floating Luxury Feature Badges */
+@keyframes floatSoft {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes floatSoftDelayed {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.hero-floating-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 999px;
+  padding: 8px 16px;
+  box-shadow: 0 12px 28px -6px rgba(13, 37, 108, 0.12),
+              0 2px 8px rgba(13, 37, 108, 0.04);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--color-primary, #0D256C);
+  animation: floatSoft 5s ease-in-out infinite;
+  will-change: transform;
+}
+
+.hero-floating-badge.badge-delay {
+  animation: floatSoftDelayed 6s ease-in-out infinite 1.5s;
+}
+
+/* --------------------------------------------------------------------------
+   3. LUXURY CARDS, GLASSMORPHISM & HOVER TRANSITIONS
+   -------------------------------------------------------------------------- */
+
+/* Universal Luxury Card Styling */
+.luxury-card {
+  position: relative;
+  background: #FFFFFF;
+  border: 1px solid rgba(13, 37, 108, 0.08);
+  border-radius: 20px;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.35s ease;
+  will-change: transform, box-shadow;
+  box-shadow: 0 8px 24px -6px rgba(13, 37, 108, 0.06),
+              0 2px 8px rgba(13, 37, 108, 0.02);
+}
+
+.luxury-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 24px 48px -12px rgba(13, 37, 108, 0.16),
+              0 6px 16px rgba(13, 37, 108, 0.06);
+  border-color: rgba(13, 37, 108, 0.18);
+}
+
+/* Glassmorphic Pill Badges */
+.glass-pill {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4px 12px rgba(13, 37, 108, 0.08);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Dark Glassmorphism (for overlays, photo cards) */
+.glass-pill-dark {
+  background: rgba(10, 25, 56, 0.65);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  color: #FFFFFF;
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Image Zoom on Card Hover */
+.image-zoom-container {
+  overflow: hidden;
+  position: relative;
+}
+
+.image-zoom-container img {
+  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.5s ease;
+  will-change: transform;
+}
+
+.luxury-card:hover .image-zoom-container img,
+.pkg-card:hover .pkg-card-img,
+.fleet-card:hover .fleet-card-img,
+.dest-card:hover .dest-card-image {
+  transform: scale(1.06);
+}
+
+/* Shimmer Light Sweep on Hover */
+.shimmer-hover {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-hover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 80%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.22) 50%,
+    transparent 100%
+  );
+  transform: skewX(-20deg);
+  transition: left 0.75s ease;
+  pointer-events: none;
+}
+
+.shimmer-hover:hover::after {
+  left: 150%;
+}
+
+/* Smooth Touch Feedback on Mobile */
+@media (hover: none) and (pointer: coarse) {
+  .luxury-card:active,
+  .btn-hero-primary:active,
+  .hero-contact-pill:active,
+  .service-card-3d:active {
+    transform: scale(0.98);
+    transition: transform 0.12s ease;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   4. SEAMLESS MOBILE ADAPTATIONS (Lightweight & Smooth)
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  /* Reduce vertical translate distance on mobile to conserve GPU memory */
+  .reveal-on-scroll {
+    transform: translateY(18px);
+    transition-duration: 0.65s;
+  }
+
+  .reveal-left,
+  .reveal-right {
+    transform: translateY(14px);
+    transition-duration: 0.65s;
+  }
+
+  .reveal-scale {
+    transform: scale(0.97) translateY(12px);
+    transition-duration: 0.65s;
+  }
+
+  /* Shorter stagger on mobile */
+  .stagger-1 { transition-delay: 40ms; }
+  .stagger-2 { transition-delay: 80ms; }
+  .stagger-3 { transition-delay: 120ms; }
+  .stagger-4 { transition-delay: 160ms; }
+  .stagger-5 { transition-delay: 200ms; }
+  .stagger-6 { transition-delay: 240ms; }
+
+  /* Ambient light scaling on mobile */
+  .hero-ambient-glow {
+    width: 280px;
+    height: 280px;
+    top: 20%;
+    left: 5%;
+    filter: blur(35px);
+  }
+
+  /* Smooth touch cards */
+  .luxury-card {
+    border-radius: 16px;
+  }
+  
+  .luxury-card:hover {
+    transform: none; /* Disable 3D tilt/lift on mobile touch */
+  }
+}
+
+/* --------------------------------------------------------------------------
+   5. ACCESSIBILITY — PREFERS-REDUCED-MOTION
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .reveal-on-scroll,
+  .reveal-scale,
+  .reveal-left,
+  .reveal-right,
+  .reveal-fade {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .hero-cinematic-bg,
+  .hero-floating-badge,
+  .shimmer-hover::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -1,0 +1,17 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Proxy API and uploads to the Node.js backend if mod_proxy is enabled in Apache
+  <IfModule mod_proxy.c>
+    RewriteRule ^api/(.*)$ http://127.0.0.1:3001/api/$1 [P,L]
+    RewriteRule ^uploads/(.*)$ http://127.0.0.1:3001/uploads/$1 [P,L]
+  </IfModule>
+
+  # SPA fallback to index.html for all client-side routes (including /admin)
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-l
+  RewriteRule . /index.html [L]
+</IfModule>

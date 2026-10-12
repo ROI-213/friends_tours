@@ -1,0 +1,530 @@
+/* ==========================================================================
+   ABOUT FRIENDS TOURS & TRAVELS SECTION STYLING
+   Editorial dual-image composition, numbered service highlights, trust strip
+   ========================================================================== */
+
+.about-section {
+  width: 100%;
+  min-width: 100%;
+  padding-top: clamp(60px, 8vw, 100px);
+  padding-bottom: clamp(60px, 8vw, 100px);
+  background: linear-gradient(180deg, #FFFFFF 0%, #F7FAFF 50%, #FFFFFF 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.about-container {
+  width: 100%;
+  max-width: var(--container-max, 1720px);
+  margin: 0 auto;
+  padding: 0 clamp(18px, 3.5vw, 48px);
+}
+
+/* --------------------------------------------------------------------------
+   MAIN 2-COLUMN GRID (55% Visual / 45% Content)
+   -------------------------------------------------------------------------- */
+.about-main-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  align-items: center;
+  gap: clamp(36px, 5vw, 72px);
+  margin-bottom: clamp(48px, 6vw, 70px);
+}
+
+/* --------------------------------------------------------------------------
+   LEFT: EDITORIAL DUAL-IMAGE COMPOSITION
+   -------------------------------------------------------------------------- */
+.about-visual-col {
+  position: relative;
+  width: 100%;
+  min-height: 460px;
+}
+
+.about-image-wrapper {
+  position: relative;
+  width: 90%;
+  max-width: 680px;
+}
+
+/* Main Large Image */
+.about-img-main {
+  width: 100%;
+  height: clamp(380px, 32vw, 500px);
+  object-fit: cover;
+  border-radius: 28px;
+  box-shadow: 0 20px 48px rgba(13, 37, 108, 0.12), 0 4px 16px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(233, 215, 232, 0.8);
+  display: block;
+  transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.about-visual-col:hover .about-img-main {
+  transform: scale(1.02);
+}
+
+/* Secondary Overlapping Image */
+.about-img-secondary {
+  position: absolute;
+  bottom: -35px;
+  right: -8%;
+  width: clamp(190px, 18vw, 270px);
+  height: clamp(170px, 16vw, 240px);
+  object-fit: cover;
+  border-radius: 20px;
+  border: 4px solid #FFFFFF;
+  box-shadow: 0 16px 40px rgba(13, 37, 108, 0.18), 0 4px 12px rgba(0, 0, 0, 0.06);
+  z-index: 3;
+  transition: transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.about-visual-col:hover .about-img-secondary {
+  transform: translateY(-6px) scale(1.03);
+}
+
+/* Floating Trust / Experience Badge */
+.about-floating-badge {
+  position: absolute;
+  top: 24px;
+  left: -20px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(233, 215, 232, 0.9);
+  border-radius: 18px;
+  padding: 12px 18px;
+  box-shadow: 0 12px 30px rgba(13, 37, 108, 0.14);
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: pulseSlow 4s ease-in-out infinite;
+}
+
+.about-badge-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--color-pink-soft, #EBF2FF);
+  color: var(--color-primary, #0D256C);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.about-badge-label {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--color-primary, #0D256C);
+}
+
+.about-badge-val {
+  font-family: var(--font-heading);
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: #0A1938;
+  margin-top: 1px;
+}
+
+/* --------------------------------------------------------------------------
+   RIGHT: EDITORIAL ABOUT CONTENT
+   -------------------------------------------------------------------------- */
+.about-content-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.about-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  background: var(--color-primary, #0D256C);
+  padding: 5px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(13, 37, 108, 0.3);
+  margin-bottom: 14px;
+  box-shadow: 0 2px 8px rgba(13, 37, 108, 0.25);
+}
+
+.about-heading {
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 3.4vw, 2.75rem);
+  font-weight: 800;
+  color: var(--color-primary, #0D256C);
+  letter-spacing: -0.02em;
+  line-height: 1.12;
+  margin-bottom: 18px;
+}
+
+.about-heading-dark {
+  color: #0A1938;
+  display: block;
+}
+
+.about-text {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  line-height: 1.68;
+  color: var(--color-text-muted, #666666);
+  margin-bottom: 14px;
+}
+
+/* --------------------------------------------------------------------------
+   NUMBERED SERVICE HIGHLIGHTS (01 - 04)
+   -------------------------------------------------------------------------- */
+.about-highlights-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 26px;
+}
+
+.about-highlight-item {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--color-border-subtle, #E2ECF8);
+  box-shadow: 0 4px 12px rgba(13, 37, 108, 0.04);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  transition: all 250ms ease;
+  cursor: default;
+}
+
+.about-highlight-item:hover {
+  background: var(--color-pink-soft, #EBF2FF);
+  border-color: var(--color-lavender, #DCE8FA);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(13, 37, 108, 0.1);
+}
+
+.about-highlight-num {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-lavender, #FA4616);
+  line-height: 1;
+  transition: color 250ms ease;
+}
+
+.about-highlight-item:hover .about-highlight-num {
+  color: var(--color-primary, #0D256C);
+}
+
+.about-highlight-name {
+  font-family: var(--font-heading);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #0A1938;
+  line-height: 1.2;
+}
+
+.about-highlight-desc {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--color-text-muted, #777777);
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+/* CTA Row */
+.about-cta-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.btn-about-story {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: var(--color-primary, #0D256C);
+  color: #FFFFFF;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  transition: all 250ms ease;
+  box-shadow: 0 4px 16px rgba(13, 37, 108, 0.3);
+}
+
+.btn-about-story:hover {
+  background: var(--color-primary-light, #1A49B8);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(13, 37, 108, 0.45);
+}
+
+/* --------------------------------------------------------------------------
+   BOTTOM TRUST STRIP (Continuous Infinite Sliding Marquee)
+   -------------------------------------------------------------------------- */
+.about-trust-strip {
+  width: 100%;
+  background: #FFFFFF;
+  border-radius: 20px;
+  border: 1px solid var(--color-border-subtle, #E2ECF8);
+  padding: 14px 0;
+  box-shadow: 0 6px 20px rgba(13, 37, 108, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.about-trust-fade-left,
+.about-trust-fade-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50px;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.about-trust-fade-left {
+  left: 0;
+  background: linear-gradient(to right, #FFFFFF 20%, rgba(255, 255, 255, 0) 100%);
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+
+.about-trust-fade-right {
+  right: 0;
+  background: linear-gradient(to left, #FFFFFF 20%, rgba(255, 255, 255, 0) 100%);
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.about-trust-marquee {
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+  user-select: none;
+}
+
+.about-trust-group {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-shrink: 0;
+  padding-right: 24px;
+  animation: trustMarquee 26s linear infinite;
+  will-change: transform;
+}
+
+.about-trust-strip:hover .about-trust-group {
+  animation-play-state: paused;
+}
+
+@keyframes trustMarquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.about-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px;
+  background: #F8FAFD;
+  border: 1px solid #E9F1FC;
+  border-radius: 999px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  transition: all 200ms ease;
+}
+
+.about-trust-item:hover {
+  background: #EBF2FF;
+  border-color: #D2E3FC;
+  transform: translateY(-1px);
+}
+
+.about-trust-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  color: var(--color-primary, #0D256C);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(13, 37, 108, 0.08);
+}
+
+.about-trust-text {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 750;
+  color: #0A1938;
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE BREAKPOINTS (Tablet & Mobile)
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .about-main-grid {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .about-visual-col {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .about-image-wrapper {
+    width: 88%;
+  }
+}
+
+@media (max-width: 640px) {
+  .about-section {
+    padding-top: 40px;
+    padding-bottom: 50px;
+  }
+
+  .about-visual-col {
+    min-height: auto;
+    margin-bottom: 25px;
+  }
+
+  .about-image-wrapper {
+    width: 100%;
+  }
+
+  .about-img-main {
+    height: 260px;
+    border-radius: 20px;
+  }
+
+  .about-img-secondary {
+    display: none; /* Hide overlapping on mobile to keep layout clean and unclipped */
+  }
+
+  .about-floating-badge {
+    left: 12px;
+    top: 12px;
+    padding: 8px 12px;
+    border-radius: 12px;
+  }
+
+  .about-badge-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  /* 2x2 Card Style on Mobile */
+  .about-highlights-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .about-highlight-item {
+    padding: 12px 10px;
+    border-radius: 14px;
+    gap: 8px;
+  }
+
+  .about-highlight-num {
+    font-size: 0.9375rem;
+    flex-shrink: 0;
+  }
+
+  .about-highlight-name {
+    font-size: 0.78125rem;
+    line-height: 1.25;
+  }
+
+  .about-highlight-desc {
+    font-size: 0.71875rem;
+    line-height: 1.35;
+    margin-top: 3px;
+  }
+
+  .about-trust-strip {
+    padding: 12px 0;
+    border-radius: 16px;
+  }
+
+  .about-trust-fade-left,
+  .about-trust-fade-right {
+    width: 28px;
+  }
+
+  .about-trust-group {
+    gap: 14px;
+    padding-right: 14px;
+    animation-duration: 18s;
+  }
+
+  .about-trust-item {
+    padding: 6px 12px;
+    gap: 8px;
+  }
+
+  .about-trust-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  .about-trust-icon svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  .about-trust-text {
+    font-size: 0.75rem;
+  }
+
+  .btn-about-story {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 380px) {
+  .about-highlights-grid {
+    gap: 8px;
+  }
+
+  .about-highlight-item {
+    padding: 10px 8px;
+    gap: 6px;
+  }
+
+  .about-highlight-num {
+    font-size: 0.84375rem;
+  }
+
+  .about-highlight-name {
+    font-size: 0.71875rem;
+  }
+
+  .about-highlight-desc {
+    font-size: 0.65625rem;
+    line-height: 1.3;
+  }
+}

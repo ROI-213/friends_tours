@@ -1,0 +1,738 @@
+/* ==========================================================================
+   BENGALURU AIRPORT TRANSFER CALCULATOR & PRICING SYSTEM
+   Friends Tours & Travels Bangalore (BLR Airport)
+   ========================================================================== */
+
+.airport-transfer-section {
+  width: 100%;
+  padding: clamp(48px, 6vw, 80px) 0;
+  background: linear-gradient(180deg, #F7FAFF 0%, #FFFFFF 50%, #F7FAFF 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.airport-container {
+  width: 100%;
+  max-width: var(--container-max, 1720px);
+  margin: 0 auto;
+  padding: 0 clamp(18px, 3.5vw, 48px);
+}
+
+/* --------------------------------------------------------------------------
+   SECTION HEADER
+   -------------------------------------------------------------------------- */
+.airport-header {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto clamp(32px, 5vw, 54px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.airport-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  background: var(--color-primary, #0D256C);
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(13, 37, 108, 0.3);
+  margin-bottom: 14px;
+  box-shadow: 0 2px 8px rgba(13, 37, 108, 0.25);
+}
+
+.airport-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.85rem, 3.5vw, 2.6rem);
+  font-weight: 800;
+  color: #0A1938;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin-bottom: 14px;
+}
+
+.airport-subtitle {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--color-text-muted, #666666);
+}
+
+/* --------------------------------------------------------------------------
+   CALCULATOR CARD & LAYOUT (2 Columns: Controls Left, Live Card Right)
+   -------------------------------------------------------------------------- */
+.airport-calc-wrapper {
+  background: #FFFFFF;
+  border-radius: 28px;
+  border: 1px solid rgba(233, 215, 232, 0.9);
+  box-shadow: 0 20px 48px rgba(13, 37, 108, 0.08), 0 4px 16px rgba(0, 0, 0, 0.02);
+  padding: clamp(24px, 4vw, 44px);
+  margin-bottom: clamp(48px, 6vw, 70px);
+}
+
+.airport-calc-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: clamp(28px, 4vw, 48px);
+  align-items: start;
+}
+
+/* Left Panel: Inputs & Selectors */
+.airport-inputs-col {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Direction Toggle Pill */
+.airport-direction-toggle {
+  display: flex;
+  background: var(--color-pink-soft, #EBF2FF);
+  padding: 4px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-subtle, #E2ECF8);
+  width: 100%;
+}
+
+.btn-direction-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #555555;
+  cursor: pointer;
+  transition: all 250ms ease;
+  white-space: nowrap;
+}
+
+.btn-direction-tab.active {
+  background: var(--color-primary, #0D256C);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(13, 37, 108, 0.3);
+}
+
+/* Form Group & Autocomplete Search */
+.airport-form-group {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.airport-label {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #222222;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.airport-search-wrap {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.airport-search-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 14px 16px 14px 44px;
+  background: #F7FAFF;
+  border: 1.5px solid rgba(233, 215, 232, 0.9);
+  border-radius: 16px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0A1938;
+  transition: all 200ms ease;
+  outline: none;
+}
+
+.airport-search-input:focus {
+  background: #FFFFFF;
+  border-color: var(--color-primary, #0D256C);
+  box-shadow: 0 0 0 4px rgba(13, 37, 108, 0.12);
+}
+
+.airport-input-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-primary, #0D256C);
+  pointer-events: none;
+}
+
+.airport-clear-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #888888;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.airport-clear-btn:hover {
+  color: #222222;
+}
+
+/* Autocomplete Dropdown List */
+.airport-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: #FFFFFF;
+  border-radius: 16px;
+  border: 1px solid rgba(233, 215, 232, 0.9);
+  box-shadow: 0 16px 36px rgba(13, 37, 108, 0.14);
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 100;
+  padding: 8px;
+}
+
+.airport-dropdown-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.airport-dropdown-option:hover,
+.airport-dropdown-option.selected {
+  background: var(--color-pink-soft, #EBF2FF);
+  color: var(--color-primary, #0D256C);
+}
+
+.airport-option-name {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.airport-option-meta {
+  font-size: 0.75rem;
+  color: var(--color-text-muted, #777777);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Vehicle Selection Cards */
+.airport-vehicle-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.airport-vehicle-card {
+  background: #F7FAFF;
+  border: 1.5px solid rgba(233, 215, 232, 0.9);
+  border-radius: 18px;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.airport-vehicle-card:hover {
+  background: #FFFFFF;
+  border-color: var(--color-primary-light, #1A49B8);
+  transform: translateY(-2px);
+}
+
+.airport-vehicle-card.active {
+  background: #FFFFFF;
+  border-color: var(--color-primary, #0D256C);
+  box-shadow: 0 6px 18px rgba(13, 37, 108, 0.16);
+}
+
+.airport-vehicle-title {
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #0A1938;
+  margin-top: 4px;
+}
+
+.airport-vehicle-example {
+  font-size: 0.7rem;
+  color: var(--color-text-muted, #777777);
+  margin-top: 2px;
+}
+
+.airport-vehicle-capacity {
+  font-size: 0.725rem;
+  font-weight: 600;
+  color: var(--color-primary, #0D256C);
+  margin-top: 8px;
+  background: var(--color-pink-soft, #EBF2FF);
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+/* Right Panel: Live Pricing Display Card */
+.airport-live-card {
+  background: linear-gradient(145deg, #071746 0%, #3D0E32 100%);
+  border-radius: 24px;
+  padding: 28px 24px;
+  color: #FFFFFF;
+  box-shadow: 0 16px 40px rgba(61, 14, 50, 0.35);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.airport-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.airport-route-badge {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.15);
+  color: #FFFFFF;
+  padding: 4px 12px;
+  border-radius: 999px;
+  backdrop-filter: blur(4px);
+}
+
+.airport-route-title {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin-bottom: 4px;
+}
+
+.airport-route-meta {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.75);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Price Big Display */
+.airport-price-display {
+  margin: 16px 0;
+  padding: 16px 0;
+  border-top: 1px dashed rgba(255, 255, 255, 0.15);
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.airport-price-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 600;
+}
+
+.airport-price-val {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #FFFFFF;
+  line-height: 1;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.airport-price-unit {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  margin-left: 4px;
+}
+
+/* Inclusions List */
+.airport-inclusions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.airport-inclusion-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.825rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.btn-book-airport {
+  width: 100%;
+  padding: 14px 24px;
+  background: #FFFFFF;
+  color: var(--color-primary, #0D256C);
+  border: none;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 0.925rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 250ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.btn-book-airport:hover {
+  background: var(--color-pink-soft, #EBF2FF);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3);
+}
+
+/* --------------------------------------------------------------------------
+   POPULAR ROUTES GRID (10 Cards)
+   -------------------------------------------------------------------------- */
+.airport-popular-title {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0A1938;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.airport-popular-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+  margin-bottom: 48px;
+}
+
+.airport-popular-card {
+  background: #FFFFFF;
+  border-radius: 20px;
+  border: 1px solid var(--color-border-subtle, #E2ECF8);
+  padding: 18px;
+  transition: all 250ms ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 14px rgba(13, 37, 108, 0.04);
+}
+
+.airport-popular-card:hover {
+  border-color: var(--color-primary, #0D256C);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(13, 37, 108, 0.12);
+}
+
+.airport-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.airport-card-area {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0A1938;
+}
+
+.airport-card-tag {
+  font-size: 0.675rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-primary, #0D256C);
+  background: var(--color-pink-soft, #EBF2FF);
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.airport-card-details {
+  font-size: 0.8rem;
+  color: var(--color-text-muted, #666666);
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.airport-card-price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border-subtle, #E2ECF8);
+}
+
+.airport-card-price {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--color-primary, #0D256C);
+}
+
+.btn-card-select {
+  background: var(--color-pink-soft, #EBF2FF);
+  color: var(--color-primary, #0D256C);
+  border: 1px solid rgba(13, 37, 108, 0.2);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.775rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.btn-card-select:hover {
+  background: var(--color-primary, #0D256C);
+  color: #FFFFFF;
+}
+
+/* --------------------------------------------------------------------------
+   DISCLAIMER & FAQ
+   -------------------------------------------------------------------------- */
+.airport-disclaimer-box {
+  background: #F7FAFF;
+  border-radius: 16px;
+  border: 1px solid var(--color-border-subtle, #E2ECF8);
+  padding: 16px 20px;
+  font-size: 0.8rem;
+  color: var(--color-text-muted, #666666);
+  line-height: 1.5;
+  margin-bottom: 48px;
+}
+
+.airport-faq-section {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.airport-faq-item {
+  background: #FFFFFF;
+  border-radius: 16px;
+  border: 1px solid var(--color-border-subtle, #E2ECF8);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.airport-faq-question {
+  padding: 18px 20px;
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0A1938;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+}
+
+.airport-faq-question:hover {
+  color: var(--color-primary, #0D256C);
+}
+
+.airport-faq-answer {
+  padding: 0 20px 18px 20px;
+  font-size: 0.875rem;
+  color: var(--color-text-muted, #666666);
+  line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE BREAKPOINTS
+   -------------------------------------------------------------------------- */
+@media (max-width: 992px) {
+  .airport-calc-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+}
+
+@media (max-width: 768px) {
+  .airport-transfer-section {
+    padding: 32px 0 44px;
+  }
+
+  .airport-container {
+    padding: 0 14px !important;
+  }
+
+  .airport-header {
+    margin: 0 auto 20px !important;
+    padding: 0 6px;
+  }
+
+  .airport-eyebrow {
+    font-size: 0.6875rem;
+    padding: 5px 12px;
+    margin-bottom: 10px;
+  }
+
+  .airport-title {
+    font-size: 1.45rem !important;
+    line-height: 1.25 !important;
+    margin-bottom: 8px !important;
+  }
+
+  .airport-subtitle {
+    font-size: 0.84rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .airport-calc-wrapper {
+    padding: 18px 14px !important;
+    border-radius: 20px !important;
+    margin-bottom: 32px !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  .airport-inputs-col {
+    gap: 16px !important;
+  }
+
+  .airport-label {
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+    font-size: 0.78rem !important;
+  }
+
+  /* Direction Switcher on Mobile: Stacked 2-row buttons to eliminate overflow & clipping */
+  .airport-direction-toggle {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+    border-radius: 14px !important;
+    padding: 5px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    background: var(--color-pink-soft, #EBF2FF) !important;
+  }
+
+  .btn-direction-tab {
+    width: 100% !important;
+    padding: 10px 14px !important;
+    font-size: 0.82rem !important;
+    border-radius: 10px !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+    box-sizing: border-box !important;
+  }
+
+  .airport-search-wrap {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .airport-search-input {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 12px 38px 12px 38px !important;
+    font-size: 0.85rem !important;
+    border-radius: 14px !important;
+  }
+
+  .airport-input-icon {
+    left: 12px !important;
+  }
+
+  .airport-vehicle-selector {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  .airport-vehicle-card {
+    padding: 12px 14px !important;
+    border-radius: 14px !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    text-align: left !important;
+  }
+
+  .airport-vehicle-title {
+    font-size: 0.88rem !important;
+    margin: 0 !important;
+  }
+
+  .airport-vehicle-example {
+    display: none;
+  }
+
+  .airport-vehicle-capacity {
+    margin-top: 0 !important;
+    font-size: 0.68rem !important;
+    padding: 2px 8px !important;
+  }
+
+  /* Live Fare Card on Mobile */
+  .airport-live-card {
+    padding: 20px 16px !important;
+    border-radius: 18px !important;
+  }
+
+  .airport-route-title {
+    font-size: 1.1rem !important;
+  }
+
+  .airport-price-val {
+    font-size: 2rem !important;
+  }
+
+  .btn-book-airport {
+    padding: 12px 18px !important;
+    font-size: 0.85rem !important;
+  }
+
+  .airport-popular-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+}

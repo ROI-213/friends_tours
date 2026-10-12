@@ -1,0 +1,236 @@
+/* ==========================================================================
+   FINAL CTA / BOOKING BANNER SECTION STYLING
+   100% Full-width cinematic travel banner, centered typography, high-impact buttons
+   ========================================================================== */
+
+.finalcta-section {
+  width: 100%;
+  min-width: 100%;
+  position: relative;
+  overflow: hidden;
+  background-color: #1a0415;
+  margin-top: clamp(20px, 3vw, 40px);
+}
+
+.finalcta-bg-wrapper {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.finalcta-bg-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transform: scale(1.02);
+  animation: cinematicBreathe 24s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+/* Gradient Scrim Overlays */
+.finalcta-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(22, 4, 18, 0.75) 0%,
+    rgba(13, 37, 108, 0.75) 50%,
+    rgba(20, 3, 16, 0.92) 100%
+  );
+  z-index: 2;
+}
+
+.finalcta-radial-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at center,
+    rgba(213, 107, 183, 0.25) 0%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   CENTERED CONTENT STAGE
+   -------------------------------------------------------------------------- */
+.finalcta-container {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  max-width: var(--container-max, 1720px);
+  margin: 0 auto;
+  padding: clamp(64px, 8vw, 96px) clamp(20px, 4vw, 48px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.finalcta-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  padding: 6px 18px;
+  border-radius: 999px;
+  margin-bottom: 18px;
+}
+
+.finalcta-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2.2rem, 4.8vw, 4rem);
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 16px;
+  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+}
+
+.finalcta-desc {
+  font-family: var(--font-body);
+  font-size: clamp(0.95rem, 1.25vw, 1.125rem);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.88);
+  max-width: 620px;
+  margin: 0 auto clamp(28px, 4vw, 40px);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+/* CTA Buttons Row */
+.finalcta-btn-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: clamp(24px, 3.5vw, 36px);
+  flex-wrap: wrap;
+}
+
+.btn-finalcta-primary {
+  height: 52px;
+  padding: 0 32px;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--color-primary, #0D256C);
+  color: #FFFFFF;
+  border-radius: 999px;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 20px rgba(13, 37, 108, 0.4);
+}
+
+.btn-finalcta-primary:hover {
+  background: var(--color-primary-light, #1A49B8);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), 0 0 30px rgba(213, 107, 183, 0.6);
+  border-color: #FFFFFF;
+}
+
+.btn-finalcta-secondary {
+  height: 52px;
+  padding: 0 28px;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #FFFFFF;
+  border-radius: 999px;
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 250ms ease;
+}
+
+.btn-finalcta-secondary:hover {
+  background: #FFFFFF;
+  color: var(--color-primary, #0D256C);
+  border-color: #FFFFFF;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Trust Micro-Row */
+.finalcta-trust-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 2vw, 20px);
+  flex-wrap: wrap;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.finalcta-trust-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.finalcta-trust-dot {
+  color: var(--color-lavender, #FA4616);
+  font-weight: 800;
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE BREAKPOINTS (Tablet & Mobile)
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .finalcta-container {
+    padding-top: 50px;
+    padding-bottom: 50px;
+  }
+
+  .finalcta-btn-row {
+    flex-direction: column;
+    width: 100%;
+    max-width: 340px;
+  }
+
+  .btn-finalcta-primary,
+  .btn-finalcta-secondary {
+    width: 100%;
+  }
+
+  .finalcta-trust-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .finalcta-trust-dot {
+    display: none;
+  }
+}

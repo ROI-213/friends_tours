@@ -1,0 +1,668 @@
+/* ==========================================================================
+   VEHICLE DETAIL PAGE STYLING
+   Bangalore Rental Cars dedicated dynamic detail view & booking card
+   ========================================================================== */
+
+.vehicledetail-page {
+  width: 100%;
+  min-width: 100%;
+  background: var(--color-bg, #F7FAFF);
+  color: var(--color-text-main, #0A1938);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --------------------------------------------------------------------------
+   1. CINEMATIC HERO SECTION
+   -------------------------------------------------------------------------- */
+.vehicledetail-hero {
+  position: relative;
+  width: 100%;
+  min-height: clamp(480px, 48vw, 600px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  background: #140312;
+}
+
+.vehicledetail-hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.65;
+  filter: brightness(0.9);
+}
+
+.vehicledetail-hero-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(20, 3, 16, 0.4) 0%,
+    rgba(20, 3, 16, 0.75) 55%,
+    rgba(20, 3, 16, 0.98) 100%
+  );
+  pointer-events: none;
+}
+
+.vehicledetail-hero-container {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  max-width: var(--container-max, 1720px);
+  margin: 0 auto;
+  padding: 100px clamp(18px, 3.5vw, 48px) 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Navigation & Breadcrumbs Row */
+.vehicledetail-nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.btn-vehicledetail-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.btn-vehicledetail-back:hover {
+  background: #FFFFFF;
+  color: var(--color-primary, #0D256C);
+}
+
+.vehicledetail-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: 600;
+}
+
+.vehicledetail-breadcrumb-link {
+  color: #FFFFFF;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+.vehicledetail-breadcrumb-link:hover {
+  color: var(--color-lavender, #FA4616);
+  text-decoration: underline;
+}
+
+/* Hero Typography */
+.vehicledetail-hero-content {
+  max-width: 900px;
+}
+
+.vehicledetail-hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-lavender, #FA4616);
+  background: rgba(213, 107, 183, 0.2);
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(213, 107, 183, 0.4);
+  margin-bottom: 8px;
+}
+
+.vehicledetail-hero-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+
+.vehicledetail-hero-pills {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.vehicledetail-hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #FFFFFF;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 999px;
+}
+
+.vehicledetail-hero-desc {
+  font-family: var(--font-body);
+  font-size: clamp(0.9375rem, 1.2vw, 1.0625rem);
+  color: #EBF2FF;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  max-width: 780px;
+}
+
+.vehicledetail-hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.btn-vehichero-primary {
+  padding: 12px 28px;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--color-primary, #0D256C);
+  color: #FFFFFF;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 6px 20px rgba(13, 37, 108, 0.4);
+  transition: all 250ms ease;
+}
+
+.btn-vehichero-primary:hover {
+  background: var(--color-primary-light, #1A49B8);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(13, 37, 108, 0.5);
+}
+
+.btn-vehichero-secondary {
+  padding: 12px 22px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 250ms ease;
+}
+
+.btn-vehichero-secondary:hover {
+  background: #FFFFFF;
+  color: var(--color-primary, #0D256C);
+}
+
+/* --------------------------------------------------------------------------
+   2. QUICK VEHICLE INFO BAR
+   -------------------------------------------------------------------------- */
+.vehicledetail-infobar {
+  width: 100%;
+  background: #FFFFFF;
+  border-bottom: 1px solid var(--color-border-subtle, #E2ECF8);
+  box-shadow: 0 4px 16px rgba(13, 37, 108, 0.04);
+}
+
+.vehicledetail-infobar-container {
+  width: 100%;
+  max-width: var(--container-max, 1720px);
+  margin: 0 auto;
+  padding: 16px clamp(18px, 3.5vw, 48px);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 16px;
+}
+
+.veh-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-right: 1px solid var(--color-border-subtle, #E2ECF8);
+  padding-right: 12px;
+}
+
+.veh-info-item:last-child {
+  border-right: none;
+}
+
+.veh-info-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted, #777777);
+}
+
+.veh-info-val {
+  font-family: var(--font-heading);
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: var(--color-primary, #0D256C);
+}
+
+/* --------------------------------------------------------------------------
+   3. MAIN 65/35 EDITORIAL GRID
+   -------------------------------------------------------------------------- */
+.vehicledetail-main-wrapper {
+  width: 100%;
+  flex: 1;
+  padding-top: clamp(36px, 5vw, 60px);
+  padding-bottom: clamp(60px, 7vw, 90px);
+}
+
+.vehicledetail-grid {
+  width: 100%;
+  max-width: var(--container-max, 1720px);
+  margin: 0 auto;
+  padding: 0 clamp(18px, 3.5vw, 48px);
+  display: grid;
+  grid-template-columns: 1.65fr 1fr;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+/* Left Column Content */
+.vehicledetail-content-col {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.vehicledetail-section-block {
+  background: #FFFFFF;
+  border-radius: 24px;
+  border: 1px solid rgba(13, 37, 108, 0.1);
+  padding: clamp(24px, 3vw, 36px);
+  box-shadow: 0 6px 24px rgba(13, 37, 108, 0.04);
+}
+
+.vehicledetail-block-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.25rem, 1.8vw, 1.5rem);
+  font-weight: 800;
+  color: var(--color-primary, #0D256C);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--color-border-subtle, #E2ECF8);
+  padding-bottom: 12px;
+}
+
+.vehicledetail-overview-text {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--color-text-main, #333333);
+  margin-bottom: 24px;
+}
+
+/* Verified Features Grid */
+.vehicledetail-features-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.vehicledetail-feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--color-pink-soft, #F7FAFF);
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border-subtle, #E2ECF8);
+}
+
+.vehicledetail-feature-icon {
+  color: var(--color-primary, #0D256C);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.vehicledetail-feature-text {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-main, #0A1938);
+}
+
+/* Rental Context Selector Pills */
+.rental-options-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.btn-rental-context-pill {
+  padding: 8px 18px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-subtle, #DCE8FA);
+  background: #FFFFFF;
+  color: var(--color-text-main, #0A1938);
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.btn-rental-context-pill.active,
+.btn-rental-context-pill:hover {
+  background: var(--color-primary, #0D256C);
+  color: #FFFFFF;
+  border-color: var(--color-primary, #0D256C);
+}
+
+/* --------------------------------------------------------------------------
+   4. VEHICLE PHOTO GALLERY (1 Large + 4 Small Grid)
+   -------------------------------------------------------------------------- */
+.vehicledetail-gallery-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-rows: 140px 140px;
+  gap: 12px;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 16px;
+}
+
+.veh-gal-large {
+  grid-row: span 2;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.veh-gal-thumb {
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 14px;
+}
+
+.veh-gal-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 400ms ease;
+}
+
+.veh-gal-large:hover .veh-gal-img,
+.veh-gal-thumb:hover .veh-gal-img {
+  transform: scale(1.06);
+}
+
+/* --------------------------------------------------------------------------
+   5. RIGHT STICKY BOOKING CARD (35%)
+   -------------------------------------------------------------------------- */
+.vehicledetail-sticky-col {
+  position: relative;
+}
+
+.veh-booking-card {
+  position: sticky;
+  top: 90px;
+  background: #FFFFFF;
+  border-radius: 24px;
+  border: 1px solid rgba(13, 37, 108, 0.18);
+  padding: 28px;
+  box-shadow: 0 16px 40px rgba(13, 37, 108, 0.1);
+}
+
+.veh-card-head {
+  border-bottom: 1px solid var(--color-border-subtle, #E2ECF8);
+  padding-bottom: 16px;
+  margin-bottom: 18px;
+}
+
+.veh-card-eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-primary, #0D256C);
+}
+
+.veh-card-title {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #0A1938;
+  margin: 4px 0 10px;
+}
+
+.veh-card-pricebox {
+  background: var(--color-pink-soft, #F7FAFF);
+  border: 1px solid var(--color-border-subtle, #E2ECF8);
+  padding: 10px 14px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.veh-price-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted, #777777);
+}
+
+.veh-price-val {
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: var(--color-primary, #0D256C);
+}
+
+/* Card Form Fields */
+.veh-card-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.veh-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.veh-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.veh-form-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #0A1938;
+}
+
+.veh-card-input,
+.veh-card-select {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--color-border-subtle, #DCE8FA);
+  font-size: 0.8125rem;
+  background: #FFFFFF;
+  color: #0A1938;
+  outline: none;
+  transition: border-color 200ms ease;
+}
+
+.veh-card-input:focus,
+.veh-card-select:focus {
+  border-color: var(--color-primary, #0D256C);
+}
+
+.btn-veh-book {
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 999px;
+  background: var(--color-primary, #0D256C);
+  color: #FFFFFF;
+  font-size: 0.875rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 8px 24px rgba(13, 37, 108, 0.3);
+  transition: all 250ms ease;
+  margin-top: 8px;
+}
+
+.btn-veh-book:hover {
+  background: var(--color-primary-light, #1A49B8);
+  transform: translateY(-2px);
+}
+
+.veh-trust-reassurance {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--color-text-muted, #777777);
+  margin-top: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   6. MOBILE STICKY BOTTOM BAR
+   -------------------------------------------------------------------------- */
+.veh-mobile-bottom-bar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #FFFFFF;
+  padding: 12px 20px;
+  border-top: 1px solid var(--color-border-subtle, #E2ECF8);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.1);
+  z-index: 99;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.veh-mobile-price-text {
+  font-size: 0.6875rem;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.veh-mobile-price-val {
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: var(--color-primary, #0D256C);
+}
+
+.btn-veh-mobile-trigger {
+  padding: 10px 22px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--color-primary, #0D256C);
+  color: #FFFFFF;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE BREAKPOINTS
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .vehicledetail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .vehicledetail-sticky-col {
+    order: 2;
+  }
+
+  .veh-booking-card {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .vehicledetail-gallery-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 160px 100px 100px;
+  }
+
+  .veh-gal-large {
+    grid-column: span 2;
+    grid-row: span 1;
+  }
+
+  .vehicledetail-features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .veh-mobile-bottom-bar {
+    display: flex;
+  }
+
+  .veh-form-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .vehicledetail-page {
+    padding-bottom: 70px;
+  }
+}

@@ -1,0 +1,47 @@
+/* ==========================================================================
+   FRIENDS TOURS & TRAVELS — MASTER CSS ARCHITECTURE
+   ========================================================================== */
+
+@import './tokens.css';
+@import './reset.css';
+@import './typography.css';
+@import './components.css';
+@import './navbar.css';
+@import './hero.css';
+@import './hotdeals.css';
+@import './about.css';
+@import './services.css';
+@import './fleet.css';
+@import './packages.css';
+@import './outstation.css';
+@import './whychoose.css';
+@import './testimonials.css';
+@import './gallery.css';
+@import './contact.css';
+@import './finalcta.css';
+@import './destinations.css';
+@import './responsibilities.css';
+@import './packagedetail.css';
+@import './vehicledetail.css';
+@import './rentalcars.css';
+@import './pages.css';
+@import './footer.css';
+@import './utilities.css';
+@import './motion.css';
+
+/* Ensure full viewport width and prevent any accidental horizontal scrollbar */
+html, body, #root {
+  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
