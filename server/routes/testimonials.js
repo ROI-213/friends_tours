@@ -35,6 +35,13 @@ router.post('/', async (req, res) => {
       INSERT INTO testimonials (customer_name, designation, location, rating, review, trip_type, vehicle_used, travel_date, is_approved, is_featured)
       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,false,false)
     `, [customer_name, designation, location, rating || 5, review, trip_type, vehicle_used, travel_date]);
+    res.json({ success: true, message: 'Thank you for your review! It will be published after approval.' });
+  } catch (err) {
+    console.error('Submit testimonial error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // DELETE /api/testimonials/:id
 router.delete('/:id', async (req, res) => {
   try {
