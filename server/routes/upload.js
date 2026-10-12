@@ -12,29 +12,8 @@ import os from 'os';
 const router = express.Router();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Multer configuration: store uploaded files in public/uploads/ or /tmp fallback
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    let uploadDir = path.join(__dirname, '../../public/uploads');
-    try {
-      if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir, { recursive: true });
-      }
-      fs.accessSync(uploadDir, fs.constants.W_OK);
-    } catch {
-      uploadDir = path.join(os.tmpdir(), 'uploads');
-      if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir, { recursive: true });
-      }
-    }
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    const name = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}${ext}`;
-    cb(null, name);
-  },
-});
+// Multer memory storage - eliminates all ENOENT / EROFS disk write issues in Serverless & VPS
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
   const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
@@ -47,30 +26,62 @@ const upload = multer({ storage, fileFilter, limits: { fileSize: 10 * 1024 * 102
 // POST /api/upload - upload image (protected)
 router.post('/', requireAuth, upload.single('image'), async (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-    const imageUrl = `/uploads/${req.file.filename}`;
-    const { category, title, caption } = req.body;
+    const { category, title, caption, save_to_gallery } = req.body;
+    let imageUrl = '';
+    let filePath = '';
+    let filename = '';
 
-    // Mirror to dist/uploads if production dist directory exists
-    const distUploads = path.join(__dirname, '../../dist/uploads');
-    if (fs.existsSync(distUploads)) {
-      try {
-        fs.copyFileSync(req.file.path, path.join(distUploads, req.file.filename));
-      } catch (copyErr) {
-        console.warn('Notice: Could not mirror upload to dist/uploads:', copyErr.message);
+    if (req.file) {
+      const ext = path.extname(req.file.originalname) || '.jpg';
+      filename = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}${ext}`;
+      const isVercel = !!process.env.VERCEL;
+
+      // On VPS / cPanel / Local: try saving to disk if writable
+      if (!isVercel) {
+        try {
+          const uploadDir = path.join(__dirname, '../../public/uploads');
+          if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+          }
+          filePath = path.join(uploadDir, filename);
+          fs.writeFileSync(filePath, req.file.buffer);
+
+          const distUploads = path.join(__dirname, '../../dist/uploads');
+          if (fs.existsSync(distUploads)) {
+            try {
+              fs.writeFileSync(path.join(distUploads, filename), req.file.buffer);
+            } catch (_) {}
+          }
+          imageUrl = `/uploads/${filename}`;
+        } catch (diskErr) {
+          console.warn('Notice: Local disk write skipped, using database Data URL:', diskErr.message);
+        }
       }
+
+      // If on Vercel or disk write failed, use Data URL stored directly in PostgreSQL
+      if (!imageUrl) {
+        const mime = req.file.mimetype || 'image/jpeg';
+        imageUrl = `data:${mime};base64,${req.file.buffer.toString('base64')}`;
+        filePath = 'database-storage';
+      }
+    } else if (req.body.image_url) {
+      imageUrl = req.body.image_url;
+      filePath = 'external-url';
+      filename = 'url-image';
+    } else {
+      return res.status(400).json({ error: 'No image file or image_url provided' });
     }
 
     // Optionally save to gallery table
-    if (req.body.save_to_gallery === 'true') {
+    if (save_to_gallery === 'true' || save_to_gallery === true) {
       const gResult = await query(
         'INSERT INTO gallery (title, caption, image_url, image_path, category) VALUES ($1,$2,$3,$4,$5) RETURNING id',
-        [title || req.file.originalname, caption, imageUrl, req.file.path, category || 'general']
+        [title || (req.file ? req.file.originalname : 'Gallery Image'), caption || '', imageUrl, filePath, category || 'general']
       );
       syncManager.notifyDataChange('gallery', 'create', { id: gResult.rows[0]?.id, url: imageUrl });
     }
 
-    res.json({ success: true, url: imageUrl, filename: req.file.filename });
+    res.json({ success: true, url: imageUrl, filename });
   } catch (err) {
     console.error('Upload error:', err);
     res.status(500).json({ error: err.message });

@@ -126,56 +126,57 @@ function ArrayEditor({ label, items = [], onChange, placeholder = 'Add new item.
   );
 }
 
+// Helper to compress images on client before uploading
+function compressImage(file) {
+  return new Promise((resolve) => {
+    if (!file.type || !file.type.startsWith('image/') || file.type === 'image/svg+xml' || file.type === 'image/gif') {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve({ dataUrl: e.target.result, blob: file });
+      reader.onerror = () => resolve({ dataUrl: '', blob: file });
+      reader.readAsDataURL(file);
+      return;
+    }
+    const img = new Image();
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      img.src = e.target.result;
+      img.onload = () => {
+        const maxDim = 1280;
+        let width = img.width;
+        let height = img.height;
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        canvas.toBlob((blob) => {
+          resolve({ dataUrl, blob: blob || file });
+        }, 'image/jpeg', 0.85);
+      };
+      img.onerror = () => {
+        resolve({ dataUrl: e.target.result, blob: file });
+      };
+    };
+    reader.onerror = () => resolve({ dataUrl: '', blob: file });
+    reader.readAsDataURL(file);
+  });
+}
+
 // ── Image Upload Component with File Picker & Preview ─────────────────────────
 function ImageUploadInput({ label, value, onChange, placeholder = '/fleet/car.jpg or upload an image', category = 'general' }) {
   const [uploading, setUploading] = useState(false);
   const [previewError, setPreviewError] = useState(false);
   const fileInputRef = useRef(null);
-
-  const compressImage = (file) => {
-    return new Promise((resolve) => {
-      if (!file.type || !file.type.startsWith('image/') || file.type === 'image/svg+xml' || file.type === 'image/gif') {
-        const reader = new FileReader();
-        reader.onload = (e) => resolve({ dataUrl: e.target.result, blob: file });
-        reader.onerror = () => resolve({ dataUrl: '', blob: file });
-        reader.readAsDataURL(file);
-        return;
-      }
-      const img = new Image();
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        img.src = e.target.result;
-        img.onload = () => {
-          const maxDim = 1280;
-          let width = img.width;
-          let height = img.height;
-          if (width > maxDim || height > maxDim) {
-            if (width > height) {
-              height = Math.round((height * maxDim) / width);
-              width = maxDim;
-            } else {
-              width = Math.round((width * maxDim) / height);
-              height = maxDim;
-            }
-          }
-          const canvas = document.createElement('canvas');
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
-          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-          canvas.toBlob((blob) => {
-            resolve({ dataUrl, blob: blob || file });
-          }, 'image/jpeg', 0.85);
-        };
-        img.onerror = () => {
-          resolve({ dataUrl: e.target.result, blob: file });
-        };
-      };
-      reader.onerror = () => resolve({ dataUrl: '', blob: file });
-      reader.readAsDataURL(file);
-    });
-  };
 
   const handleFileChange = async (e) => {
     const file = e.target.files?.[0];
@@ -1731,7 +1732,11 @@ function MediaManager() {
   const [uploading, setUploading] = useState(false);
   const [title, setTitle] = useState('');
   const [caption, setCaption] = useState('');
-  const [category, setCategory] = useState('general');
+  const [category, setCategory] = useState('fleet');
+  const [imageUrlInput, setImageUrlInput] = useState('');
+  const [selectedFilter, setSelectedFilter] = useState('all');
+  const [previewDataUrl, setPreviewDataUrl] = useState('');
+  const fileInputRef = useRef(null);
 
   const load = () => {
     setLoading(true);
@@ -1739,17 +1744,70 @@ function MediaManager() {
   };
   useEffect(() => { load(); }, []);
 
-  const handleUpload = async (e) => {
+  const handleFileUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
     try {
-      await adminApi.uploadImage(file, { title, caption, category, save_to_gallery: true });
-      alert('Image uploaded successfully to server storage!');
-      setTitle(''); setCaption('');
-      load();
+      const { dataUrl, blob } = await compressImage(file);
+      setPreviewDataUrl(dataUrl);
+      const uploadTitle = title.trim() || file.name.replace(/\.[^.]+$/, '');
+
+      // 1. Try server storage upload
+      try {
+        const uploadFile = new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' });
+        const res = await adminApi.uploadImage(uploadFile, {
+          title: uploadTitle,
+          caption: caption.trim(),
+          category,
+          save_to_gallery: true,
+        });
+        if (res && (res.success || res.url)) {
+          alert('Image uploaded successfully and added to Gallery!');
+          setTitle(''); setCaption(''); setPreviewDataUrl('');
+          load();
+          return;
+        }
+      } catch (uploadErr) {
+        console.warn('Server upload fallback to direct database insert:', uploadErr.message);
+      }
+
+      // 2. Direct PostgreSQL fallback (guaranteed to work across all platforms, including Vercel)
+      if (dataUrl) {
+        await adminApi.addGalleryItem({
+          title: uploadTitle,
+          caption: caption.trim(),
+          category,
+          image_url: dataUrl,
+        });
+        alert('Image saved successfully to Gallery!');
+        setTitle(''); setCaption(''); setPreviewDataUrl('');
+        load();
+      }
     } catch (err) {
       alert(`Upload failed: ${err.message}`);
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const handleAddByUrl = async (e) => {
+    e.preventDefault();
+    if (!imageUrlInput.trim()) return;
+    setUploading(true);
+    try {
+      await adminApi.addGalleryItem({
+        title: title.trim() || 'Gallery Image',
+        caption: caption.trim(),
+        category,
+        image_url: imageUrlInput.trim(),
+      });
+      alert('Image URL added successfully to Gallery!');
+      setTitle(''); setCaption(''); setImageUrlInput('');
+      load();
+    } catch (err) {
+      alert(`Failed to add image: ${err.message}`);
     } finally {
       setUploading(false);
     }
@@ -1757,23 +1815,40 @@ function MediaManager() {
 
   const handleDelete = async (id) => {
     if (!confirm('Remove image from gallery?')) return;
-    await adminApi.deleteGalleryItem(id);
-    load();
+    try {
+      await adminApi.deleteGalleryItem(id);
+      load();
+    } catch (err) {
+      alert(`Delete failed: ${err.message}`);
+    }
   };
+
+  const filteredGallery = selectedFilter === 'all'
+    ? gallery
+    : gallery.filter(g => (g.category || '').toLowerCase() === selectedFilter.toLowerCase());
 
   return (
     <div>
       <div style={{ marginBottom: 20 }}>
-        <h2 style={{ margin: 0, fontWeight: 800, color: '#0A1938' }}>Media & Storage Manager</h2>
-        <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '0.875rem' }}>Upload images directly to server storage with metadata saved in PostgreSQL.</p>
+        <h2 style={{ margin: 0, fontWeight: 800, color: '#0A1938' }}>Media & Gallery Manager</h2>
+        <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '0.875rem' }}>
+          Upload vehicle, tour, and service photos directly to server storage and PostgreSQL.
+        </p>
       </div>
 
       <div style={{ background: '#fff', borderRadius: 14, padding: 24, boxShadow: '0 2px 10px rgba(0,0,0,0.04)', marginBottom: 24 }}>
-        <h3 style={{ margin: '0 0 16px', fontWeight: 800, color: '#0A1938', fontSize: '1rem' }}>Upload New Image</h3>
+        <h3 style={{ margin: '0 0 16px', fontWeight: 800, color: '#0A1938', fontSize: '1rem' }}>Upload or Add New Image</h3>
+        
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 16 }}>
           <div>
             <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>IMAGE TITLE</label>
-            <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Innova Crysta at Mysore" style={inputStyle} />
+            <input
+              type="text"
+              value={title}
+              onChange={e => setTitle(e.target.value)}
+              placeholder="e.g. Innova Crysta at Mysore"
+              style={inputStyle}
+            />
           </div>
           <div>
             <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>CATEGORY</label>
@@ -1786,42 +1861,181 @@ function MediaManager() {
           </div>
           <div>
             <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>CAPTION / ALT TEXT</label>
-            <input type="text" value={caption} onChange={e => setCaption(e.target.value)} placeholder="Short photo description" style={inputStyle} />
+            <input
+              type="text"
+              value={caption}
+              onChange={e => setCaption(e.target.value)}
+              placeholder="Short photo description"
+              style={inputStyle}
+            />
           </div>
         </div>
 
-        <div>
-          <label style={{
-            display: 'inline-block', padding: '12px 24px', background: '#0A1938', color: '#fff',
-            borderRadius: 8, fontWeight: 700, fontSize: '0.875rem', cursor: uploading ? 'not-allowed' : 'pointer'
-          }}>
-            {uploading ? 'Uploading to Server...' : '📁 Choose Image File to Upload'}
-            <input type="file" accept="image/*" onChange={handleUpload} disabled={uploading} style={{ display: 'none' }} />
-          </label>
+        {/* Upload methods: File picker or URL */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, background: '#f8fafc', padding: 18, borderRadius: 12, border: '1px solid #e2e8f0' }}>
+          {/* Method 1: Upload from computer/device */}
+          <div>
+            <div style={{ fontWeight: 800, fontSize: '0.8125rem', color: '#0A1938', marginBottom: 6 }}>
+              OPTION 1: UPLOAD FROM DEVICE
+            </div>
+            <p style={{ margin: '0 0 12px', fontSize: '0.75rem', color: '#64748b' }}>
+              Choose any photo from your phone or PC. Automatically optimized and saved.
+            </p>
+            <button
+              type="button"
+              disabled={uploading}
+              onClick={() => fileInputRef.current?.click()}
+              style={{
+                padding: '11px 22px',
+                background: uploading ? '#94a3b8' : 'linear-gradient(135deg, #0A1938 0%, #1e3a8a 100%)',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 8,
+                fontWeight: 700,
+                fontSize: '0.875rem',
+                cursor: uploading ? 'not-allowed' : 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                boxShadow: '0 2px 6px rgba(0,0,0,0.12)'
+              }}
+            >
+              {uploading ? '⏳ Uploading & Saving...' : '📁 Choose Image File to Upload'}
+            </button>
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept="image/*"
+              onChange={handleFileUpload}
+              disabled={uploading}
+              style={{ display: 'none' }}
+            />
+          </div>
+
+          {/* Method 2: Add by URL */}
+          <div>
+            <div style={{ fontWeight: 800, fontSize: '0.8125rem', color: '#0A1938', marginBottom: 6 }}>
+              OPTION 2: ADD BY IMAGE URL
+            </div>
+            <p style={{ margin: '0 0 12px', fontSize: '0.75rem', color: '#64748b' }}>
+              Paste an existing web URL (e.g. Unsplash, Wikipedia, or /fleet/car.jpg).
+            </p>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <input
+                type="text"
+                value={imageUrlInput}
+                onChange={e => setImageUrlInput(e.target.value)}
+                placeholder="https://images.unsplash.com/... or /fleet/car.jpg"
+                style={{ ...inputStyle, marginTop: 0, flex: 1, fontSize: '0.8rem' }}
+              />
+              <button
+                type="button"
+                disabled={uploading || !imageUrlInput.trim()}
+                onClick={handleAddByUrl}
+                style={{
+                  padding: '0 16px',
+                  background: !imageUrlInput.trim() ? '#cbd5e1' : '#0A1938',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 8,
+                  fontWeight: 700,
+                  fontSize: '0.8125rem',
+                  cursor: !imageUrlInput.trim() ? 'not-allowed' : 'pointer',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                + Add URL
+              </button>
+            </div>
+          </div>
         </div>
+
+        {previewDataUrl && (
+          <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', gap: 12, padding: 10, background: '#f0fdf4', borderRadius: 8, border: '1px solid #bbf7d0' }}>
+            <img src={previewDataUrl} alt="Preview" style={{ width: 60, height: 44, objectFit: 'cover', borderRadius: 6 }} />
+            <div style={{ fontSize: '0.8125rem', color: '#166534', fontWeight: 600 }}>Image ready and saving to PostgreSQL gallery...</div>
+          </div>
+        )}
       </div>
 
       <div style={{ background: '#fff', borderRadius: 14, padding: 24, boxShadow: '0 2px 10px rgba(0,0,0,0.04)' }}>
-        <h3 style={{ margin: '0 0 16px', fontWeight: 800, color: '#0A1938', fontSize: '1rem' }}>Gallery Images ({gallery.length})</h3>
-        {loading ? <div style={{ textAlign: 'center', padding: 30, color: '#94a3b8' }}>Loading gallery...</div> : (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18, flexWrap: 'wrap', gap: 10 }}>
+          <h3 style={{ margin: 0, fontWeight: 800, color: '#0A1938', fontSize: '1rem' }}>
+            Gallery Images ({filteredGallery.length}{selectedFilter !== 'all' ? ` of ${gallery.length}` : ''})
+          </h3>
+          <div style={{ display: 'flex', gap: 6 }}>
+            {['all', 'fleet', 'outstation', 'airport', 'general'].map(cat => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setSelectedFilter(cat)}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: 6,
+                  border: selectedFilter === cat ? 'none' : '1px solid #e2e8f0',
+                  background: selectedFilter === cat ? '#0A1938' : '#f8fafc',
+                  color: selectedFilter === cat ? '#fff' : '#475569',
+                  fontWeight: 700,
+                  fontSize: '0.75rem',
+                  cursor: 'pointer',
+                  textTransform: 'capitalize'
+                }}
+              >
+                {cat === 'all' ? 'All Images' : cat}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: 30, color: '#94a3b8' }}>Loading gallery...</div>
+        ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16 }}>
-            {gallery.map(img => (
-              <div key={img.id} style={{ borderRadius: 10, overflow: 'hidden', border: '1px solid #e2e8f0', background: '#f8fafc' }}>
-                <img src={img.image_url} alt={img.title} style={{ width: '100%', height: 130, objectFit: 'cover' }} />
-                <div style={{ padding: 10 }}>
-                  <div style={{ fontWeight: 700, fontSize: '0.8125rem', color: '#0A1938', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{img.title || 'Untitled'}</div>
-                  <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{img.category}</div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
-                    <button onClick={() => { navigator.clipboard.writeText(img.image_url); alert('URL copied!'); }}
-                      style={{ padding: '3px 8px', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: 4, fontSize: '0.7rem', cursor: 'pointer' }}>Copy URL</button>
-                    <button onClick={() => handleDelete(img.id)}
-                      style={{ padding: '3px 8px', background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: 4, fontSize: '0.7rem', cursor: 'pointer' }}>Delete</button>
+            {filteredGallery.map(img => (
+              <div key={img.id} style={{ borderRadius: 10, overflow: 'hidden', border: '1px solid #e2e8f0', background: '#f8fafc', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ height: 130, background: '#e2e8f0', overflow: 'hidden' }}>
+                  <img
+                    src={img.image_url}
+                    alt={img.title}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                  />
+                </div>
+                <div style={{ padding: 12, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: '0.8125rem', color: '#0A1938', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {img.title || 'Untitled'}
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'capitalize', marginTop: 2 }}>
+                      {img.category || 'general'}
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 }}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(img.image_url);
+                        alert('Image URL copied to clipboard!');
+                      }}
+                      style={{ padding: '4px 10px', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: 4, fontSize: '0.7rem', cursor: 'pointer', fontWeight: 600 }}
+                    >
+                      Copy URL
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(img.id)}
+                      style={{ padding: '4px 10px', background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: 4, fontSize: '0.7rem', cursor: 'pointer', fontWeight: 700 }}
+                    >
+                      Delete
+                    </button>
                   </div>
                 </div>
               </div>
             ))}
-            {gallery.length === 0 && (
-              <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: 30, color: '#94a3b8' }}>No gallery images uploaded yet.</div>
+            {filteredGallery.length === 0 && (
+              <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: 40, color: '#94a3b8' }}>
+                No gallery images found in this category. Upload one above!
+              </div>
             )}
           </div>
         )}
