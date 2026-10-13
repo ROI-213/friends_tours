@@ -476,7 +476,16 @@ export const adminApi = {
     return res;
   },
   deleteTestimonial: async (id) => {
-    const res = await apiFetch(`/admin/testimonials/${id}`, { method: 'DELETE' });
+    let res;
+    try {
+      res = await apiFetch(`/admin/testimonials/${id}`, { method: 'DELETE' });
+    } catch (adminErr) {
+      try {
+        res = await apiFetch(`/testimonials/${id}`, { method: 'DELETE' });
+      } catch (_) {
+        throw adminErr;
+      }
+    }
     notifyLocalMutation('testimonials', 'delete');
     return res;
   },

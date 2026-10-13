@@ -1719,19 +1719,24 @@ function TestimonialsManager() {
   };
 
   const [deletingId, setDeletingId] = useState(null);
+  const [confirmDeleteTarget, setConfirmDeleteTarget] = useState(null);
+  const [statusNotification, setStatusNotification] = useState(null);
 
-  const handleDelete = async (id, name) => {
-    const confirmed = window.confirm(`Are you sure you want to permanently delete the testimonial from "${name || 'customer'}"?`);
-    if (!confirmed) return;
-
+  const executeDelete = async (id) => {
     setDeletingId(id);
     try {
-      await adminApi.deleteTestimonial(id);
-      // Immediately remove from local state for instant responsive UI
+      // Optimistically remove from local state immediately for instant responsive UI
       setTestimonials(prev => prev.filter(t => String(t.id) !== String(id)));
+      await adminApi.deleteTestimonial(id);
+      setStatusNotification({ type: 'success', text: 'Testimonial deleted successfully from PostgreSQL.' });
+      setConfirmDeleteTarget(null);
+      setTimeout(() => setStatusNotification(null), 3000);
       load();
     } catch (err) {
-      alert('Error deleting testimonial: ' + (err.message || err));
+      console.error('Delete testimonial error:', err);
+      setStatusNotification({ type: 'error', text: err.message || 'Failed to delete testimonial' });
+      alert('Delete failed: ' + (err.message || 'Please try again.'));
+      load();
     } finally {
       setDeletingId(null);
     }
@@ -1748,6 +1753,20 @@ function TestimonialsManager() {
           + Add Testimonial
         </button>
       </div>
+
+      {statusNotification && (
+        <div style={{
+          padding: '12px 16px',
+          borderRadius: 8,
+          marginBottom: 16,
+          fontWeight: 700,
+          fontSize: '0.875rem',
+          background: statusNotification.type === 'success' ? '#dcfce7' : '#fee2e2',
+          color: statusNotification.type === 'success' ? '#15803d' : '#b91c1c'
+        }}>
+          {statusNotification.type === 'success' ? '✓ ' : '✕ '} {statusNotification.text}
+        </div>
+      )}
 
       {loading ? <div style={{ padding: 40, textAlign: 'center', color: '#94a3b8' }}>Loading testimonials...</div> : (
         <div style={{ display: 'grid', gap: 14 }}>
@@ -1774,7 +1793,7 @@ function TestimonialsManager() {
                 <button
                   type="button"
                   disabled={deletingId === t.id}
-                  onClick={() => handleDelete(t.id, t.customer_name)}
+                  onClick={() => setConfirmDeleteTarget(t)}
                   title="Delete testimonial"
                   style={{
                     padding: '7px 14px',
@@ -1797,6 +1816,53 @@ function TestimonialsManager() {
             </div>
           ))}
         </div>
+      )}
+
+      {/* Confirmation Modal to ensure browser pop-up blockers never prevent deleting */}
+      {confirmDeleteTarget && (
+        <Modal title="Confirm Testimonial Deletion" onClose={() => { if (!deletingId) setConfirmDeleteTarget(null); }} maxWidth={460}>
+          <div style={{ padding: '6px 0 18px' }}>
+            <p style={{ margin: '0 0 10px', color: '#0A1938', fontSize: '1rem', fontWeight: 700 }}>
+              Are you sure you want to permanently delete this testimonial?
+            </p>
+            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: '12px 14px', margin: '0 0 12px' }}>
+              <div style={{ fontWeight: 700, color: '#1e293b', fontSize: '0.875rem' }}>{confirmDeleteTarget.customer_name}</div>
+              <div style={{ color: '#64748b', fontSize: '0.8rem', fontStyle: 'italic', marginTop: 4 }}>"{confirmDeleteTarget.review}"</div>
+            </div>
+            <p style={{ margin: 0, color: '#dc2626', fontSize: '0.8rem', fontWeight: 700 }}>
+              ⚠️ This will permanently remove the review from both the live website and database.
+            </p>
+          </div>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+            <button
+              type="button"
+              disabled={deletingId === confirmDeleteTarget.id}
+              onClick={() => setConfirmDeleteTarget(null)}
+              style={{ padding: '9px 18px', background: '#f1f5f9', color: '#475569', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              disabled={deletingId === confirmDeleteTarget.id}
+              onClick={() => executeDelete(confirmDeleteTarget.id)}
+              style={{
+                padding: '9px 20px',
+                background: deletingId === confirmDeleteTarget.id ? '#991b1b' : '#dc2626',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 8,
+                fontWeight: 700,
+                cursor: deletingId === confirmDeleteTarget.id ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6
+              }}
+            >
+              {deletingId === confirmDeleteTarget.id ? '⏳ Deleting...' : '🗑️ Delete Permanently'}
+            </button>
+          </div>
+        </Modal>
       )}
 
       {/* Testimonial Edit Modal */}
