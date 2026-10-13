@@ -54,7 +54,7 @@ export const FleetSection = ({ onEnquireVehicle, onViewVehicleDetails, onOpenTar
           bestSuitedFor: v.best_suited_for || v.bestSuitedFor || '',
           package8hr80km: v.package_8hr_80km || v.package8hr80km || null,
           outstationMinPerDay: v.outstation_min_per_day || v.outstationMinPerDay || null,
-          features: Array.isArray(v.features) ? v.features : [],
+          features: Array.isArray(v.features) ? v.features : (typeof v.features === 'string' ? (() => { try { const p = JSON.parse(v.features); return Array.isArray(p) ? p : [v.features]; } catch(_) { return [v.features]; } })() : []),
           image: v.image_url || v.image || '',
         }));
         setVehicles(normalized);

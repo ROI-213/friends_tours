@@ -61,7 +61,7 @@ export const RentalCarsPage = ({
           extraHour: v.extra_hour || v.extraHour || null,
           nightBata: v.night_bata || v.nightBata || 200,
           image: v.image || v.image_url || '/fleet/dzire-white.jpg',
-          features: Array.isArray(v.features) ? v.features : [],
+          features: Array.isArray(v.features) ? v.features : (typeof v.features === 'string' ? (() => { try { const p = JSON.parse(v.features); return Array.isArray(p) ? p : [v.features]; } catch(_) { return [v.features]; } })() : []),
         }));
         setVehiclesList(normalized);
       }

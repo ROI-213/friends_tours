@@ -919,6 +919,8 @@ function VehiclesManager() {
   const [loading, setLoading] = useState(true);
   const [editingVehicle, setEditingVehicle] = useState(null);
   const [isNew, setIsNew] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [statusMsg, setStatusMsg] = useState(null);
 
   const emptyVehicle = {
     id: '', slug: '', name: '', category: 'Compact Sedan', type_category: 'SEDAN',
@@ -938,38 +940,69 @@ function VehiclesManager() {
   useEffect(() => { load(); }, []);
 
   const handleEdit = (v) => {
-    const feat = Array.isArray(v.features) ? v.features : (typeof v.features === 'string' ? JSON.parse(v.features || '[]') : []);
+    let feat = [];
+    if (Array.isArray(v.features)) {
+      feat = v.features;
+    } else if (typeof v.features === 'string') {
+      try { feat = JSON.parse(v.features); } catch (_) { feat = []; }
+    }
     setEditingVehicle({ ...v, features: feat });
+    setStatusMsg(null);
     setIsNew(false);
   };
 
   const handleCreateNew = () => {
-    setEditingVehicle({ ...emptyVehicle, id: `v-${Date.now()}` });
+    setEditingVehicle({ ...emptyVehicle, id: `veh-${Date.now()}` });
+    setStatusMsg(null);
     setIsNew(true);
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
-    if (!editingVehicle.name) return alert('Name is required');
-    if (isNew) {
-      if (!editingVehicle.slug) editingVehicle.slug = editingVehicle.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-      await adminApi.createVehicle(editingVehicle);
-    } else {
-      await adminApi.updateVehicle(editingVehicle.id, editingVehicle);
+    if (!editingVehicle.name) return alert('Vehicle display name is required');
+    setSaving(true);
+    setStatusMsg(null);
+    try {
+      if (isNew) {
+        if (!editingVehicle.slug) {
+          editingVehicle.slug = editingVehicle.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+        }
+        await adminApi.createVehicle(editingVehicle);
+      } else {
+        await adminApi.updateVehicle(editingVehicle.id, editingVehicle);
+      }
+      setStatusMsg({ type: 'success', text: 'Vehicle saved successfully to database!' });
+      setTimeout(() => {
+        setEditingVehicle(null);
+        setStatusMsg(null);
+        load();
+      }, 600);
+    } catch (err) {
+      console.error('Save vehicle error:', err);
+      setStatusMsg({ type: 'error', text: err.message || 'Failed to save vehicle' });
+      alert('Save failed: ' + (err.message || 'Please check input fields and try again.'));
+    } finally {
+      setSaving(false);
     }
-    setEditingVehicle(null);
-    load();
   };
 
   const handleDelete = async (id) => {
     if (!confirm('Are you sure you want to delete this vehicle from the fleet?')) return;
-    await adminApi.deleteVehicle(id);
-    load();
+    try {
+      await adminApi.deleteVehicle(id);
+      load();
+    } catch (err) {
+      alert('Delete failed: ' + err.message);
+    }
   };
 
   const handleToggle = async (v) => {
-    await adminApi.updateVehicle(v.id, { ...v, enabled: !v.enabled });
-    load();
+    try {
+      await adminApi.updateVehicle(v.id, { ...v, enabled: !v.enabled });
+      load();
+    } catch (err) {
+      alert('Toggle failed: ' + err.message);
+    }
   };
 
   return (
@@ -1024,7 +1057,7 @@ function VehiclesManager() {
 
       {/* Vehicle In-Detail Edit Modal */}
       {editingVehicle && (
-        <Modal title={isNew ? 'Create New Vehicle' : `Edit Vehicle: ${editingVehicle.name}`} onClose={() => setEditingVehicle(null)} maxWidth={740}>
+        <Modal title={isNew ? 'Create New Vehicle' : `Edit Vehicle: ${editingVehicle.name}`} onClose={() => { if (!saving) setEditingVehicle(null); }} maxWidth={740}>
           <form onSubmit={handleSave} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
             <div style={{ gridColumn: '1 / -1' }}>
               <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>VEHICLE DISPLAY NAME *</label>
@@ -1057,8 +1090,13 @@ function VehiclesManager() {
             </div>
 
             <div>
-              <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>PASSENGER CAPACITY</label>
+              <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>PASSENGER CAPACITY (LABEL)</label>
               <input type="text" value={editingVehicle.passenger_capacity || ''} onChange={e => setEditingVehicle({ ...editingVehicle, passenger_capacity: e.target.value })} placeholder="e.g. 4 Passengers" style={inputStyle} />
+            </div>
+
+            <div>
+              <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>PASSENGER COUNT (NUMERIC)</label>
+              <input type="number" value={editingVehicle.passenger_count || 4} onChange={e => setEditingVehicle({ ...editingVehicle, passenger_count: parseInt(e.target.value) || 4 })} placeholder="4" style={inputStyle} />
             </div>
 
             <div>
@@ -1151,11 +1189,55 @@ function VehiclesManager() {
               </label>
             </div>
 
+            {statusMsg && (
+              <div style={{
+                gridColumn: '1 / -1',
+                padding: '10px 14px',
+                borderRadius: 8,
+                background: statusMsg.type === 'success' ? '#dcfce7' : '#fee2e2',
+                color: statusMsg.type === 'success' ? '#15803d' : '#b91c1c',
+                fontWeight: 700,
+                fontSize: '0.85rem'
+              }}>
+                {statusMsg.type === 'success' ? '✓ ' : '✕ '} {statusMsg.text}
+              </div>
+            )}
+
             <div style={{ gridColumn: '1 / -1', display: 'flex', gap: 12, marginTop: 8 }}>
-              <button type="submit" style={{ flex: 1, padding: '12px', background: '#0A1938', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>
-                💾 Save Vehicle to PostgreSQL
+              <button
+                type="submit"
+                disabled={saving}
+                style={{
+                  flex: 1,
+                  padding: '12px',
+                  background: saving ? '#64748b' : '#0A1938',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 8,
+                  fontWeight: 700,
+                  cursor: saving ? 'not-allowed' : 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8
+                }}
+              >
+                {saving ? '⏳ Saving to PostgreSQL...' : '💾 Save Vehicle to PostgreSQL'}
               </button>
-              <button type="button" onClick={() => setEditingVehicle(null)} style={{ padding: '12px 24px', background: '#f1f5f9', color: '#475569', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>
+              <button
+                type="button"
+                disabled={saving}
+                onClick={() => setEditingVehicle(null)}
+                style={{
+                  padding: '12px 24px',
+                  background: '#f1f5f9',
+                  color: '#475569',
+                  border: 'none',
+                  borderRadius: 8,
+                  fontWeight: 700,
+                  cursor: saving ? 'not-allowed' : 'pointer'
+                }}
+              >
                 Cancel
               </button>
             </div>
@@ -1373,6 +1455,7 @@ function TariffManager() {
   const [loading, setLoading] = useState(true);
   const [editingItem, setEditingItem] = useState(null);
   const [isNew, setIsNew] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -1407,22 +1490,35 @@ function TariffManager() {
 
   const handleSave = async (e) => {
     e.preventDefault();
-    if (editingItem._type === 'local') {
-      if (isNew) await adminApi.createLocalTariff(editingItem);
-      else await adminApi.updateLocalTariff(editingItem.id, editingItem);
-    } else {
-      if (isNew) await adminApi.createOutstationTariff(editingItem);
-      else await adminApi.updateOutstationTariff(editingItem.id, editingItem);
+    if (!editingItem.vehicle_name) return alert('Vehicle Name is required');
+    setSaving(true);
+    try {
+      if (editingItem._type === 'local') {
+        if (isNew) await adminApi.createLocalTariff(editingItem);
+        else await adminApi.updateLocalTariff(editingItem.id, editingItem);
+      } else {
+        if (isNew) await adminApi.createOutstationTariff(editingItem);
+        else await adminApi.updateOutstationTariff(editingItem.id, editingItem);
+      }
+      setEditingItem(null);
+      load();
+    } catch (err) {
+      console.error('Save tariff error:', err);
+      alert('Save failed: ' + (err.message || 'Please check input fields and try again.'));
+    } finally {
+      setSaving(false);
     }
-    setEditingItem(null);
-    load();
   };
 
   const handleDelete = async (item, type) => {
     if (!confirm(`Delete tariff entry for ${item.vehicle_name}?`)) return;
-    if (type === 'local') await adminApi.deleteLocalTariff(item.id);
-    else await adminApi.deleteOutstationTariff(item.id);
-    load();
+    try {
+      if (type === 'local') await adminApi.deleteLocalTariff(item.id);
+      else await adminApi.deleteOutstationTariff(item.id);
+      load();
+    } catch (err) {
+      alert('Delete failed: ' + err.message);
+    }
   };
 
   return (

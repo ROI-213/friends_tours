@@ -231,22 +231,92 @@ router.delete('/enquiries/:id', requireAuth, async (req, res) => {
   }
 });
 
+// ── VEHICLES HELPERS & HANDLERS ──────────────────────────────────────────────
+const sanitizeInt = (val) => {
+  if (val === null || val === undefined || val === '') return null;
+  const parsed = parseInt(val, 10);
+  return isNaN(parsed) ? null : parsed;
+};
+
+const sanitizeStr = (val, defaultVal = null) => {
+  if (val === null || val === undefined) return defaultVal;
+  const s = String(val).trim();
+  return s.length > 0 ? s : defaultVal;
+};
+
+const sanitizeJson = (val, fallback = '[]') => {
+  if (val === null || val === undefined) return fallback;
+  if (typeof val === 'string') {
+    try {
+      JSON.parse(val);
+      return val;
+    } catch {
+      return JSON.stringify([val]);
+    }
+  }
+  return JSON.stringify(val);
+};
+
 // ── VEHICLES ──────────────────────────────────────────────────────────────────
 router.get('/vehicles', requireAuth, async (req, res) => {
   try {
     const result = await query('SELECT * FROM vehicles ORDER BY sort_order ASC, created_at ASC');
     res.json(result.rows);
   } catch (err) {
+    console.error('Fetch vehicles error:', err);
     res.json([]);
   }
 });
 
 router.post('/vehicles', requireAuth, async (req, res) => {
   try {
-    const v = req.body;
+    const v = req.body || {};
     if (!v.name) return res.status(400).json({ error: 'Vehicle name is required' });
-    const id = v.id || `veh-${Date.now()}`;
-    const slug = v.slug || v.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const id = sanitizeStr(v.id) || `veh-${Date.now()}`;
+    let slug = sanitizeStr(v.slug) || v.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    if (!slug) slug = `veh-${Date.now()}`;
+
+    // Ensure slug doesn't conflict with another vehicle
+    try {
+      const existing = await query('SELECT id FROM vehicles WHERE slug = $1 AND id != $2', [slug, id]);
+      if (existing.rows.length > 0) {
+        slug = `${slug}-${Date.now().toString().slice(-4)}`;
+      }
+    } catch (_) {}
+
+    const params = [
+      id,
+      slug,
+      sanitizeStr(v.name),
+      sanitizeStr(v.category, 'Compact Sedan'),
+      sanitizeStr(v.type_category, 'SEDAN').toUpperCase(),
+      sanitizeStr(v.badge, null),
+      sanitizeStr(v.color, 'White'),
+      sanitizeStr(v.passenger_capacity, '4 Passengers'),
+      sanitizeInt(v.passenger_count) || 4,
+      sanitizeStr(v.luggage_capacity, '2 Bags'),
+      sanitizeStr(v.air_conditioning, 'AC'),
+      sanitizeStr(v.best_suited_for, null),
+      sanitizeStr(v.image, '/fleet/dzire-white.jpg'),
+      sanitizeJson(v.gallery, '[]'),
+      sanitizeStr(v.description, null),
+      sanitizeJson(v.features, '[]'),
+      sanitizeJson(v.rental_types, '[]'),
+      sanitizeJson(v.rental_durations, '[]'),
+      sanitizeInt(v.package_4hr_40km),
+      sanitizeInt(v.package_8hr_80km),
+      sanitizeInt(v.extra_km),
+      sanitizeInt(v.extra_hour),
+      sanitizeInt(v.night_bata),
+      sanitizeInt(v.outstation_rate_per_km),
+      sanitizeInt(v.outstation_min_per_day),
+      sanitizeStr(v.pricing_type, 'Local & Outstation Packages'),
+      sanitizeStr(v.price_note, null),
+      Boolean(v.featured),
+      v.enabled !== false,
+      sanitizeInt(v.sort_order) || 0
+    ];
+
     const result = await query(`
       INSERT INTO vehicles (id, slug, name, category, type_category, badge, color,
         passenger_capacity, passenger_count, luggage_capacity, air_conditioning,
@@ -255,14 +325,22 @@ router.post('/vehicles', requireAuth, async (req, res) => {
         night_bata, outstation_rate_per_km, outstation_min_per_day, pricing_type,
         price_note, featured, enabled, sort_order)
       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30)
+      ON CONFLICT (id) DO UPDATE SET
+        slug=EXCLUDED.slug, name=EXCLUDED.name, category=EXCLUDED.category, type_category=EXCLUDED.type_category,
+        badge=EXCLUDED.badge, color=EXCLUDED.color, passenger_capacity=EXCLUDED.passenger_capacity,
+        passenger_count=EXCLUDED.passenger_count, luggage_capacity=EXCLUDED.luggage_capacity,
+        air_conditioning=EXCLUDED.air_conditioning, best_suited_for=EXCLUDED.best_suited_for,
+        image=EXCLUDED.image, gallery=EXCLUDED.gallery, description=EXCLUDED.description,
+        features=EXCLUDED.features, rental_types=EXCLUDED.rental_types,
+        rental_durations=EXCLUDED.rental_durations, package_4hr_40km=EXCLUDED.package_4hr_40km,
+        package_8hr_80km=EXCLUDED.package_8hr_80km, extra_km=EXCLUDED.extra_km,
+        extra_hour=EXCLUDED.extra_hour, night_bata=EXCLUDED.night_bata,
+        outstation_rate_per_km=EXCLUDED.outstation_rate_per_km,
+        outstation_min_per_day=EXCLUDED.outstation_min_per_day,
+        pricing_type=EXCLUDED.pricing_type, price_note=EXCLUDED.price_note,
+        featured=EXCLUDED.featured, enabled=EXCLUDED.enabled, sort_order=EXCLUDED.sort_order, updated_at=NOW()
       RETURNING *
-    `, [id, slug, v.name, v.category, v.type_category || 'SEDAN', v.badge, v.color,
-        v.passenger_capacity, v.passenger_count || 4, v.luggage_capacity, v.air_conditioning,
-        v.best_suited_for, v.image, JSON.stringify(v.gallery || []), v.description,
-        JSON.stringify(v.features || []), JSON.stringify(v.rental_types || []),
-        JSON.stringify(v.rental_durations || []), v.package_4hr_40km, v.package_8hr_80km,
-        v.extra_km, v.extra_hour, v.night_bata, v.outstation_rate_per_km, v.outstation_min_per_day,
-        v.pricing_type, v.price_note, v.featured || false, v.enabled !== false, v.sort_order || 0]);
+    `, params);
     
     syncManager.notifyDataChange('vehicles', 'create', { id });
     res.json({ success: true, vehicle: result.rows[0] });
@@ -274,8 +352,43 @@ router.post('/vehicles', requireAuth, async (req, res) => {
 
 router.put('/vehicles/:id', requireAuth, async (req, res) => {
   try {
-    const v = req.body;
-    const result = await query(`
+    const v = req.body || {};
+    const targetId = req.params.id;
+    if (!v.name) return res.status(400).json({ error: 'Vehicle name is required' });
+
+    const updateParams = [
+      sanitizeStr(v.name),
+      sanitizeStr(v.category, 'Compact Sedan'),
+      sanitizeStr(v.type_category, 'SEDAN').toUpperCase(),
+      sanitizeStr(v.badge, null),
+      sanitizeStr(v.color, 'White'),
+      sanitizeStr(v.passenger_capacity, '4 Passengers'),
+      sanitizeInt(v.passenger_count) || 4,
+      sanitizeStr(v.luggage_capacity, '2 Bags'),
+      sanitizeStr(v.air_conditioning, 'AC'),
+      sanitizeStr(v.best_suited_for, null),
+      sanitizeStr(v.image, '/fleet/dzire-white.jpg'),
+      sanitizeJson(v.gallery, '[]'),
+      sanitizeStr(v.description, null),
+      sanitizeJson(v.features, '[]'),
+      sanitizeJson(v.rental_types, '[]'),
+      sanitizeJson(v.rental_durations, '[]'),
+      sanitizeInt(v.package_4hr_40km),
+      sanitizeInt(v.package_8hr_80km),
+      sanitizeInt(v.extra_km),
+      sanitizeInt(v.extra_hour),
+      sanitizeInt(v.night_bata),
+      sanitizeInt(v.outstation_rate_per_km),
+      sanitizeInt(v.outstation_min_per_day),
+      sanitizeStr(v.pricing_type, 'Local & Outstation Packages'),
+      sanitizeStr(v.price_note, null),
+      Boolean(v.featured),
+      v.enabled !== false,
+      sanitizeInt(v.sort_order) || 0,
+      targetId
+    ];
+
+    let result = await query(`
       UPDATE vehicles SET
         name=$1, category=$2, type_category=$3, badge=$4, color=$5, passenger_capacity=$6,
         passenger_count=$7, luggage_capacity=$8, air_conditioning=$9, best_suited_for=$10,
@@ -283,20 +396,44 @@ router.put('/vehicles/:id', requireAuth, async (req, res) => {
         package_4hr_40km=$17, package_8hr_80km=$18, extra_km=$19, extra_hour=$20, night_bata=$21,
         outstation_rate_per_km=$22, outstation_min_per_day=$23,
         pricing_type=$24, price_note=$25, featured=$26, enabled=$27, sort_order=$28, updated_at=NOW()
-      WHERE id=$29
+      WHERE id=$29 OR slug=$29
       RETURNING *
-    `, [v.name, v.category, v.type_category, v.badge, v.color, v.passenger_capacity,
-        v.passenger_count, v.luggage_capacity, v.air_conditioning, v.best_suited_for,
-        v.image, JSON.stringify(v.gallery || []), v.description,
-        JSON.stringify(v.features || []), JSON.stringify(v.rental_types || []),
-        JSON.stringify(v.rental_durations || []), v.package_4hr_40km, v.package_8hr_80km,
-        v.extra_km, v.extra_hour, v.night_bata, v.outstation_rate_per_km, v.outstation_min_per_day,
-        v.pricing_type, v.price_note,
-        v.featured || false, v.enabled !== false, v.sort_order || 0, req.params.id]);
+    `, updateParams);
+
+    // If vehicle not found with id or slug, upsert it as a new vehicle record
+    if (!result.rows || result.rows.length === 0) {
+      const slug = sanitizeStr(v.slug) || v.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || targetId;
+      const insertParams = [targetId, slug, ...updateParams.slice(0, 27)];
+      result = await query(`
+        INSERT INTO vehicles (id, slug, name, category, type_category, badge, color,
+          passenger_capacity, passenger_count, luggage_capacity, air_conditioning,
+          best_suited_for, image, gallery, description, features, rental_types,
+          rental_durations, package_4hr_40km, package_8hr_80km, extra_km, extra_hour,
+          night_bata, outstation_rate_per_km, outstation_min_per_day, pricing_type,
+          price_note, featured, enabled, sort_order)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30)
+        ON CONFLICT (id) DO UPDATE SET
+          slug=EXCLUDED.slug, name=EXCLUDED.name, category=EXCLUDED.category, type_category=EXCLUDED.type_category,
+          badge=EXCLUDED.badge, color=EXCLUDED.color, passenger_capacity=EXCLUDED.passenger_capacity,
+          passenger_count=EXCLUDED.passenger_count, luggage_capacity=EXCLUDED.luggage_capacity,
+          air_conditioning=EXCLUDED.air_conditioning, best_suited_for=EXCLUDED.best_suited_for,
+          image=EXCLUDED.image, gallery=EXCLUDED.gallery, description=EXCLUDED.description,
+          features=EXCLUDED.features, rental_types=EXCLUDED.rental_types,
+          rental_durations=EXCLUDED.rental_durations, package_4hr_40km=EXCLUDED.package_4hr_40km,
+          package_8hr_80km=EXCLUDED.package_8hr_80km, extra_km=EXCLUDED.extra_km,
+          extra_hour=EXCLUDED.extra_hour, night_bata=EXCLUDED.night_bata,
+          outstation_rate_per_km=EXCLUDED.outstation_rate_per_km,
+          outstation_min_per_day=EXCLUDED.outstation_min_per_day,
+          pricing_type=EXCLUDED.pricing_type, price_note=EXCLUDED.price_note,
+          featured=EXCLUDED.featured, enabled=EXCLUDED.enabled, sort_order=EXCLUDED.sort_order, updated_at=NOW()
+        RETURNING *
+      `, insertParams);
+    }
     
-    syncManager.notifyDataChange('vehicles', 'update', { id: req.params.id });
+    syncManager.notifyDataChange('vehicles', 'update', { id: targetId });
     res.json({ success: true, vehicle: result.rows[0] });
   } catch (err) {
+    console.error('Update vehicle error:', err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -397,29 +534,53 @@ router.get('/tariff/local', requireAuth, async (req, res) => {
 
 router.post('/tariff/local', requireAuth, async (req, res) => {
   try {
-    const t = req.body;
+    const t = req.body || {};
+    if (!t.vehicle_name) return res.status(400).json({ error: 'Vehicle name is required' });
     const result = await query(`
       INSERT INTO tariff_local (vehicle_name, category, package_4hr_40km, package_8hr_80km, extra_hour, extra_km, night_bata, sort_order, enabled)
       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *
-    `, [t.vehicle_name, t.category, t.package_4hr_40km, t.package_8hr_80km, t.extra_hour, t.extra_km, t.night_bata, t.sort_order || 0, t.enabled !== false]);
+    `, [
+      sanitizeStr(t.vehicle_name),
+      sanitizeStr(t.category, 'Sedan'),
+      sanitizeInt(t.package_4hr_40km),
+      sanitizeInt(t.package_8hr_80km),
+      sanitizeInt(t.extra_hour),
+      sanitizeInt(t.extra_km),
+      sanitizeInt(t.night_bata),
+      sanitizeInt(t.sort_order) || 0,
+      t.enabled !== false
+    ]);
     syncManager.notifyDataChange('tariffs', 'create', { id: result.rows[0].id });
     res.json({ success: true, tariff: result.rows[0] });
   } catch (err) {
+    console.error('Create local tariff error:', err);
     res.status(500).json({ error: err.message });
   }
 });
 
 router.put('/tariff/local/:id', requireAuth, async (req, res) => {
   try {
-    const t = req.body;
+    const t = req.body || {};
     const result = await query(`
       UPDATE tariff_local SET vehicle_name=$1, category=$2, package_4hr_40km=$3, package_8hr_80km=$4, extra_hour=$5, extra_km=$6, night_bata=$7, sort_order=$8, enabled=$9
       WHERE id=$10
       RETURNING *
-    `, [t.vehicle_name, t.category, t.package_4hr_40km, t.package_8hr_80km, t.extra_hour, t.extra_km, t.night_bata, t.sort_order || 0, t.enabled !== false, req.params.id]);
+    `, [
+      sanitizeStr(t.vehicle_name),
+      sanitizeStr(t.category, 'Sedan'),
+      sanitizeInt(t.package_4hr_40km),
+      sanitizeInt(t.package_8hr_80km),
+      sanitizeInt(t.extra_hour),
+      sanitizeInt(t.extra_km),
+      sanitizeInt(t.night_bata),
+      sanitizeInt(t.sort_order) || 0,
+      t.enabled !== false,
+      req.params.id
+    ]);
     syncManager.notifyDataChange('tariffs', 'update', { id: req.params.id });
     res.json({ success: true, tariff: result.rows[0] });
   } catch (err) {
+    console.error('Update local tariff error:', err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -445,29 +606,51 @@ router.get('/tariff/outstation', requireAuth, async (req, res) => {
 
 router.post('/tariff/outstation', requireAuth, async (req, res) => {
   try {
-    const t = req.body;
+    const t = req.body || {};
+    if (!t.vehicle_name) return res.status(400).json({ error: 'Vehicle name is required' });
     const result = await query(`
       INSERT INTO tariff_outstation (vehicle_name, category, min_amount_per_day, extra_per_km, driver_bata_day, night_bata_extra, sort_order, enabled)
       VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *
-    `, [t.vehicle_name, t.category, t.min_amount_per_day, t.extra_per_km, t.driver_bata_day, t.night_bata_extra, t.sort_order || 0, t.enabled !== false]);
+    `, [
+      sanitizeStr(t.vehicle_name),
+      sanitizeStr(t.category, 'Sedan'),
+      sanitizeInt(t.min_amount_per_day),
+      sanitizeInt(t.extra_per_km),
+      sanitizeInt(t.driver_bata_day),
+      sanitizeInt(t.night_bata_extra),
+      sanitizeInt(t.sort_order) || 0,
+      t.enabled !== false
+    ]);
     syncManager.notifyDataChange('tariffs', 'create', { id: result.rows[0].id });
     res.json({ success: true, tariff: result.rows[0] });
   } catch (err) {
+    console.error('Create outstation tariff error:', err);
     res.status(500).json({ error: err.message });
   }
 });
 
 router.put('/tariff/outstation/:id', requireAuth, async (req, res) => {
   try {
-    const t = req.body;
+    const t = req.body || {};
     const result = await query(`
       UPDATE tariff_outstation SET vehicle_name=$1, category=$2, min_amount_per_day=$3, extra_per_km=$4, driver_bata_day=$5, night_bata_extra=$6, sort_order=$7, enabled=$8
       WHERE id=$9
       RETURNING *
-    `, [t.vehicle_name, t.category, t.min_amount_per_day, t.extra_per_km, t.driver_bata_day, t.night_bata_extra, t.sort_order || 0, t.enabled !== false, req.params.id]);
+    `, [
+      sanitizeStr(t.vehicle_name),
+      sanitizeStr(t.category, 'Sedan'),
+      sanitizeInt(t.min_amount_per_day),
+      sanitizeInt(t.extra_per_km),
+      sanitizeInt(t.driver_bata_day),
+      sanitizeInt(t.night_bata_extra),
+      sanitizeInt(t.sort_order) || 0,
+      t.enabled !== false,
+      req.params.id
+    ]);
     syncManager.notifyDataChange('tariffs', 'update', { id: req.params.id });
     res.json({ success: true, tariff: result.rows[0] });
   } catch (err) {
+    console.error('Update outstation tariff error:', err);
     res.status(500).json({ error: err.message });
   }
 });
