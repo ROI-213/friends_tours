@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, createContext, useContext } from 'react';
+import React, { useState, useEffect, useRef, useCallback, createContext, useContext } from 'react';
 import { adminApi } from '../lib/api.js';
 import { Eye, EyeOff } from 'lucide-react';
 
@@ -74,6 +74,39 @@ function Modal({ title, onClose, children, maxWidth = 680 }) {
       </div>
     </div>
   );
+}
+
+class AdminErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error, errorInfo) {
+    console.error('Admin section crash prevented by ErrorBoundary:', error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: 32, background: '#fff', borderRadius: 14, border: '1px solid #fecaca', boxShadow: '0 4px 14px rgba(0,0,0,0.04)' }}>
+          <h3 style={{ color: '#dc2626', margin: '0 0 10px', fontSize: '1.15rem', fontWeight: 800 }}>⚠️ Something went wrong in this section</h3>
+          <p style={{ color: '#64748b', fontSize: '0.875rem', margin: '0 0 16px', lineHeight: 1.5 }}>
+            {this.state.error?.message || 'An unexpected error occurred while loading this manager.'}
+          </p>
+          <button
+            type="button"
+            onClick={() => this.setState({ hasError: false, error: null })}
+            style={{ padding: '9px 20px', background: '#0A1938', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer' }}
+          >
+            ↻ Reload Section
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
 }
 
 const inputStyle = {
@@ -1943,9 +1976,22 @@ function MediaManager() {
     setLoading(true);
     adminApi.getGallery()
       .then((data) => {
-        if (Array.isArray(data)) setGallery(data);
+        if (Array.isArray(data)) {
+          setGallery(data);
+        } else if (data && Array.isArray(data.gallery)) {
+          setGallery(data.gallery);
+        } else if (data && Array.isArray(data.items)) {
+          setGallery(data.items);
+        } else if (data && Array.isArray(data.rows)) {
+          setGallery(data.rows);
+        } else {
+          setGallery([]);
+        }
       })
-      .catch(console.error)
+      .catch((err) => {
+        console.error('Gallery load error:', err);
+        setGallery([]);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -2090,9 +2136,11 @@ function MediaManager() {
     }
   };
 
+  const galleryList = Array.isArray(gallery) ? gallery : [];
   const filteredGallery = selectedFilter === 'all'
-    ? gallery
-    : gallery.filter(g => {
+    ? galleryList
+    : galleryList.filter(g => {
+        if (!g) return false;
         const cat = (g.category || '').toLowerCase();
         if (selectedFilter === 'fleet') return cat === 'fleet' || cat === 'vehicles';
         if (selectedFilter === 'outstation') return cat === 'outstation' || cat === 'tours' || cat === 'destinations';
@@ -2524,6 +2572,14 @@ function ContentManager() {
         rows.forEach(r => {
           if (r.key && r.value !== undefined && r.value !== null && r.value !== '') {
             merged[r.key] = r.value;
+          }
+        });
+        setContent(merged);
+      } else if (rows && typeof rows === 'object') {
+        const merged = { ...DEFAULT_WEBSITE_CONTENT };
+        Object.entries(rows).forEach(([k, v]) => {
+          if (v !== undefined && v !== null && v !== '') {
+            merged[k] = v;
           }
         });
         setContent(merged);
@@ -3399,7 +3455,9 @@ function AdminApp() {
 
       {/* Main Content Area */}
       <div style={{ flex: 1, padding: '36px 40px', overflowY: 'auto', minWidth: 0 }}>
-        {renderSection()}
+        <AdminErrorBoundary key={section}>
+          {renderSection()}
+        </AdminErrorBoundary>
       </div>
     </div>
   );
