@@ -325,8 +325,8 @@ function ImageUploadInput({ label, value, onChange, placeholder = '/fleet/car.jp
 // ── Login Page ────────────────────────────────────────────────────────────────
 function LoginPage() {
   const { login } = useAuth();
-  const [email, setEmail] = useState('admin@friendstours.in');
-  const [password, setPassword] = useState('admin@FT2026!');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -353,7 +353,15 @@ function LoginPage() {
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: 16 }}>
             <label style={{ display: 'block', fontWeight: 600, fontSize: '0.8125rem', color: '#334155' }}>Admin Email</label>
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} required style={inputStyle} autoComplete="username" />
+            <input 
+              type="email" 
+              value={email} 
+              onChange={e => setEmail(e.target.value)} 
+              placeholder="Enter your admin email" 
+              required 
+              style={inputStyle} 
+              autoComplete="username" 
+            />
           </div>
           <div style={{ marginBottom: 20 }}>
             <label style={{ display: 'block', fontWeight: 600, fontSize: '0.8125rem', color: '#334155' }}>Password</label>
@@ -362,6 +370,7 @@ function LoginPage() {
                 type={showPassword ? 'text' : 'password'} 
                 value={password} 
                 onChange={e => setPassword(e.target.value)} 
+                placeholder="Enter your password" 
                 required 
                 style={{ ...inputStyle, marginTop: 0, paddingRight: 42 }} 
                 autoComplete="current-password" 
