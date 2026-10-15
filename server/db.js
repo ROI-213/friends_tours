@@ -11,13 +11,21 @@ dotenv.config();
 const { Pool } = pg;
 
 function createPool() {
-  // Ensure dead or legacy Supabase connection strings are completely discarded
+  // Completely strip out any dead or legacy Supabase pooler / connection strings from process.env
+  const deadKeys = ['DATABASE_URL', 'POSTGRES_URL', 'POSTGRESQL_URL', 'SUPABASE_URL', 'SUPABASE_DB_URL', 'PGHOST'];
+  for (const key of deadKeys) {
+    if (process.env[key] && (
+      process.env[key].includes('supabase') || 
+      process.env[key].includes('gozqx') || 
+      process.env[key].includes('pooler')
+    )) {
+      console.warn(`⚠️ Discarding legacy/dead Supabase URL in ${key}. Using direct PostgreSQL frien470.`);
+      delete process.env[key];
+    }
+  }
+
   let connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.POSTGRESQL_URL;
-  if (connectionString && (connectionString.includes('supabase') || connectionString.includes('gozqxqtxzrqlfevzrryn'))) {
-    console.warn('⚠️ Discarding legacy/dead Supabase URL. Using direct PostgreSQL frien470 credentials.');
-    delete process.env.DATABASE_URL;
-    delete process.env.POSTGRES_URL;
-    delete process.env.POSTGRESQL_URL;
+  if (connectionString && (connectionString.includes('supabase') || connectionString.includes('gozqx') || connectionString.includes('pooler'))) {
     connectionString = null;
   }
 
