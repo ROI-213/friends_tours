@@ -3388,6 +3388,7 @@ const SECTIONS = [
   { key: 'vehicles', label: '🚗 Fleet Vehicles' },
   { key: 'packages', label: '🗺️ Tour Packages' },
   { key: 'tariffs', label: '💳 Tariff Rate Cards' },
+  { key: 'airport-areas', label: '✈️ Airport Fare Zones' },
   { key: 'outstation-dest', label: '📍 Outstation Destinations' },
   { key: 'testimonials', label: '⭐ Testimonials' },
   { key: 'content', label: '📝 Website Content' },
@@ -3407,6 +3408,7 @@ function AdminApp() {
       case 'vehicles': return <VehiclesManager />;
       case 'packages': return <PackagesManager />;
       case 'tariffs': return <TariffManager />;
+      case 'airport-areas': return <AirportAreasManager />;
       case 'outstation-dest': return <OutstationDestinationsManager />;
       case 'testimonials': return <TestimonialsManager />;
       case 'content': return <ContentManager />;
