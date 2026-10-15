@@ -1,4 +1,5 @@
 import EventEmitter from 'events';
+import { query } from './db.js';
 
 class SyncManager extends EventEmitter {
   constructor() {
@@ -56,6 +57,15 @@ class SyncManager extends EventEmitter {
     this.version = Date.now();
     this.lastModified = new Date().toISOString();
     this.lastType = type;
+
+    // Persist mutation timestamp in PostgreSQL for serverless (Vercel) multi-instance synchronization
+    try {
+      query(`
+        INSERT INTO site_settings (key, value, updated_at)
+        VALUES ('data_version', $1, NOW())
+        ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = NOW()
+      `, [String(this.version)]).catch(() => {});
+    } catch (_) {}
 
     const payload = JSON.stringify({
       type,

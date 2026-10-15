@@ -22,8 +22,17 @@ router.get('/events', (req, res) => {
   syncManager.handleSSE(req, res);
 });
 
-// Polling Version / Timestamp endpoint
-router.get('/version', (req, res) => {
+// Polling Version / Timestamp endpoint (hybrid in-memory + PostgreSQL for Vercel lambdas)
+router.get('/version', async (req, res) => {
+  try {
+    const dbRes = await query("SELECT value FROM site_settings WHERE key = 'data_version'");
+    if (dbRes.rows[0]?.value) {
+      const dbVersion = parseInt(dbRes.rows[0].value, 10);
+      if (dbVersion && dbVersion > syncManager.version) {
+        syncManager.version = dbVersion;
+      }
+    }
+  } catch (_) {}
   res.json(syncManager.getVersion());
 });
 

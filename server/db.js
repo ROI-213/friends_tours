@@ -37,6 +37,11 @@ function createPool() {
     (isRemoteHost && !connectionString?.includes('127.0.0.1')) ||
     (connectionString ? connectionString.includes('sslmode=require') : false);
 
+  const isVercel = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+  const primaryHost = (isVercel && (!process.env.DB_HOST || process.env.DB_HOST === '127.0.0.1' || process.env.DB_HOST === 'localhost'))
+    ? '168.119.64.101'
+    : (process.env.DB_HOST || process.env.PGHOST || '127.0.0.1');
+
   const poolConfig = connectionString
     ? {
         connectionString,
@@ -46,7 +51,7 @@ function createPool() {
         connectionTimeoutMillis: 10000,
       }
     : {
-        host: process.env.DB_HOST || process.env.PGHOST || '127.0.0.1',
+        host: primaryHost,
         port: parseInt(process.env.DB_PORT || process.env.PGPORT || '5432', 10),
         database: process.env.DB_NAME || process.env.PGDATABASE || 'frien470',
         user: process.env.DB_USER || process.env.PGUSER || 'frien470',
