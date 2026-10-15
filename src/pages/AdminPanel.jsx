@@ -2372,7 +2372,10 @@ function MediaManager() {
                     <button
                       type="button"
                       onClick={() => {
-                        navigator.clipboard.writeText(img.image_url);
+                        const fullUrl = (img.image_url && img.image_url.startsWith('/')) 
+                          ? `${window.location.origin}${img.image_url}` 
+                          : (img.image_url || '');
+                        navigator.clipboard.writeText(fullUrl);
                         showFeedback('Image URL copied to clipboard!');
                       }}
                       style={{ flex: 1, padding: '6px 8px', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: 6, fontSize: '0.72rem', cursor: 'pointer', fontWeight: 600, color: '#334155' }}
