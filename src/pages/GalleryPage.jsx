@@ -69,7 +69,7 @@ export const GalleryPage = ({ onNavigate, onBookNowClick }) => {
 
   const fetchGallery = React.useCallback(() => {
     api.getGallery().then((data) => {
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         const dynamic = data.map((g, idx) => ({
           id: g.id || idx,
           title: g.title || 'Friends Tours Gallery',

@@ -23,7 +23,14 @@ class SyncManager extends EventEmitter {
       'Access-Control-Allow-Origin': '*',
     });
 
+    if (typeof res.flushHeaders === 'function') {
+      res.flushHeaders();
+    }
+
     res.write(`data: ${JSON.stringify({ type: 'connected', version: this.version, time: this.lastModified })}\n\n`);
+    if (typeof res.flush === 'function') {
+      res.flush();
+    }
 
     this.clients.add(res);
 
@@ -36,6 +43,9 @@ class SyncManager extends EventEmitter {
     for (const client of this.clients) {
       try {
         client.write(': keepalive\n\n');
+        if (typeof client.flush === 'function') {
+          client.flush();
+        }
       } catch (err) {
         this.clients.delete(client);
       }
@@ -58,6 +68,9 @@ class SyncManager extends EventEmitter {
     for (const client of this.clients) {
       try {
         client.write(`event: data-change\ndata: ${payload}\n\n`);
+        if (typeof client.flush === 'function') {
+          client.flush();
+        }
       } catch (err) {
         this.clients.delete(client);
       }

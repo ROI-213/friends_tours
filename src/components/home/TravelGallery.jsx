@@ -114,7 +114,7 @@ export const TravelGallery = () => {
 
   const fetchGallery = useCallback(() => {
     api.getGallery().then((data) => {
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         const dynamic = data.map((g, i) => ({
           id: g.id,
           title: g.title || 'Friends Tours & Travels',

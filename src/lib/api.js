@@ -89,13 +89,20 @@ async function apiFetch(path, options = {}) {
   const token = localStorage.getItem('ft_admin_token');
   const headers = {
     'Content-Type': 'application/json',
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0',
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...options.headers,
   };
 
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  const isGet = !options.method || options.method.toUpperCase() === 'GET';
+  const querySeparator = cleanPath.includes('?') ? '&' : '?';
+  const finalPath = isGet ? `${cleanPath}${querySeparator}_t=${Date.now()}` : cleanPath;
+
   const base = getApiBase();
-  const url = `${base}${cleanPath}`;
+  const url = `${base}${finalPath}`;
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 15000);
@@ -112,7 +119,7 @@ async function apiFetch(path, options = {}) {
     } catch (initialErr) {
       // If direct port connection had network error (or vice-versa), try alternate endpoint
       const alternateBase = base.includes('3001') ? '/api' : 'http://localhost:3001/api';
-      const alternateUrl = `${alternateBase}${cleanPath}`;
+      const alternateUrl = `${alternateBase}${finalPath}`;
       try {
         response = await fetch(alternateUrl, {
           cache: 'no-store',
@@ -232,6 +239,23 @@ export const api = {
         const sseUrl = `${base}/public/events`;
         evtSource = new EventSource(sseUrl);
 
+        // Standard message listener for connection greeting and broadcast
+        evtSource.onmessage = (e) => {
+          try {
+            const data = JSON.parse(e.data);
+            if (data.version) {
+              if (currentVersion !== null && data.version !== currentVersion) {
+                currentVersion = data.version;
+                if (typeof onEvent === 'function') {
+                  onEvent({ type: data.type || 'all', action: data.action || 'sync', version: data.version });
+                }
+              } else {
+                currentVersion = data.version;
+              }
+            }
+          } catch (_) {}
+        };
+
         evtSource.addEventListener('data-change', (e) => {
           try {
             const data = JSON.parse(e.data);
@@ -264,29 +288,33 @@ export const api = {
             evtSource = null;
           }
           if (isSubscribed) {
-            reconnectTimeout = setTimeout(connectSSE, 5000);
+            reconnectTimeout = setTimeout(connectSSE, 4000);
           }
         };
       } catch (err) {
-        console.warn('SSE connection failed, relying on polling fallback:', err);
+        console.warn('SSE connection failed, relying on fast polling fallback:', err);
       }
     };
 
     const pollVersion = async () => {
       if (!isSubscribed) return;
       try {
-        const res = await fetch(`${base}/public/version?t=${Date.now()}`, {
+        const res = await fetch(`${base}/public/version?_t=${Date.now()}`, {
           cache: 'no-store',
-          headers: { 'Cache-Control': 'no-cache' }
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
         });
         if (res.ok) {
           const data = await res.json();
           if (currentVersion === null) {
             currentVersion = data.version;
-          } else if (data.version > currentVersion) {
+          } else if (data.version !== currentVersion) {
             currentVersion = data.version;
             if (typeof onEvent === 'function') {
-              onEvent({ type: 'all', action: 'sync', version: data.version });
+              onEvent({ type: data.lastType || 'all', action: 'sync', version: data.version });
             }
           }
         }
@@ -296,7 +324,18 @@ export const api = {
     };
 
     connectSSE();
-    pollInterval = setInterval(pollVersion, 25000);
+    // Fast polling fallback: checks version every 3 seconds to guarantee instant updates on all devices
+    pollInterval = setInterval(pollVersion, 3000);
+
+    // Immediate check whenever user refocuses the window, tab becomes visible, or comes online
+    const handleImmediateSync = () => {
+      if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+        pollVersion();
+      }
+    };
+    window.addEventListener('focus', handleImmediateSync);
+    window.addEventListener('visibilitychange', handleImmediateSync);
+    window.addEventListener('online', handleImmediateSync);
 
     return () => {
       isSubscribed = false;
@@ -309,6 +348,9 @@ export const api = {
         clearInterval(pollInterval);
         pollInterval = null;
       }
+      window.removeEventListener('focus', handleImmediateSync);
+      window.removeEventListener('visibilitychange', handleImmediateSync);
+      window.removeEventListener('online', handleImmediateSync);
     };
   },
 };

@@ -100,7 +100,7 @@ export const TopDestinations = ({ onSelectDestination }) => {
 
   const fetchTopDestinations = useCallback(() => {
     api.getOutstationDestinations().then((items) => {
-      if (Array.isArray(items) && items.length > 0) {
+      if (Array.isArray(items)) {
         const keys = ['column1', 'column2_top', 'column2_bottom', 'column3', 'column4_top', 'column4_bottom'];
         setDestinationsData((prev) => {
           const updated = { ...prev };

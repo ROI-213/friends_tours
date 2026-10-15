@@ -51,7 +51,7 @@ export const TestimonialsPage = ({ onNavigate, onBookNowClick }) => {
 
   const fetchTestimonials = React.useCallback(() => {
     api.getTestimonials().then((data) => {
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         const normalized = data.map((t, idx) => ({
           id: t.id || idx,
           name: t.customer_name || t.name || 'Verified Guest',

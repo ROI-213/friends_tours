@@ -64,7 +64,7 @@ export const OfficialTariffSection = ({ onBookVehicle }) => {
       api.getOutstationTariffs(),
     ]).then(([localRes, outstationRes]) => {
       // Normalize local tariffs if returned with data
-      if (localRes.status === 'fulfilled' && Array.isArray(localRes.value) && localRes.value.length > 0) {
+      if (localRes.status === 'fulfilled' && Array.isArray(localRes.value)) {
         setLocalTariffs(localRes.value.map(v => ({
           ...v,
           vehicleId: v.id || v.vehicleId || v.vehicle_name,
@@ -78,7 +78,7 @@ export const OfficialTariffSection = ({ onBookVehicle }) => {
         })));
       }
       // Normalize outstation tariffs if returned with data
-      if (outstationRes.status === 'fulfilled' && Array.isArray(outstationRes.value) && outstationRes.value.length > 0) {
+      if (outstationRes.status === 'fulfilled' && Array.isArray(outstationRes.value)) {
         setOutstationTariffs(outstationRes.value.map(v => ({
           ...v,
           vehicleId: v.id || v.vehicleId || v.vehicle_name,

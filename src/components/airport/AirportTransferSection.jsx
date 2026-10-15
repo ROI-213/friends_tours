@@ -39,7 +39,7 @@ export const AirportTransferSection = ({ onBookTransfer }) => {
 
   const fetchAirportAreas = useCallback(() => {
     api.getAirportAreas().then((data) => {
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         const dynamic = data.map(a => ({
           id: a.id,
           name: a.name,
@@ -52,9 +52,9 @@ export const AirportTransferSection = ({ onBookTransfer }) => {
         }));
         setAirportAreas(dynamic);
         setSelectedArea(prev => {
-          if (!prev) return dynamic[0];
+          if (!prev) return dynamic[0] || null;
           const found = dynamic.find(d => d.id === prev.id);
-          return found || dynamic[0];
+          return found || dynamic[0] || null;
         });
       }
     }).catch((err) => {

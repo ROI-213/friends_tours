@@ -42,7 +42,7 @@ export const RentalCarsPage = ({
 
   const fetchVehicles = React.useCallback(() => {
     api.getVehicles({ enabled: true }).then((data) => {
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         const normalized = data.map(v => ({
           ...v,
           id: v.id,

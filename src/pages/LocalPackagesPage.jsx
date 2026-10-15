@@ -32,7 +32,7 @@ export const LocalPackagesPage = ({ onNavigate, onBookNowClick, onSelectPackage,
 
   const fetchPackages = React.useCallback(() => {
     api.getPackages({ enabled: true }).then((data) => {
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         const normalized = data.map(p => ({
           ...p,
           id: p.id,

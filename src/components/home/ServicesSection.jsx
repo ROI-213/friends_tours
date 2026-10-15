@@ -77,7 +77,7 @@ export const ServicesSection = ({ onEnquireService, onViewDetails }) => {
 
   const fetchServices = useCallback(() => {
     api.getServices().then((data) => {
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         const iconMap = {
           'srv-employee': Briefcase,
           'srv-airport': Plane,

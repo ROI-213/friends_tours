@@ -21,7 +21,7 @@ export const TestimonialsSection = () => {
   const fetchTestimonials = useCallback(() => {
     api.getTestimonials().then(data => {
       const raw = Array.isArray(data) ? data : data?.testimonials || [];
-      if (raw.length > 0) {
+      if (Array.isArray(raw)) {
         const normalized = raw.map(t => ({
           ...t,
           customerName: t.customer_name || t.customerName || 'Guest',

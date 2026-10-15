@@ -43,7 +43,7 @@ export const FleetSection = ({ onEnquireVehicle, onViewVehicleDetails, onOpenTar
   const fetchVehicles = React.useCallback(() => {
     api.getVehicles({ enabled: true }).then(data => {
       const items = Array.isArray(data) ? data : data?.vehicles;
-      if (items && items.length > 0) {
+      if (Array.isArray(items)) {
         // Normalize API response (snake_case) to match component expectations
         const normalized = items.map(v => ({
           ...v,
@@ -59,9 +59,9 @@ export const FleetSection = ({ onEnquireVehicle, onViewVehicleDetails, onOpenTar
         }));
         setVehicles(normalized);
         setSelectedVehicle(prev => {
-          if (!prev) return normalized[0];
+          if (!prev) return normalized[0] || null;
           const found = normalized.find(v => v.id === prev.id);
-          return found || normalized[0];
+          return found || normalized[0] || null;
         });
       }
     }).catch(console.error);

@@ -129,7 +129,7 @@ export const OutstationDestinations = ({ onEnquireDestination, onExploreDestinat
 
   const fetchDestinations = useCallback(() => {
     api.getOutstationDestinations().then((data) => {
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         const dynamic = data.map((d, i) => ({
           id: d.id,
           slug: (d.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-'),

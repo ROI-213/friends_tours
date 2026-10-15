@@ -28,8 +28,8 @@ export const PopularPackages = ({ onEnquirePackage, onViewPackage }) => {
 
   const fetchPackages = useCallback(() => {
     api.getPackages({ enabled: true }).then(data => {
-      const raw = Array.isArray(data) ? data : data?.packages || [];
-      if (raw.length > 0) {
+      const raw = Array.isArray(data) ? data : (data?.packages || []);
+      if (Array.isArray(raw)) {
         const normalized = raw.map(p => ({
           ...p,
           image: p.hero_image || p.heroImage || p.image_url || p.image || '/destinations/default.jpg',

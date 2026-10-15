@@ -32,7 +32,7 @@ export const ServicesPage = ({ onNavigate, onBookNowClick, onOpenTariffModal }) 
 
   const fetchServices = React.useCallback(() => {
     api.getServices().then((data) => {
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         setServices(data);
       }
     }).catch((err) => {
