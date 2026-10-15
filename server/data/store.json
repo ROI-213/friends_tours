@@ -31,43 +31,64 @@
       "email": "admin",
       "password_hash": "$2a$12$CU9f8Q1fVFhvmkck1BGlouXx80RcNYAfKf9OTHavd7N5aytvvmxRC",
       "id": "adm-1791610222733"
+    },
+    {
+      "created_at": "2026-10-15T06:45:08.643Z",
+      "updated_at": "2026-10-15T06:45:08.643Z",
+      "email": "admin@friendstours.in",
+      "password_hash": "$2a$12$l/dEj14/aup0/kqATANhju9iwbN/C7obi2r0jWSZr5Z7b6RcPczve",
+      "id": "adm-1792046708643"
+    },
+    {
+      "created_at": "2026-10-15T06:45:08.647Z",
+      "updated_at": "2026-10-15T06:45:08.647Z",
+      "email": "admin@friendstours.com",
+      "password_hash": "$2a$12$l/dEj14/aup0/kqATANhju9iwbN/C7obi2r0jWSZr5Z7b6RcPczve",
+      "id": "adm-1792046708647"
+    },
+    {
+      "created_at": "2026-10-15T06:45:08.651Z",
+      "updated_at": "2026-10-15T06:45:08.651Z",
+      "email": "admin",
+      "password_hash": "$2a$12$l/dEj14/aup0/kqATANhju9iwbN/C7obi2r0jWSZr5Z7b6RcPczve",
+      "id": "adm-1792046708651"
     }
   ],
   "site_settings": [
     {
       "key": "site_name",
       "value": "Friends Tours & Travels",
-      "updated_at": "2026-10-10T05:30:22.744Z"
+      "updated_at": "2026-10-15T06:45:08.697Z"
     },
     {
       "key": "site_tagline",
       "value": "Your Journey. Our Priority.",
-      "updated_at": "2026-10-10T05:30:22.746Z"
+      "updated_at": "2026-10-15T06:45:08.700Z"
     },
     {
       "key": "phone",
       "value": "+91 82773 93089",
-      "updated_at": "2026-10-10T05:30:22.750Z"
+      "updated_at": "2026-10-15T06:45:08.703Z"
     },
     {
       "key": "whatsapp",
       "value": "+918277393089",
-      "updated_at": "2026-10-10T05:30:22.751Z"
+      "updated_at": "2026-10-15T06:45:08.707Z"
     },
     {
       "key": "email",
       "value": "friendstravelsone@gmail.com",
-      "updated_at": "2026-10-10T05:30:22.755Z"
+      "updated_at": "2026-10-15T06:45:08.709Z"
     },
     {
       "key": "address",
       "value": "#18, 24TH Main 5th Phase, J.P. Nagar, Bangalore – 560078",
-      "updated_at": "2026-10-10T05:30:22.757Z"
+      "updated_at": "2026-10-15T06:45:08.712Z"
     },
     {
       "key": "google_maps_url",
       "value": "https://maps.google.com",
-      "updated_at": "2026-10-10T05:30:22.758Z"
+      "updated_at": "2026-10-15T06:45:08.715Z"
     },
     {
       "key": "hero_headline",
@@ -76,72 +97,72 @@
     {
       "key": "hero_eyebrow",
       "value": "FRIENDS TOURS & TRAVELS • J.P. NAGAR, BANGALORE",
-      "updated_at": "2026-10-10T05:30:22.762Z"
+      "updated_at": "2026-10-15T06:45:08.724Z"
     },
     {
       "key": "hero_subtitle",
       "value": "Bangalore's trusted partner for Employee Transportation, Airport Transport, Local & Outstation Rentals, and Shuttle Services.",
-      "updated_at": "2026-10-10T05:30:22.768Z"
+      "updated_at": "2026-10-15T06:45:08.729Z"
     },
     {
       "key": "instagram_url",
       "value": "",
-      "updated_at": "2026-10-10T05:30:22.759Z"
+      "updated_at": "2026-10-15T06:45:08.718Z"
     },
     {
       "key": "facebook_url",
       "value": "",
-      "updated_at": "2026-10-10T05:30:22.761Z"
+      "updated_at": "2026-10-15T06:45:08.721Z"
     },
     {
       "key": "hero_title",
       "value": "YOUR JOURNEY. OUR PRIORITY.",
-      "updated_at": "2026-10-10T05:30:22.765Z"
+      "updated_at": "2026-10-15T06:45:08.726Z"
     },
     {
       "key": "about_title",
       "value": "MORE THAN A RIDE. A PROMISE.",
-      "updated_at": "2026-10-10T05:30:22.770Z"
+      "updated_at": "2026-10-15T06:45:08.732Z"
     },
     {
       "key": "about_story",
       "value": "Founded with the ambition to set the gold standard in Bangalore commercial passenger transport, Friends Tours & Travels has grown into a premier fleet operator trusted by tech executives, corporate HR desks, and holidaying families.",
-      "updated_at": "2026-10-10T05:30:22.772Z"
+      "updated_at": "2026-10-15T06:45:08.735Z"
     },
     {
       "key": "stat_years_exp",
       "value": "15+",
-      "updated_at": "2026-10-10T05:30:22.773Z"
+      "updated_at": "2026-10-15T06:45:08.738Z"
     },
     {
       "key": "stat_trips_completed",
       "value": "50,000+",
-      "updated_at": "2026-10-10T05:30:22.775Z"
+      "updated_at": "2026-10-15T06:45:08.742Z"
     },
     {
       "key": "stat_client_rating",
       "value": "4.9 / 5",
-      "updated_at": "2026-10-10T05:30:22.776Z"
+      "updated_at": "2026-10-15T06:45:08.744Z"
     },
     {
       "key": "safety_gps",
       "value": "100% GPS Fleet Tracking & Speed Governors",
-      "updated_at": "2026-10-10T05:30:22.779Z"
+      "updated_at": "2026-10-15T06:45:08.747Z"
     },
     {
       "key": "safety_police",
       "value": "Police Verified & Background Checked Chauffeurs",
-      "updated_at": "2026-10-10T05:30:22.781Z"
+      "updated_at": "2026-10-15T06:45:08.750Z"
     },
     {
       "key": "safety_sanitized",
       "value": "Deep Cleaned & Sanitized Cabins Before Every Trip",
-      "updated_at": "2026-10-10T05:30:22.782Z"
+      "updated_at": "2026-10-15T06:45:08.752Z"
     },
     {
       "key": "safety_billing",
       "value": "Transparent Computerized / Printed Receipt Billing",
-      "updated_at": "2026-10-10T05:30:22.784Z"
+      "updated_at": "2026-10-15T06:45:08.755Z"
     }
   ],
   "vehicles": [

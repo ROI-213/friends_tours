@@ -81,6 +81,29 @@ import { queryStore } from './dataStore.js';
 // Preserve original pg.Pool.prototype.query to prevent infinite recursion
 const rawPoolQuery = pool.query.bind(pool);
 
+let remoteFallbackPool = null;
+let useRemote = false;
+
+function getRemotePool() {
+  if (!remoteFallbackPool) {
+    remoteFallbackPool = new Pool({
+      host: '168.119.64.101',
+      port: 5432,
+      database: process.env.DB_NAME || 'frien470',
+      user: process.env.DB_USER || 'frien470',
+      password: process.env.DB_PASSWORD || 'VGgzGvd9tielKwuxxeB4qI7zn',
+      ssl: false,
+      max: parseInt(process.env.DB_POOL_MAX || '20', 10),
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 10000,
+    });
+    remoteFallbackPool.on('error', (err) => {
+      console.error('Remote fallback pool error:', err.message);
+    });
+  }
+  return remoteFallbackPool;
+}
+
 function isConnectionOrDbUnavailableError(err) {
   if (!err) return false;
   const msg = (err.message || '').toLowerCase();
@@ -116,7 +139,19 @@ function isConnectionOrDbUnavailableError(err) {
 }
 
 export async function query(text, params) {
-  // Always query PostgreSQL first directly
+  if (useRemote) {
+    try {
+      const res = await getRemotePool().query(text, params);
+      return res;
+    } catch (remoteErr) {
+      if (isConnectionOrDbUnavailableError(remoteErr)) {
+        return queryStore(text, params);
+      }
+      throw remoteErr;
+    }
+  }
+
+  // Always query primary PostgreSQL first directly (127.0.0.1 on host)
   try {
     const start = Date.now();
     const res = await rawPoolQuery(text, params);
@@ -126,6 +161,20 @@ export async function query(text, params) {
     }
     return res;
   } catch (err) {
+    // If local 127.0.0.1 or localhost was refused on a local laptop, automatically connect to live database
+    const host = process.env.DB_HOST || '127.0.0.1';
+    if ((host === '127.0.0.1' || host === 'localhost') && (err.code === 'ECONNREFUSED' || err.code === 'ENOTFOUND')) {
+      console.log('⚡ Local 127.0.0.1:5432 not running on this laptop. Connecting to live database at 168.119.64.101...');
+      useRemote = true;
+      try {
+        const res = await getRemotePool().query(text, params);
+        console.log('✅ Connected to live PostgreSQL database (168.119.64.101)');
+        return res;
+      } catch (fallbackErr) {
+        console.warn('⚠️ Remote database fallback error:', fallbackErr.message);
+      }
+    }
+
     if (isConnectionOrDbUnavailableError(err)) {
       console.warn(`⚡ PostgreSQL/Supabase unavailable (${err.message}). Using local store fallback.`);
       return queryStore(text, params);
@@ -135,9 +184,19 @@ export async function query(text, params) {
 }
 
 export async function getClient() {
+  if (useRemote) {
+    return await getRemotePool().connect();
+  }
   try {
     return await pool.connect();
   } catch (err) {
+    const host = process.env.DB_HOST || '127.0.0.1';
+    if ((host === '127.0.0.1' || host === 'localhost') && (err.code === 'ECONNREFUSED' || err.code === 'ENOTFOUND')) {
+      useRemote = true;
+      try {
+        return await getRemotePool().connect();
+      } catch (_) {}
+    }
     return {
       query: (t, p) => queryStore(t, p),
       release: () => {}
@@ -146,8 +205,9 @@ export async function getClient() {
 }
 
 export async function testDatabaseConnection() {
+  const p = useRemote ? getRemotePool() : pool;
   try {
-    const client = await pool.connect();
+    const client = await p.connect();
     try {
       const res = await client.query(
         'SELECT current_database() as database, NOW() as server_time, version() as version;'
@@ -155,7 +215,7 @@ export async function testDatabaseConnection() {
       const row = res.rows[0];
       return {
         success: true,
-        database: row.database,
+        database: row.database + (useRemote ? ' (Remote Live DB)' : ' (Localhost DB)'),
         serverTime: row.server_time,
         version: row.version,
       };
@@ -163,6 +223,13 @@ export async function testDatabaseConnection() {
       client.release();
     }
   } catch (err) {
+    if (!useRemote) {
+      const host = process.env.DB_HOST || '127.0.0.1';
+      if (host === '127.0.0.1' || host === 'localhost') {
+        useRemote = true;
+        return testDatabaseConnection();
+      }
+    }
     return {
       success: true,
       database: 'Local Persistent Data Engine (Auto-Failover Active)',

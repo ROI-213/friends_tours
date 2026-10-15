@@ -156,12 +156,24 @@ app.use((err, req, res, next) => {
 
 // ── Start server ──────────────────────────────────────────────────────────────
 async function start() {
-  let isDbConnected = false;
+  // Always bind and listen on PORT immediately so frontend never encounters NetworkError or 502
+  const serverInstance = app.listen(PORT, () => {
+    console.log(`\n🚀 Friends Tours API running on http://localhost:${PORT}`);
+    console.log(`   Health: http://localhost:${PORT}/health`);
+    console.log(`   Admin login: POST http://localhost:${PORT}/api/admin/login`);
+  });
+  serverInstance.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.log(`ℹ️ Port ${PORT} is already active, sharing existing instance.`);
+    } else {
+      console.error('Server listen error:', err.message);
+    }
+  });
+
   try {
     console.log('🔌 Connecting to PostgreSQL...');
     await pool.query('SELECT NOW()');
     console.log('✅ PostgreSQL connected:', process.env.DB_HOST, 'DB:', process.env.DB_NAME);
-    isDbConnected = true;
 
     // Run migrations on startup
     await runMigrations();
@@ -186,28 +198,6 @@ async function start() {
   } catch (err) {
     console.warn('⚠️ PostgreSQL offline or unreachable at startup:', err.message);
     console.warn('⚡ API Server is starting in resilient mode. Connecting to PostgreSQL in the background...');
-  }
-
-  // Always bind and listen on PORT so frontend never encounters NetworkError
-  app.listen(PORT, () => {
-    console.log(`\n🚀 Friends Tours API running on http://localhost:${PORT}`);
-    console.log(`   Health: http://localhost:${PORT}/health`);
-    console.log(`   Admin login: POST http://localhost:${PORT}/api/admin/login`);
-    console.log(`   DB Status: ${isDbConnected ? 'CONNECTED' : 'CONNECTING IN BACKGROUND'}\n`);
-  });
-
-  // Background reconnect worker if PostgreSQL was offline during initial boot
-  if (!isDbConnected) {
-    const reconnectTimer = setInterval(async () => {
-      try {
-        await pool.query('SELECT NOW()');
-        console.log('✅ PostgreSQL connected successfully in background!');
-        clearInterval(reconnectTimer);
-        await runMigrations();
-      } catch (retryErr) {
-        // Silent background retry
-      }
-    }, 15000);
   }
 }
 
