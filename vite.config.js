@@ -3,26 +3,7 @@ import react from '@vitejs/plugin-react';
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [
-    react(),
-    {
-      name: 'api-dev-middleware',
-      configureServer(server) {
-        server.middlewares.use(async (req, res, next) => {
-          if (req.url && (req.url.startsWith('/api') || req.url.startsWith('/uploads') || req.url.startsWith('/health'))) {
-            try {
-              const { default: app } = await import('./server/index.js');
-              return app(req, res, next);
-            } catch (err) {
-              console.error('API middleware error:', err);
-              return next();
-            }
-          }
-          next();
-        });
-      },
-    },
-  ],
+  plugins: [react()],
   base: '/', // Absolute root pathing ensures deep routes like /services/airport-transfer resolve assets cleanly
   server: {
     host: '0.0.0.0',
